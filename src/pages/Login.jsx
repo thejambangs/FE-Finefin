@@ -3,7 +3,7 @@ import axiosInstance from '../Utils/axiosInstance';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; // <-- 1. LOGIKA FE 2: Import untuk navigasi
 import LoginImage from '../assets/images/login-register.jpg'; 
-import axios from 'axios';
+// import axios from 'axios';
 
 const Login = () => {
   const [email, setEmail] = useState('');
