@@ -1,9 +1,9 @@
 // src/pages/Register.jsx
-import axiosInstance from '../Utils/axiosInstance';
+// import axiosInstance from '../Utils/axiosInstance';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate untuk routing
 import RegisterImage from '../assets/images/login-register.jpg'; 
-// import axios from 'axios';
+import axios from 'axios';
 
 const Register = () => {
   const [email, setEmail] = useState('');
@@ -28,7 +28,7 @@ const Register = () => {
     try {
       // 2. KIRIM DATA PENDAFTARAN BARU KE BACKEND
       // Sesuaikan URL "http://localhost:5000/api/register" dengan instruksi tim Backend-mu
-      const response = await axiosInstance.post('http://localhost:5000/api/register', {
+      const response = await axios.post('http://localhost:5000/api/register', {
         email: email,
         password: password
       });

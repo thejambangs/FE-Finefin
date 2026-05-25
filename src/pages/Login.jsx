@@ -1,9 +1,9 @@
 // src/pages/Login.jsx
-import axiosInstance from '../Utils/axiosInstance';
+// import axiosInstance from '../Utils/axiosInstance';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; // <-- 1. LOGIKA FE 2: Import untuk navigasi
 import LoginImage from '../assets/images/login-register.jpg'; 
-// import axios from 'axios';
+import axios from 'axios';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -21,7 +21,7 @@ const Login = () => {
     try {
       // 2. TEMBAK DATA KE BACKEND
       // Sesuaikan URL "http://localhost:5000/api/login" dengan instruksi tim Backend-mu
-      const response = await axiosInstance.post('http://localhost:5000/api/login', {
+      const response = await axios.post('http://localhost:5000/api/login', {
         email: email,       // Mengambil state email dari input form
         password: password  // Mengambil state password dari input form
       });
