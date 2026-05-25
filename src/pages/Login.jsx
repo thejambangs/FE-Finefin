@@ -1,72 +1,97 @@
 // src/pages/Login.jsx
+import axiosInstance from '../Utils/axiosInstance';
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // <-- 1. IMPORT USE_NAVIGATE
-import loginImage from '../assets/images/login-register.jpg'; 
+import { useNavigate } from 'react-router-dom'; // <-- 1. LOGIKA FE 2: Import untuk navigasi
+import LoginImage from '../assets/images/login-register.jpg'; 
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   
-  // 2. INISIALISASI NAVIGATE
-  const navigate = useNavigate(); 
+  // === 2. LOGIKA FE 1 & 2: State Loading & Inisialisasi Navigasi ===
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
+  // === 3. LOGIKA FE 2: Fungsi Handle Login ===
   const handleLogin = (e) => {
     e.preventDefault();
-    setIsLoading(true);
+    setIsLoading(true); // Aktifkan loading spinner DaisyUI
 
+    // Simulasi proses cek akun ke database/API (2 detik)
     setTimeout(() => {
-      setIsLoading(false);
-      // CONTOH NYATA: Jika login sukses di API, pindah ke dashboard
-      // navigate('/dashboard'); 
-    }, 3000);
+      setIsLoading(false); // Matikan spinner
+      
+      // TARGET UTAMA: Setelah sukses login, arahkan user ke halaman kuesioner
+      navigate('/kuesioner'); 
+    }, 2000);
   };
 
   return (
     <div className="flex h-screen w-full bg-white">
-      {/* PANEL KIRI (Gambar) */}
+      
+      {/* PANEL KIRI: Visual Estetika FE 1 */}
       <div className="w-1/2 h-full bg-gray-100 border-r border-gray-200 overflow-hidden flex items-center justify-center">
-        <img src={loginImage} alt="FineFin Login Visual" className="w-full h-full object-cover" />
+        <img 
+          src={LoginImage} 
+          alt="FineFin Login Visual" 
+          className="w-full h-full object-cover" 
+        />
       </div>
 
-      {/* PANEL KANAN */}
+      {/* PANEL KANAN: Form Login & Interaksi */}
       <div className="w-1/2 h-full flex flex-col justify-center px-16 lg:px-32 xl:px-40 gap-8 bg-white">
-        <h1 className="text-5xl font-extrabold text-black uppercase tracking-tight">LOGIN</h1>
+        
+        <h1 className="text-5xl font-extrabold text-black uppercase tracking-tight">MASUK</h1>
 
-        {/* FORM GROUP: EMAIL */}
+        {/* INPUT EMAIL */}
         <label className="form-control w-full gap-2">
           <div className="label p-0"><span className="label-text text-xl font-medium text-black">Email</span></div>
-          <input type="email" placeholder="contoh@email.com" value={email} onChange={(e) => setEmail(e.target.value)} className="input input-bordered w-full rounded-full border-gray-300 h-14 text-lg text-black bg-white focus:border-black focus:ring-0" />
+          <input 
+            type="email" 
+            placeholder="contoh@email.com" 
+            value={email} 
+            onChange={(e) => setEmail(e.target.value)} 
+            className="input input-bordered w-full rounded-full border-gray-300 h-14 text-lg text-black bg-white focus:border-black focus:ring-0" 
+          />
         </label>
 
-        {/* FORM GROUP: KATA SANDI */}
-        <div className="flex flex-col gap-2">
-          <label className="form-control w-full gap-2">
-            <div className="label p-0"><span className="label-text text-xl font-medium text-black">Kata Sandi</span></div>
-            <input type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} className="input input-bordered w-full rounded-full border-gray-300 h-14 text-lg text-black bg-white focus:border-black focus:ring-0" />
-          </label>
+        {/* INPUT PASSWORD */}
+        <label className="form-control w-full gap-2">
+          <div className="label p-0"><span className="label-text text-xl font-medium text-black">Kata Sandi</span></div>
+          <input 
+            type="password" 
+            placeholder="••••••••" 
+            value={password} 
+            onChange={(e) => setPassword(e.target.value)} 
+            className="input input-bordered w-full rounded-full border-gray-300 h-14 text-lg text-black bg-white focus:border-black focus:ring-0" 
+          />
+        </label>
 
-          {/* CAPTION LINK REGISTER */}
-          <div className="text-right px-2 text-sm text-gray-500 font-medium mt-1">
-            Belum punya akun?{' '}
-            <button 
-              type="button"
-              // 3. PASANG FUNGSI KLIK UNTUK PINDAH KE REGISTER
-              onClick={() => navigate('/register')} 
-              className="text-black font-bold hover:underline cursor-pointer transition-colors bg-transparent border-none p-0"
-            >
-              Register
-            </button>
-          </div>
-        </div>
+        {/* TOMBOL CONTAINER: Integrasi Navigasi & DaisyUI */}
+        <div className="flex flex-row gap-5 mt-2">
+          
+          {/* Tombol ke Halaman Registrasi */}
+          <button 
+            type="button"
+            onClick={() => navigate('/register')} // Lempar ke /register jika belum punya akun
+            className="btn flex-grow rounded-full text-base h-14 text-black border-black bg-white hover:bg-gray-100 font-semibold"
+          >
+            Belum punya akun? Daftar
+          </button>
 
-        {/* TOMBOL MASUK */}
-        <div className="flex flex-col mt-4">
-          <button onClick={handleLogin} disabled={isLoading} className="btn w-full rounded-full text-lg h-14 text-white bg-black hover:bg-neutral-800 disabled:bg-neutral-700 disabled:text-neutral-400 uppercase font-semibold">
+          {/* Tombol Masuk (FE 1: DaisyUI Spinner | FE 2: Mengarah ke Kuesioner) */}
+          <button 
+            onClick={handleLogin}
+            disabled={isLoading} // Kunci tombol saat sedang loading
+            className="btn flex-grow rounded-full text-lg h-14 text-white bg-black hover:bg-neutral-800 disabled:bg-neutral-700 disabled:text-neutral-400 uppercase font-semibold"
+          >
+            {/* Animasi Spinner DaisyUI */}
             {isLoading && <span className="loading loading-spinner text-neutral-400"></span>}
             {isLoading ? 'Memproses...' : 'Masuk'}
           </button>
+
         </div>
+
       </div>
     </div>
   );
