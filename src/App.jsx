@@ -18,7 +18,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         
         {/* Jalur halaman Register */}
-        {/* <Route path="/register" element={<Register />} /> */}
+        <Route path="/register" element={<Register />} />
         
         {/* Jalur halaman Dashboard (setelah sukses login) */}
         {/* <Route path="/dashboard" element={<Dashboard />} /> */}
