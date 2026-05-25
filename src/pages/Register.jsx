@@ -3,6 +3,7 @@ import axiosInstance from '../Utils/axiosInstance';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate untuk routing
 import RegisterImage from '../assets/images/login-register.jpg'; 
+import axios from 'axios';
 
 const Register = () => {
   const [email, setEmail] = useState('');
@@ -13,17 +14,43 @@ const Register = () => {
   const navigate = useNavigate(); // Inisialisasi fungsi navigasi
 
   // Fungsi aksi saat tombol "Daftar" diklik
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
+
+    // Validasi Client-Side Sederhana sebelum kirim ke database
+    if (password !== confirmPassword) {
+      alert("Kata sandi dan konfirmasi kata sandi tidak cocok!");
+      return;
+    }
+
     setIsLoading(true); // Aktifkan loading spinner DaisyUI
 
-    // Simulasi jeda pengiriman data 2 detik
-    setTimeout(() => {
+    try {
+      // 2. KIRIM DATA PENDAFTARAN BARU KE BACKEND
+      // Sesuaikan URL "http://localhost:5000/api/register" dengan instruksi tim Backend-mu
+      const response = await axios.post('http://localhost:5000/api/register', {
+        email: email,
+        password: password
+      });
+
+      // 3. JIKA DATABASE BERHASIL MENYIMPAN DATA BARU
+      if (response.status === 201 || response.data.success) {
+        setIsLoading(false); // Matikan spinner
+        alert('Registrasi Berhasil! Data sudah tersimpan di database.');
+        navigate('/login'); // Kembalikan ke halaman login
+      }
+
+    } catch (error) {
       setIsLoading(false); // Matikan spinner
       
-      // TARGET FE 2: Mengarahkan user kembali ke halaman login setelah berhasil daftar
-      navigate('/login'); 
-    }, 2000);
+      if (error.response) {
+        // Menangkap error jika email sudah terdaftar sebelumnya di database
+        alert(`Gagal Daftar: ${error.response.data.message || 'Data tidak valid!'}`);
+      } else {
+        alert('Gagal menyambung ke server database backend.');
+      }
+      console.error('Error Register:', error);
+    }
   };
 
   return (

@@ -3,6 +3,7 @@ import axiosInstance from '../Utils/axiosInstance';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; // <-- 1. LOGIKA FE 2: Import untuk navigasi
 import LoginImage from '../assets/images/login-register.jpg'; 
+import axios from 'axios';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -13,17 +14,41 @@ const Login = () => {
   const navigate = useNavigate();
 
   // === 3. LOGIKA FE 2: Fungsi Handle Login ===
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     setIsLoading(true); // Aktifkan loading spinner DaisyUI
 
-    // Simulasi proses cek akun ke database/API (2 detik)
-    setTimeout(() => {
-      setIsLoading(false); // Matikan spinner
+    try {
+      // 2. TEMBAK DATA KE BACKEND
+      // Sesuaikan URL "http://localhost:5000/api/login" dengan instruksi tim Backend-mu
+      const response = await axios.post('http://localhost:5000/api/login', {
+        email: email,       // Mengambil state email dari input form
+        password: password  // Mengambil state password dari input form
+      });
+
+      // 3. JIKA BACKEND MENYATAKAN DATA COCOK DI DATABASE
+      if (response.status === 200 || response.data.success) {
+        
+        // Opsional: Simpan token JWT jika backend menggunakan sistem token
+        if (response.data.token) {
+          localStorage.setItem('token', response.data.token);
+        }
+
+        setIsLoading(false); // Matikan spinner
+        navigate('/kuesioner'); // Pindah ke kuesioner
+      }
+
+    } catch (error) {
+      setIsLoading(false); // Matikan spinner jika gagal
       
-      // TARGET UTAMA: Setelah sukses login, arahkan user ke halaman kuesioner
-      navigate('/kuesioner'); 
-    }, 2000);
+      // Tangkap pesan error dari backend (misal: email salah, password tidak cocok)
+      if (error.response) {
+        alert(`Gagal Login: ${error.response.data.message || 'Akun tidak ditemukan!'}`);
+      } else {
+        alert('Gagal terhubung ke server backend. Pastikan server backend sudah menyala!');
+      }
+      console.error('Error Login:', error);
+    }
   };
 
   return (
