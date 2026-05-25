@@ -28,7 +28,7 @@ const Register = () => {
     try {
       // 2. KIRIM DATA PENDAFTARAN BARU KE BACKEND
       // Sesuaikan URL "http://localhost:5000/api/register" dengan instruksi tim Backend-mu
-      const response = await axios.post('http://localhost:5000/api/register', {
+      const response = await axiosInstance.post('http://localhost:5000/api/register', {
         email: email,
         password: password
       });

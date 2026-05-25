@@ -21,7 +21,7 @@ const Login = () => {
     try {
       // 2. TEMBAK DATA KE BACKEND
       // Sesuaikan URL "http://localhost:5000/api/login" dengan instruksi tim Backend-mu
-      const response = await axios.post('http://localhost:5000/api/login', {
+      const response = await axiosInstance.post('http://localhost:5000/api/login', {
         email: email,       // Mengambil state email dari input form
         password: password  // Mengambil state password dari input form
       });
