@@ -6,6 +6,7 @@ import RegisterImage from '../assets/images/login-register.jpg';
 // import axios from 'axios';
 
 const Register = () => {
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -29,6 +30,7 @@ const Register = () => {
       // 2. KIRIM DATA PENDAFTARAN BARU KE BACKEND
       // Sesuaikan URL "http://localhost:5000/api/register" dengan instruksi tim Backend-mu
       const response = await axiosInstance.post('http://localhost:5000/api/auth/register', {
+        username: username,
         email: email,
         password: password
       });
@@ -69,6 +71,19 @@ const Register = () => {
       <div className="w-1/2 h-full flex flex-col justify-center px-16 lg:px-32 xl:px-40 gap-8 bg-white">
         
         <h1 className="text-5xl font-extrabold text-black uppercase tracking-tight">REGISTRASI</h1>
+
+        {/* FORM GROUP: USERNAME */}
+        <label className="form-control w-full gap-1">
+          <div className="label p-0"><span className="label-text text-lg font-medium text-black">Username</span></div>
+          <input 
+            type="text"
+            required
+            placeholder="Masukkan username" 
+            value={username} 
+            onChange={(e) => setUsername(e.target.value)} 
+            className="input input-bordered w-full rounded-full border-gray-300 h-14 text-lg text-black bg-white focus:border-black focus:ring-0" 
+          />
+        </label>
 
         {/* FORM GROUP: EMAIL */}
         <label className="form-control w-full gap-2">
