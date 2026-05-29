@@ -28,12 +28,24 @@ const Kuesioner = () => {
   };
 
   // =========================================================================
-  // LOGIKA FE 2: FUNGSI PEMBERSIH ANGKA (Sanitization)
-  // Menghapus huruf/simbol dan memastikan output adalah Number murni
+  // LOGIKA FE 2: VALIDASI REAL-TIME (ANTI-HURUF & ANTI-ANGKA)
   // =========================================================================
+  
+  // Fungsi khusus kolom NOMINAL (Hanya menerima angka)
+  const handleNumericInputChange = (field, value) => {
+    const digitOnly = value.replace(/[^0-9]/g, ''); 
+    handleInputChange(field, digitOnly);
+  };
+
+  // Fungsi khusus kolom NAMA/TEKS (Memblokir dan menghapus angka)
+  const handleTextOnlyInputChange = (field, value) => {
+    const textOnly = value.replace(/[0-9]/g, ''); // Menghapus angka 0-9 secara real-time
+    handleInputChange(field, textOnly);
+  };
+
   const cleanNumber = (val) => {
     if (!val) return 0;
-    const sanitized = val.toString().replace(/[^0-9]/g, ''); // Perbaikan regex agar murni angka 0-9
+    const sanitized = val.toString().replace(/[^0-9]/g, ''); 
     return sanitized ? parseInt(sanitized, 10) : 0;
   };
 
@@ -46,8 +58,7 @@ const Kuesioner = () => {
       setIsLoading(true);
 
       // =========================================================================
-      // LOGIKA FE 2: MODIFIKASI MENGGUNAKAN ARRAY UNTUK RISK PROFILE
-      // Ditata menggunakan Array agar BE 2 di Sprint 4 tinggal melakukan looping jumlah skor
+      // LOGIKA FE 2: RESTRUKTURISASI DATA MENGGUNAKAN ARRAY UNTUK BACKEND
       // =========================================================================
       const finalPayload = {
         impian: formData.impian,
@@ -65,24 +76,19 @@ const Kuesioner = () => {
           targetTabungan: cleanNumber(formData.targetTabungan)
         },
         
-        // DIUBAH MENJADI ARRAY OF NUMBERS (Tugas FE 2)
-        // Berisi kumpulan skor dari pertanyaan 1-5 di Step 7
         riskProfile: [
-          cleanNumber(formData.rencanaInvestasi),     // Indeks 0: Jawaban Pertanyaan 1
-          cleanNumber(formData.tujuanInvestasi),      // Indeks 1: Jawaban Pertanyaan 2
-          cleanNumber(formData.pengetahuanInvestasi), // Indeks 2: Jawaban Pertanyaan 3
-          cleanNumber(formData.reaksiPasar),          // Indeks 3: Jawaban Pertanyaan 4
-          cleanNumber(formData.alokasiSurplus)        // Indeks 4: Jawaban Pertanyaan 5
+          cleanNumber(formData.rencanaInvestasi),     
+          cleanNumber(formData.tujuanInvestasi),      
+          cleanNumber(formData.pengetahuanInvestasi), 
+          cleanNumber(formData.reaksiPasar),          
+          cleanNumber(formData.alokasiSurplus)        
         ]
       };
 
       setTimeout(() => {
         setIsLoading(false);
         alert("Seluruh Kuesioner Berhasil Dikirim!");
-        
-        // Cek hasilnya di console log browser (F12), properti riskProfile akan berupa array [angka, angka, dst]
         console.log("Data Terstruktur (API-Ready dengan Array):", finalPayload);
-        
         navigate('/dashboard'); 
       }, 2000);
     }
@@ -90,7 +96,7 @@ const Kuesioner = () => {
 
   const handleBack = () => {
     if (currentStep > 1) {
-      setCurrentStep((prev) => prev + 1);
+      setCurrentStep((prev) => prev - 1); 
     }
   };
 
@@ -116,11 +122,15 @@ const Kuesioner = () => {
               {currentStep === 1 && (
                 <div className="flex flex-col gap-4">
                   <h2 className="text-xl font-bold text-black">1. Berapa rata-rata pemasukan bersihmu setiap bulannya?</h2>
-                  <input 
-                    type="text" required placeholder="Rpxxx.xxx.xxx" 
-                    value={formData.pemasukan} onChange={(e) => handleInputChange('pemasukan', e.target.value)}
-                    className="input input-bordered w-full rounded-md border-gray-300 h-14 text-lg text-black bg-white focus:border-black focus:ring-0"
-                  />
+                  <div className="relative flex items-center w-full">
+                    <span className="absolute left-4 text-lg font-bold text-black select-none z-10">Rp</span>
+                    <input 
+                      type="text" required placeholder="0" inputMode="numeric"
+                      value={formData.pemasukan} 
+                      onChange={(e) => handleNumericInputChange('pemasukan', e.target.value)}
+                      className="input input-bordered w-full rounded-md border-gray-300 h-14 text-lg text-black bg-white focus:border-black focus:ring-1 focus:ring-black pl-16 font-medium"
+                    />
+                  </div>
                   <p className="text-sm text-gray-400">Bisa diisi dari gaji tetap, uang saku, atau rata-rata fee proyek freelance tiap bulan</p>
                 </div>
               )}
@@ -131,7 +141,7 @@ const Kuesioner = () => {
                   <h2 className="text-xl font-bold text-black">2. Setiap tanggal berapa biasanya siklus keuanganmu dimulai (Tanggal Gajian)?</h2>
                   <select 
                     required value={formData.tanggalGajian} onChange={(e) => handleInputChange('tanggalGajian', e.target.value)}
-                    className="select select-bordered w-full rounded-md border-gray-300 h-14 text-lg text-black bg-white focus:border-black focus:ring-0"
+                    className="select select-bordered w-full rounded-md border-gray-300 h-14 text-lg text-black bg-white focus:border-black focus:ring-1 focus:ring-black px-4"
                   >
                     <option value="">1-31 (dropdown)</option>
                     {[...Array(31)].map((_, i) => (
@@ -148,14 +158,19 @@ const Kuesioner = () => {
                   <h2 className="text-xl font-bold text-black">3. Yuk, catat tagihan bulanan yang nominalnya pasti dan wajib dibayar!</h2>
                   <input 
                     type="text" required placeholder="Nama Pengeluaran: misal, Bayar Kosan / Token Listrik" 
-                    value={formData.tagihanNama} onChange={(e) => handleInputChange('tagihanNama', e.target.value)}
-                    className="input input-bordered w-full rounded-md border-gray-300 h-14 text-base text-black bg-white focus:border-black focus:ring-0 mb-2"
+                    value={formData.tagihanNama} 
+                    onChange={(e) => handleTextOnlyInputChange('tagihanNama', e.target.value)}
+                    className="input input-bordered w-full rounded-md border-gray-300 h-14 text-base text-black bg-white focus:border-black focus:ring-1 focus:ring-black mb-2 px-4"
                   />
-                  <input 
-                    type="text" required placeholder="Nominal: Rpxxx.xxx.xxx" 
-                    value={formData.tagihanNominal} onChange={(e) => handleInputChange('tagihanNominal', e.target.value)}
-                    className="input input-bordered w-full rounded-md border-gray-300 h-14 text-lg text-black bg-white focus:border-black focus:ring-0"
-                  />
+                  <div className="relative flex items-center w-full">
+                    <span className="absolute left-4 text-lg font-bold text-black select-none z-10">Rp</span>
+                    <input 
+                      type="text" required placeholder="0" inputMode="numeric"
+                      value={formData.tagihanNominal} 
+                      onChange={(e) => handleNumericInputChange('tagihanNominal', e.target.value)}
+                      className="input input-bordered w-full rounded-md border-gray-300 h-14 text-lg text-black bg-white focus:border-black focus:ring-1 focus:ring-black pl-16 font-medium"
+                    />
+                  </div>
                 </div>
               )}
 
@@ -165,14 +180,19 @@ const Kuesioner = () => {
                   <h2 className="text-xl font-bold text-black">4. Ada pengeluaran besar tahunan yang mau dicicil dari sekarang? (Opsional)</h2>
                   <input 
                     type="text" placeholder="Nama Pengeluaran: misal, UKT Kampus / Pajak Kendaraan" 
-                    value={formData.cicilanNama} onChange={(e) => handleInputChange('cicilanNama', e.target.value)}
-                    className="input input-bordered w-full rounded-md border-gray-300 h-14 text-base text-black bg-white focus:border-black focus:ring-0 mb-2"
+                    value={formData.cicilanNama} 
+                    onChange={(e) => handleTextOnlyInputChange('cicilanNama', e.target.value)}
+                    className="input input-bordered w-full rounded-md border-gray-300 h-14 text-base text-black bg-white focus:border-black focus:ring-1 focus:ring-black mb-2 px-4"
                   />
-                  <input 
-                    type="text" placeholder="Nominal: Rpxxx.xxx.xxx" 
-                    value={formData.cicilanNominal} onChange={(e) => handleInputChange('cicilanNominal', e.target.value)}
-                    className="input input-bordered w-full rounded-md border-gray-300 h-14 text-lg text-black bg-white focus:border-black focus:ring-0"
-                  />
+                  <div className="relative flex items-center w-full">
+                    <span className="absolute left-4 text-lg font-bold text-black select-none z-10">Rp</span>
+                    <input 
+                      type="text" placeholder="0" inputMode="numeric"
+                      value={formData.cicilanNominal} 
+                      onChange={(e) => handleNumericInputChange('cicilanNominal', e.target.value)}
+                      className="input input-bordered w-full rounded-md border-gray-300 h-14 text-lg text-black bg-white focus:border-black focus:ring-1 focus:ring-black pl-16 font-medium"
+                    />
+                  </div>
                 </div>
               )}
 
@@ -180,11 +200,15 @@ const Kuesioner = () => {
               {currentStep === 5 && (
                 <div className="flex flex-col gap-4">
                   <h2 className="text-xl font-bold text-black">5. Berapa target minimal yang ingin kamu sisihkan untuk ditabung/investasi setiap bulannya?</h2>
-                  <input 
-                    type="text" required placeholder="Rpxxx.xxx.xxx" 
-                    value={formData.targetTabungan} onChange={(e) => handleInputChange('targetTabungan', e.target.value)}
-                    className="input input-bordered w-full rounded-md border-gray-300 h-14 text-lg text-black bg-white focus:border-black focus:ring-0"
-                  />
+                  <div className="relative flex items-center w-full">
+                    <span className="absolute left-4 text-lg font-bold text-black select-none z-10">Rp</span>
+                    <input 
+                      type="text" required placeholder="0" inputMode="numeric"
+                      value={formData.targetTabungan} 
+                      onChange={(e) => handleNumericInputChange('targetTabungan', e.target.value)}
+                      className="input input-bordered w-full rounded-md border-gray-300 h-14 text-lg text-black bg-white focus:border-black focus:ring-1 focus:ring-black pl-16 font-medium"
+                    />
+                  </div>
                 </div>
               )}
 
@@ -192,10 +216,12 @@ const Kuesioner = () => {
               {currentStep === 6 && (
                 <div className="flex flex-col gap-4">
                   <h2 className="text-xl font-bold text-black">6. Apa satu impian atau barang yang ingin kamu capai/beli dalam waktu dekat?</h2>
+                  {/* PERBAIKAN: Sekarang menggunakan handleTextOnlyInputChange (Anti-Angka) */}
                   <input 
                     type="text" required placeholder="Input Teks: misal, Beli Laptop Baru, Rakit PC" 
-                    value={formData.impian} onChange={(e) => handleInputChange('impian', e.target.value)}
-                    className="input input-bordered w-full rounded-md border-gray-300 h-14 text-lg text-black bg-white focus:border-black focus:ring-0"
+                    value={formData.impian} 
+                    onChange={(e) => handleTextOnlyInputChange('impian', e.target.value)}
+                    className="input input-bordered w-full rounded-md border-gray-300 h-14 text-lg text-black bg-white focus:border-black focus:ring-1 focus:ring-black px-4"
                   />
                   <p className="text-sm text-gray-400">Target ini akan dipajang di Dasbor utamamu sebagai penyemangat!</p>
                 </div>
