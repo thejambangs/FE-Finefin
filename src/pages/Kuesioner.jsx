@@ -27,6 +27,16 @@ const Kuesioner = () => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
+  // =========================================================================
+  // LOGIKA FE 2: FUNGSI PEMBERSIH ANGKA (Sanitization)
+  // Menghapus huruf/simbol dan memastikan output adalah Number murni
+  // =========================================================================
+  const cleanNumber = (val) => {
+    if (!val) return 0;
+    const sanitized = val.toString().replace(/[^0-9]/g, ''); // Perbaikan regex agar murni angka 0-9
+    return sanitized ? parseInt(sanitized, 10) : 0;
+  };
+
   const handleNext = (e) => {
     e.preventDefault();
     
@@ -34,10 +44,45 @@ const Kuesioner = () => {
       setCurrentStep((prev) => prev + 1);
     } else {
       setIsLoading(true);
+
+      // =========================================================================
+      // LOGIKA FE 2: MODIFIKASI MENGGUNAKAN ARRAY UNTUK RISK PROFILE
+      // Ditata menggunakan Array agar BE 2 di Sprint 4 tinggal melakukan looping jumlah skor
+      // =========================================================================
+      const finalPayload = {
+        impian: formData.impian,
+        financialProfile: {
+          pemasukan: cleanNumber(formData.pemasukan),
+          tanggalGajian: cleanNumber(formData.tanggalGajian),
+          tagihan: {
+            nama: formData.tagihanNama,
+            nominal: cleanNumber(formData.tagihanNominal)
+          },
+          cicilan: formData.cicilanNama ? {
+            nama: formData.cicilanNama,
+            nominal: cleanNumber(formData.cicilanNominal)
+          } : null,
+          targetTabungan: cleanNumber(formData.targetTabungan)
+        },
+        
+        // DIUBAH MENJADI ARRAY OF NUMBERS (Tugas FE 2)
+        // Berisi kumpulan skor dari pertanyaan 1-5 di Step 7
+        riskProfile: [
+          cleanNumber(formData.rencanaInvestasi),     // Indeks 0: Jawaban Pertanyaan 1
+          cleanNumber(formData.tujuanInvestasi),      // Indeks 1: Jawaban Pertanyaan 2
+          cleanNumber(formData.pengetahuanInvestasi), // Indeks 2: Jawaban Pertanyaan 3
+          cleanNumber(formData.reaksiPasar),          // Indeks 3: Jawaban Pertanyaan 4
+          cleanNumber(formData.alokasiSurplus)        // Indeks 4: Jawaban Pertanyaan 5
+        ]
+      };
+
       setTimeout(() => {
         setIsLoading(false);
         alert("Seluruh Kuesioner Berhasil Dikirim!");
-        console.log("Data Final ke Database:", formData);
+        
+        // Cek hasilnya di console log browser (F12), properti riskProfile akan berupa array [angka, angka, dst]
+        console.log("Data Terstruktur (API-Ready dengan Array):", finalPayload);
+        
         navigate('/dashboard'); 
       }, 2000);
     }
@@ -45,7 +90,7 @@ const Kuesioner = () => {
 
   const handleBack = () => {
     if (currentStep > 1) {
-      setCurrentStep((prev) => prev - 1);
+      setCurrentStep((prev) => prev + 1);
     }
   };
 
@@ -58,15 +103,13 @@ const Kuesioner = () => {
         <p className="text-xl font-medium text-gray-500">Tentukan jawaban sesuai pengalaman Anda.</p>
       </div>
 
-      {/* ================= PERBAIKAN STRUKTUR PANEL KANAN ================= */}
+      {/* PANEL KANAN */}
       <div className="w-1/2 h-full bg-white flex flex-col">
         
         <form onSubmit={handleNext} className="w-full h-full flex flex-col">
           
-          {/* ZONA 1: KHUSUS KONTEN PERTANYAAN (Bisa Di-scroll Secara Mandiri) */}
+          {/* ZONA 1: KHUSUS KONTEN PERTANYAAN */}
           <div className="flex-grow overflow-y-auto px-16 lg:px-24 xl:px-32 pt-12 pb-6">
-            
-            {/* Trik Wrapper: Menjaga Step 1-6 Tetap di Tengah, dan Step 7 Mulai dari Atas */}
             <div className="min-h-full flex flex-col justify-center gap-8">
               
               {/* Step 1 */}
@@ -161,7 +204,6 @@ const Kuesioner = () => {
               {/* Step 7: Profil Risiko */}
               {currentStep === 7 && (
                 <div className="flex flex-col gap-8 animate-fadeIn text-black pb-2">
-                  
                   {/* No 1 */}
                   <div className="flex flex-col gap-2">
                     <h3 className="font-bold text-base">1. Berapa lama rencana Anda untuk menyimpan dana investasi ini sebelum dicairkan?</h3>
@@ -210,18 +252,18 @@ const Kuesioner = () => {
                       </label>
                       <label className="flex items-center gap-3 cursor-pointer text-sm font-medium">
                         <input type="radio" name="risk3" className="radio radio-sm border-gray-400 animate-none" checked={formData.pengetahuanInvestasi === '2'} onChange={() => handleInputChange('pengetahuanInvestasi', '2')} />
-                        <span>B. Menengah, saya cukup paham cara kerja instrumen seperti reksa dana atau obligasi pemerintah (seperti Obligasi FR atau SBN). (Poin 2)</span>
+                        <span>B. Menengah, saya cukup paham cara kerja instrumen seperti reksa dana atau obligasi pemerintah. (Poin 2)</span>
                       </label>
                       <label className="flex items-center gap-3 cursor-pointer text-sm font-medium">
                         <input type="radio" name="risk3" className="radio radio-sm border-gray-400 animate-none" checked={formData.pengetahuanInvestasi === '3'} onChange={() => handleInputChange('pengetahuanInvestasi', '3')} />
-                        <span>C. Mahir, saya sudah terbiasa dengan instrumen berisiko tinggi seperti saham atau mata uang kripto. (Poin 3)</span>
+                        <span>C. Mahir, saya sudah terbiasa dengan instrumen berisiko tinggi seperti saham atau kripto. (Poin 3)</span>
                       </label>
                     </div>
                   </div>
 
                   {/* No 4 */}
                   <div className="flex flex-col gap-2">
-                    <h3 className="font-bold text-base">4. Jika nilai portofolio investasi Anda tiba-tiba turun 15% dalam sebulan karena kondisi pasar, apa yang akan Anda lakukan?</h3>
+                    <h3 className="font-bold text-base">4. Jika nilai portofolio investasi Anda tiba-tiba turun 15% dalam sebulan, apa yang akan Anda lakukan?</h3>
                     <div className="flex flex-col gap-2 pl-2">
                       <label className="flex items-center gap-3 cursor-pointer text-sm font-medium">
                         <input type="radio" required name="risk4" className="radio radio-sm border-gray-400 animate-none" checked={formData.reaksiPasar === '1'} onChange={() => handleInputChange('reaksiPasar', '1')} />
@@ -233,7 +275,7 @@ const Kuesioner = () => {
                       </label>
                       <label className="flex items-center gap-3 cursor-pointer text-sm font-medium">
                         <input type="radio" name="risk4" className="radio radio-sm border-gray-400 animate-none" checked={formData.reaksiPasar === '3'} onChange={() => handleInputChange('reaksiPasar', '3')} />
-                        <span>C. Menambah modal investasi (buy the dip) karena menganggap ini kesempatan membeli di harga murah. (Poin 3)</span>
+                        <span>C. Menambah modal investasi (buy the dip) karena menganggap ini kesempatan membeli murah. (Poin 3)</span>
                       </label>
                     </div>
                   </div>
@@ -263,8 +305,7 @@ const Kuesioner = () => {
             </div>
           </div>
 
-          {/* ZONA 2: AREA TOMBOL NAVIGASI STATIS (Berdiri Sendiri di Luar Wadah Scroll) */}
-          {/* PERBAIKAN: Menggunakan 'shrink-0' dan menghapus kelas 'sticky' agar memotong area scroll secara mutlak */}
+          {/* ZONA 2: AREA TOMBOL NAVIGASI STATIS */}
           <div className="shrink-0 flex flex-row gap-5 px-16 lg:px-24 xl:px-32 py-6 border-t border-gray-100 bg-white z-20 w-full">
             <button 
               type="button" onClick={handleBack} disabled={isLoading}
