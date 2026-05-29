@@ -1,6 +1,7 @@
 const StepYearlyExpense = ({
   formData,
-  handleNumericInputChange
+  handleNumericInputChange,
+  handleTextOnlyInputChange
 }) => {
   return (<div className="flex flex-col gap-4">
     <h2 className="text-xl font-bold text-black">4. Ada pengeluaran besar tahunan yang mau dicicil dari sekarang? (Opsional)</h2>

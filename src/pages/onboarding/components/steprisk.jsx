@@ -1,6 +1,6 @@
  const StepRisk = ({
   formData,
-  handleNumericInputChange
+  handleInputChange
 }) => {
   return (<div className="flex flex-col gap-8 animate-fadeIn text-black pb-2">
                   {/* No 1 */}

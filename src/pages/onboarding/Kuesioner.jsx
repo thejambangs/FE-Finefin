@@ -1,13 +1,13 @@
 // src/pages/Kuesioner.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import StepIncome from './components/stepincome';
-import StepPayday from './components/steppayday';
-import StepExpenses from './components/stepexpenses';
-import StepYearlyExpense from './components/stepyearlyexpense';
-import StepTarget from './components/steptarget';
+import StepIncome from './components/StepIncome';
+import StepPayday from './components/StepPayday';
+import StepExpenses from './components/StepExpenses';
+import StepYearlyExpense from './components/StepYearlyExpense';
+import StepTarget from './components/StepTarget';
 import StepDream from './components/StepDream';
-import StepRisk from './components/steprisk';
+import StepRisk from './components/StepRisk';
 
 const Kuesioner = () => {
   const [currentStep, setCurrentStep] = useState(1); 
@@ -145,8 +145,8 @@ const Kuesioner = () => {
               {currentStep === 2 && (
                 <StepPayday
                   formData={formData}
-                  handleNumericInputChange={
-                    handleNumericInputChange
+                  handleInputChange={
+                    handleInputChange
                   }
                 />
               )}
@@ -158,6 +158,9 @@ const Kuesioner = () => {
                   handleNumericInputChange={
                     handleNumericInputChange
                   }
+                  handleTextOnlyInputChange={
+                    handleTextOnlyInputChange
+                  }
                 />
               )}
 
@@ -167,6 +170,9 @@ const Kuesioner = () => {
                   formData={formData}
                   handleNumericInputChange={
                     handleNumericInputChange
+                  }
+                  handleTextOnlyInputChange={
+                    handleTextOnlyInputChange
                   }
                 />
               )}
@@ -188,6 +194,12 @@ const Kuesioner = () => {
                   handleNumericInputChange={
                     handleNumericInputChange
                   }
+                  handleTextOnlyInputChange={
+                    handleTextOnlyInputChange
+                  }
+                  handleInputChange={
+                    handleInputChange
+                  }
                 />
               )}
 
@@ -195,8 +207,8 @@ const Kuesioner = () => {
               {currentStep === 7 && (
                 <StepRisk
                   formData={formData}
-                  handleNumericInputChange={
-                    handleNumericInputChange
+                  handleInputChange={
+                    handleInputChange
                   }
                 />
               )}

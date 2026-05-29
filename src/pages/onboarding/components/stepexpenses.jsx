@@ -1,6 +1,7 @@
 const StepExpenses = ({
   formData,
-  handleNumericInputChange
+  handleNumericInputChange,
+  handleTextOnlyInputChange
 }) => {
   return (<div className="flex flex-col gap-4">
     <h2 className="text-xl font-bold text-black">3. Yuk, catat tagihan bulanan yang nominalnya pasti dan wajib dibayar!</h2>

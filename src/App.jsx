@@ -2,7 +2,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/Login.jsx' 
 import Register from './pages/Register.jsx'
-import Kuesioner from './pages/Kuesioner.jsx'
+import Kuesioner from './pages/onboarding/Kuesioner.jsx'
 
 // PENTING: Karena kita mendaftarkan rute /dashboard, 
 // pastikan FE 1 atau FE 2 sudah membuat file dummy (kosong) bernama Dashboard.jsx di dalam folder pages agar tidak error.

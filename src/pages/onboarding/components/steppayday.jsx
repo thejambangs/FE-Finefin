@@ -1,6 +1,6 @@
 const StepPayday = ({
   formData,
-  handleNumericInputChange
+  handleInputChange
 }) => {
   return (<div className="flex flex-col gap-4">
     <h2 className="text-xl font-bold text-black">2. Setiap tanggal berapa biasanya siklus keuanganmu dimulai (Tanggal Gajian)?</h2>
