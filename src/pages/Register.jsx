@@ -70,6 +70,18 @@ const Register = () => {
         
         <h1 className="text-5xl font-extrabold text-black uppercase tracking-tight">REGISTRASI</h1>
 
+        {/* FORM GROUP: USERNAME */}
+        <label className="form-control w-full gap-2">
+          <div className="label p-0"><span className="label-text text-xl font-medium text-black">Username</span></div>
+          <input 
+            type="text"
+            placeholder="Masukkan username" 
+            value={username} 
+            onChange={(e) => setUsername(e.target.value)} 
+            className="input input-bordered w-full rounded-full border-gray-300 h-14 text-lg text-black bg-white focus:border-black focus:ring-0" 
+          />
+        </label>
+
         {/* FORM GROUP: EMAIL */}
         <label className="form-control w-full gap-2">
           <div className="label p-0"><span className="label-text text-xl font-medium text-black">Email</span></div>
