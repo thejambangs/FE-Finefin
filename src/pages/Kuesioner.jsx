@@ -28,21 +28,27 @@ const Kuesioner = () => {
   };
 
   // =========================================================================
-  // LOGIKA FE 2: VALIDASI REAL-TIME (ANTI-HURUF & ANTI-ANGKA)
+  // LOGIKA FE 2: VALIDASI REAL-TIME & FORMATTING RIBUAN (AUTO-FORMAT)
   // =========================================================================
   
-  // Fungsi khusus kolom NOMINAL (Hanya menerima angka)
+  // Fungsi khusus kolom NOMINAL (Blokir huruf + Otomatis tambah titik ribuan)
   const handleNumericInputChange = (field, value) => {
+    // 1. Hapus semua karakter yang bukan angka
     const digitOnly = value.replace(/[^0-9]/g, ''); 
-    handleInputChange(field, digitOnly);
+    
+    // 2. Tambahkan titik setiap 3 digit angka (Format Rupiah)
+    const formatted = digitOnly.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    
+    handleInputChange(field, formatted);
   };
 
   // Fungsi khusus kolom NAMA/TEKS (Memblokir dan menghapus angka)
   const handleTextOnlyInputChange = (field, value) => {
-    const textOnly = value.replace(/[0-9]/g, ''); // Menghapus angka 0-9 secara real-time
+    const textOnly = value.replace(/[0-9]/g, ''); 
     handleInputChange(field, textOnly);
   };
 
+  // Bersihkan titik pemisah ribuan sebelum diubah menjadi Integer murni untuk BE
   const cleanNumber = (val) => {
     if (!val) return 0;
     const sanitized = val.toString().replace(/[^0-9]/g, ''); 
@@ -216,7 +222,6 @@ const Kuesioner = () => {
               {currentStep === 6 && (
                 <div className="flex flex-col gap-4">
                   <h2 className="text-xl font-bold text-black">6. Apa satu impian atau barang yang ingin kamu capai/beli dalam waktu dekat?</h2>
-                  {/* PERBAIKAN: Sekarang menggunakan handleTextOnlyInputChange (Anti-Angka) */}
                   <input 
                     type="text" required placeholder="Input Teks: misal, Beli Laptop Baru, Rakit PC" 
                     value={formData.impian} 
@@ -333,12 +338,15 @@ const Kuesioner = () => {
 
           {/* ZONA 2: AREA TOMBOL NAVIGASI STATIS */}
           <div className="shrink-0 flex flex-row gap-5 px-16 lg:px-24 xl:px-32 py-6 border-t border-gray-100 bg-white z-20 w-full">
-            <button 
-              type="button" onClick={handleBack} disabled={isLoading}
-              className="btn flex-grow rounded-md text-lg h-14 text-black border-gray-300 bg-white hover:bg-gray-100 font-semibold disabled:opacity-50"
-            >
-              {currentStep === 1 ? 'Simpan Draf' : 'Kembali'}
-            </button>
+            {/* FIX LENGKAP: Menggunakan currentStep > 1 agar tombol kiri tersembunyi total di Step 1 */}
+            {currentStep > 1 && (
+              <button 
+                type="button" onClick={handleBack} disabled={isLoading}
+                className="btn flex-grow rounded-md text-lg h-14 text-black border-gray-300 bg-white hover:bg-gray-100 font-semibold disabled:opacity-50"
+              >
+                Kembali
+              </button>
+            )}
 
             <button 
               type="submit" disabled={isLoading}
