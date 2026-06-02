@@ -8,6 +8,7 @@ import StepYearlyExpense from './components/StepYearlyExpense';
 import StepTarget from './components/StepTarget';
 import StepDream from './components/StepDream';
 import StepRisk from './components/StepRisk';
+import axiosInstance from '../../Utils/axiosInstance';
 
 const Kuesioner = () => {
   const [currentStep, setCurrentStep] = useState(1); 
@@ -121,16 +122,24 @@ useEffect(() => {
         ]
       };
 
-      setTimeout(() => {
-        setIsLoading(false);
-
-        //localStorage.removeItem('kuesioner');
-
-        alert("Seluruh Kuesioner Berhasil Dikirim!");
-        console.log("Data Terstruktur (API-Ready dengan Array):", finalPayload);
-
-        navigate('/dashboard');
-      }, 2000);
+      axiosInstance.post('/onboarding', finalPayload)
+        .then((response) => {
+            alert(response.data.message); // Akan memunculkan "Kuesioner berhasil! Profil risiko Anda: ..."
+            
+            // Hapus draf kuesioner jika berhasil
+            localStorage.removeItem('kuesioner');
+            // Tandai user sudah onboard
+            localStorage.setItem('is_onboarded', 'true');
+            
+            navigate('/dashboard');
+        })
+        .catch((error) => {
+            console.error("Gagal dikirim:", error.response?.data || error.message);
+            alert(error.response?.data?.message || "Gagal menyimpan kuesioner.");
+        })
+        .finally(() => {
+            setIsLoading(false);
+        });
     }
   };
 
@@ -269,6 +278,6 @@ useEffect(() => {
       </div>
     </div>
   );
-};
+}; 
 
 export default Kuesioner;
