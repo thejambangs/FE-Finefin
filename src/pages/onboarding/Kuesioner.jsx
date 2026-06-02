@@ -122,7 +122,7 @@ useEffect(() => {
         ]
       };
 
-      axiosInstance.post('/onboarding', finalPayload)
+      axiosInstance.post('/api/onboarding', finalPayload)
         .then((response) => {
             alert(response.data.message); // Akan memunculkan "Kuesioner berhasil! Profil risiko Anda: ..."
             
