@@ -78,6 +78,10 @@ const Register = () => {
           <input 
             type="text"
             required
+        <label className="form-control w-full gap-2">
+          <div className="label p-0"><span className="label-text text-xl font-medium text-black">Username</span></div>
+          <input 
+            type="text"
             placeholder="Masukkan username" 
             value={username} 
             onChange={(e) => setUsername(e.target.value)} 
