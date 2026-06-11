@@ -18,6 +18,14 @@ const Register = () => {
   const handleRegister = async (e) => {
     e.preventDefault();
 
+    // === TAMBAHKAN VALIDASI EMAIL DI SINI ===
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      alert("Format email tidak valid! (Contoh: nama@email.com)");
+      return; // Stop proses registrasi jika bukan format email
+    }
+    // ========================================
+
     // Validasi Client-Side Sederhana sebelum kirim ke database
     if (password !== confirmPassword) {
       alert("Kata sandi dan konfirmasi kata sandi tidak cocok!");
@@ -30,7 +38,7 @@ const Register = () => {
       // 2. KIRIM DATA PENDAFTARAN BARU KE BACKEND
       // Sesuaikan URL "http://localhost:5000/api/register" dengan instruksi tim Backend-mu
       const response = await axiosInstance.post('http://localhost:5000/api/auth/register', {
-        username: username,
+        //username: username,
         email: email,
         password: password
       });
@@ -73,11 +81,6 @@ const Register = () => {
         <h1 className="text-5xl font-extrabold text-black uppercase tracking-tight">REGISTRASI</h1>
 
         {/* FORM GROUP: USERNAME */}
-        <label className="form-control w-full gap-1">
-          <div className="label p-0"><span className="label-text text-lg font-medium text-black">Username</span></div>
-          <input 
-            type="text"
-            required
         <label className="form-control w-full gap-2">
           <div className="label p-0"><span className="label-text text-xl font-medium text-black">Username</span></div>
           <input 

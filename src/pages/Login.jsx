@@ -16,8 +16,17 @@ const Login = () => {
   // === 3. LOGIKA FE 2: Fungsi Handle Login ===
   const handleLogin = async (e) => {
     e.preventDefault();
-    setIsLoading(true); // Aktifkan loading spinner DaisyUI
+    
+    // === TAMBAHKAN VALIDASI EMAIL DI SINI ===
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      alert("Format email tidak valid! (Contoh: nama@email.com)");
+      return; // Stop proses login jika bukan format email
+    }
+    // ========================================
 
+    setIsLoading(true); // Aktifkan loading spinner DaisyUI
+    
     try {
       // 2. TEMBAK DATA KE BACKEND
       // Sesuaikan URL "http://localhost:5000/api/login" dengan instruksi tim Backend-mu
