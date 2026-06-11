@@ -73,11 +73,6 @@ const Register = () => {
         <h1 className="text-5xl font-extrabold text-black uppercase tracking-tight">REGISTRASI</h1>
 
         {/* FORM GROUP: USERNAME */}
-        <label className="form-control w-full gap-1">
-          <div className="label p-0"><span className="label-text text-lg font-medium text-black">Username</span></div>
-          <input 
-            type="text"
-            required
         <label className="form-control w-full gap-2">
           <div className="label p-0"><span className="label-text text-xl font-medium text-black">Username</span></div>
           <input 
