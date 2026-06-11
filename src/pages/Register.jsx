@@ -16,7 +16,6 @@ const Register = () => {
   const handleRegister = async (e) => {
     e.preventDefault();
 
-<<<<<<< HEAD
     // === TAMBAHKAN VALIDASI EMAIL DI SINI ===
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
@@ -26,8 +25,6 @@ const Register = () => {
     // ========================================
 
     // Validasi Client-Side Sederhana sebelum kirim ke database
-=======
->>>>>>> 89f0ea183e957f5f6d376c3d5e145fdcf8448fa6
     if (password !== confirmPassword) {
       alert("Kata sandi dan konfirmasi kata sandi tidak cocok!");
       return;
@@ -36,15 +33,6 @@ const Register = () => {
     setIsLoading(true);
 
     try {
-<<<<<<< HEAD
-      // 2. KIRIM DATA PENDAFTARAN BARU KE BACKEND
-      // Sesuaikan URL "http://localhost:5000/api/register" dengan instruksi tim Backend-mu
-      const response = await axiosInstance.post('http://localhost:5000/api/auth/register', {
-        //username: username,
-        email: email,
-        password: password
-      });
-=======
       const response = await axiosInstance.post(
         "http://localhost:5000/api/auth/register",
         {
@@ -53,7 +41,6 @@ const Register = () => {
           password: password,
         },
       );
->>>>>>> 89f0ea183e957f5f6d376c3d5e145fdcf8448fa6
 
       if (response.status === 201 || response.data.success) {
         setIsLoading(false);
