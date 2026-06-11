@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import RegisterImage from "../assets/images/login-register.jpg";
 
 const Register = () => {
-  //const [username, setUsername] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -27,7 +27,7 @@ const Register = () => {
       const response = await axiosInstance.post(
         "http://localhost:5000/api/auth/register",
         {
-          //username: username,
+          username: username,
           email: email,
           password: password,
         },
