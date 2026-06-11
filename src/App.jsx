@@ -7,7 +7,7 @@ import Dashboard from './pages/Dashboard.jsx'
 
 // PENTING: Karena kita mendaftarkan rute /dashboard, 
 // pastikan FE 1 atau FE 2 sudah membuat file dummy (kosong) bernama Dashboard.jsx di dalam folder pages agar tidak error.
-import ProtectedRoute from './components/ProtectedRoute.jsx';
+import ProtectedRoute from './pages/onboarding/components/ProtectedRoute.jsx';
 
 function App() {
   return (
