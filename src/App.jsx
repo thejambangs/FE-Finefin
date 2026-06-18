@@ -30,7 +30,7 @@ function App() {
         <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
 
         {/* Jalur Tambah Pengeluaran */}
-        <Route path="/tambah-pengeluaran" element={<ProtectedRoute><AddTransaction /></ProtectedRoute>} />
+        <Route path="/tambah-pengeluaran" element={/*<ProtectedRoute>*/ <AddTransaction /> /*</ProtectedRoute>*/} />
       </Routes>
     </Router>
   )

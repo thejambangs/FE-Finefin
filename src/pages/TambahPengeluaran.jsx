@@ -194,7 +194,7 @@ const AddTransaction = () => {
                 value={formData.tanggal}
                 onChange={handleInputChange}
                 required
-                className="input input-bordered w-full rounded-md border-gray-300 bg-white text-black focus:border-black focus:ring-0" 
+                className="input input-bordered w-full rounded-md border-gray-300 bg-white text-black focus:border-black focus:ring-0 [&::-webkit-calendar-picker-indicator]:invert" 
               />
               <div className="label pt-1"><span className="label-text-alt text-gray-400">Hanya berlaku untuk tanggal mundur jika diperlukan.</span></div>
             </label>
