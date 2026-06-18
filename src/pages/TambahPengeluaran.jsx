@@ -1,6 +1,7 @@
 // src/pages/AddTransaction.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const AddTransaction = () => {
   const navigate = useNavigate();
@@ -8,38 +9,77 @@ const AddTransaction = () => {
   // State untuk menampung data form
   const [formData, setFormData] = useState({
     namaPengeluaran: '',
-    totalPengeluaran: '',
-    kategori: '',
+    totalPengeluaran: '', // Di sini akan menyimpan string berformat titik (contoh: "50.000")
+    kategori: '', // Sekarang akan menampung nilai dari dropdown
     metodePembayaran: '',
     tanggal: ''
   });
 
-  // ================= TUGAS FE 2: LOGIKA SANITASI INPUT =================
+  // ================= TUGAS FE 2: LOGIKA SANITASI & FORMAT RIBUAN =================
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     
-    // Proteksi khusus kolom nominal agar tidak bisa diinput huruf, minus (-), atau karakter 'e'
     if (name === 'totalPengeluaran') {
-      // Regex ini mendeteksi & menghapus karakter selain angka 0-9 secara real-time
-      const cleanValue = value.replace(/[^0-9]/g, '');
-      setFormData((prev) => ({ ...prev, [name]: cleanValue }));
+      // 1. Bersihkan input: Hanya izinkan angka 0-9. Huruf, minus (-), plus (+), dan e otomatis terhapus.
+      // Ini menjamin nilainya wajib POSITIF dan berupa INTEGER.
+      let cleanValue = value.replace(/[^0-9]/g, '');
+      
+      // 2. Hilangkan angka 0 di paling depan jika user mengetik angka lain setelahnya (misal: "05" jadi "5")
+      if (cleanValue.length > 1 && cleanValue.startsWith('0')) {
+        cleanValue = cleanValue.replace(/^0+/, '');
+      }
+
+      // 3. Tambahkan titik setiap 3 digit angka (Format Ribuan Indonesia)
+      const formattedValue = cleanValue.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+      
+      setFormData((prev) => ({ ...prev, [name]: formattedValue }));
     } else {
-      // Kolom lainnya berjalan normal seperti biasa
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
   };
 
-  const handleSimpan = (e) => {
+  // ================= TUGAS FE 2: CONVERT DATA SEBELUM KIRIM KE BACKEND =================
+  const handleSimpan = async (e) => {
     e.preventDefault();
-    console.log("Data Transaksi Disimpan:", formData);
-    alert("Transaksi berhasil ditambahkan!");
-    navigate('/dashboard'); // Kembali ke dasbor setelah simpan
+    
+    try {
+      const token = localStorage.getItem('token'); 
+      const config = {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      };
+
+      // TUGAS FE 2: Buang semua titik (".") dari string nominal sebelum diubah menjadi Integer murni
+      const rawNominal = formData.totalPengeluaran.replace(/\./g, '');
+
+      const dataPayload = {
+        namaPengeluaran: formData.namaPengeluaran,
+        totalPengeluaran: parseInt(rawNominal, 10), // Dikirim ke backend sebagai integer murni (contoh: 50000)
+        kategori: formData.kategori,
+        metodePembayaran: formData.metodePembayaran,
+        tanggal: formData.tanggal
+      };
+
+      const response = await axios.post('http://localhost:5000/api/transaction', dataPayload, config);
+
+      if (response.status === 200 || response.status === 201) {
+        alert("Transaksi berhasil ditambahkan!");
+        navigate('/dashboard'); 
+      }
+
+    } catch (error) {
+      console.error("Gagal menyimpan transaksi:", error);
+      const errorMessage = error.response?.data?.message || "Terjadi kesalahan pada server.";
+      alert(`Gagal menyimpan: ${errorMessage}`);
+    }
   };
 
   return (
     <div className="min-h-screen w-full bg-white text-neutral font-sans flex flex-col items-center">
       
-      {/* ================= HEADER (Konsisten dengan Dashboard) ================= */}
+      {/* ================= HEADER ================= */}
       <div className="navbar bg-white border-b border-gray-100 px-4 md:px-8 w-full shrink-0">
         <div className="flex-1">
           <a href="/dashboard" className="text-3xl font-black text-black tracking-tighter uppercase select-none">
@@ -63,7 +103,6 @@ const AddTransaction = () => {
       {/* ================= KONTEN FORM ================= */}
       <div className="w-full max-w-4xl px-6 py-12 flex flex-col gap-10 mt-8">
         
-        {/* Judul Halaman */}
         <div className="flex flex-col gap-2">
           <h1 className="text-4xl font-bold text-black">Tambahkan Pengeluaran</h1>
           <p className="text-lg text-gray-600">Catat pengeluaran dalam hitungan detik—dasbor Anda akan langsung diperbarui.</p>
@@ -71,7 +110,7 @@ const AddTransaction = () => {
 
         <form onSubmit={handleSimpan} className="flex flex-col gap-8 w-full">
           
-          {/* BARIS 1: Nama Pengeluaran (Full Width) */}
+          {/* Nama Pengeluaran */}
           <label className="form-control w-full">
             <div className="label pb-1"><span className="label-text font-bold text-black text-base">Nama Pengeluaran</span></div>
             <input 
@@ -86,46 +125,50 @@ const AddTransaction = () => {
             <div className="label pt-1"><span className="label-text-alt text-gray-400">Tuliskan deskripsi singkat pengeluaran Anda.</span></div>
           </label>
 
-          {/* GRID BARIS 2 & 3: Dibagi 2 Kolom Kiri-Kanan */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             
-            {/* Kiri: Total Pengeluaran */}
+            {/* Total Pengeluaran (Sudah Berformat Titik & Anti-Negatif) */}
             <label className="form-control w-full">
               <div className="label pb-1"><span className="label-text font-bold text-black text-base">Total Pengeluaran</span></div>
               <div className="input input-bordered flex items-center gap-2 rounded-md border-gray-300 bg-white focus-within:border-black focus-within:ring-1 focus-within:ring-black">
                 <span className="font-bold text-gray-500">Rp</span>
-                
-                {/* ================= TUGAS FE 2: MODIFIKASI ATRIBUT INPUT ================= */}
                 <input 
-                  type="text" // Diubah ke text agar fungsi regex replace di handleInputChange berjalan mulus
-                  inputMode="numeric" // Memaksa keyboard smartphone langsung memunculkan angka
+                  type="text" 
+                  inputMode="numeric" 
                   name="totalPengeluaran"
                   placeholder="0"
-                  value={formData.totalPengeluaran}
+                  value={formData.totalPengeluaran} // Menampilkan teks berformat (contoh: 150.000)
                   onChange={handleInputChange}
                   required
                   className="grow bg-transparent text-black border-none focus:outline-none focus:ring-0" 
                 />
               </div>
-              <div className="label pt-1"><span className="label-text-alt text-gray-400">Gunakan angka bulat tanpa titik.</span></div>
+              <div className="label pt-1"><span className="label-text-alt text-gray-400">Otomatis menggunakan format ribuan positif.</span></div>
             </label>
 
-            {/* Kanan: Kategori (Text Biasa) */}
+            {/* ================= TUGAS FE 2: DROPDOWN KATEGORI ================= */}
             <label className="form-control w-full">
               <div className="label pb-1"><span className="label-text font-bold text-black text-base">Kategori</span></div>
-              <input 
-                type="text" 
+              <select 
                 name="kategori"
-                placeholder="Makanan & Minuman" 
                 value={formData.kategori}
                 onChange={handleInputChange}
                 required
-                className="input input-bordered w-full rounded-md border-gray-300 bg-white text-black focus:border-black focus:ring-0" 
-              />
-              <div className="label pt-1"><span className="label-text-alt text-gray-400">Tuliskan kategori yang paling sesuai.</span></div>
+                className="select select-bordered w-full rounded-md border-gray-300 bg-white text-black focus:border-black focus:ring-0"
+              >
+                <option value="" disabled>Pilih kategori...</option>
+                <option value="Makanan & Minuman">🍔 Makanan & Minuman</option>
+                <option value="Transportasi">🚗 Transportasi</option>
+                <option value="Hiburan & Rekreasi">🎬 Hiburan & Rekreasi</option>
+                <option value="Belanja Bulanan">🛍️ Belanja Bulanan</option>
+                <option value="Tagihan & Utilitas">🧾 Tagihan & Utilitas</option>
+                <option value="Kesehatan">⚕️ Kesehatan</option>
+                <option value="Pendidikan">📚 Pendidikan</option>
+              </select>
+              <div className="label pt-1"><span className="label-text-alt text-gray-400">Pilih kategori pengeluaran yang paling sesuai.</span></div>
             </label>
 
-            {/* Kiri: Metode Pembayaran (Dropdown/Select) */}
+            {/* Metode Pembayaran */}
             <label className="form-control w-full">
               <div className="label pb-1"><span className="label-text font-bold text-black text-base">Metode Pembayaran</span></div>
               <select 
@@ -142,7 +185,7 @@ const AddTransaction = () => {
               <div className="label pt-1"><span className="label-text-alt text-gray-400">Membantu meningkatkan akurasi pelaporan.</span></div>
             </label>
 
-            {/* Kanan: Tanggal (Date Picker) */}
+            {/* Tanggal */}
             <label className="form-control w-full">
               <div className="label pb-1"><span className="label-text font-bold text-black text-base">Tanggal</span></div>
               <input 
