@@ -14,9 +14,19 @@ const AddTransaction = () => {
     tanggal: ''
   });
 
+  // ================= TUGAS FE 2: LOGIKA SANITASI INPUT =================
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    
+    // Proteksi khusus kolom nominal agar tidak bisa diinput huruf, minus (-), atau karakter 'e'
+    if (name === 'totalPengeluaran') {
+      // Regex ini mendeteksi & menghapus karakter selain angka 0-9 secara real-time
+      const cleanValue = value.replace(/[^0-9]/g, '');
+      setFormData((prev) => ({ ...prev, [name]: cleanValue }));
+    } else {
+      // Kolom lainnya berjalan normal seperti biasa
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleSimpan = (e) => {
@@ -79,14 +89,16 @@ const AddTransaction = () => {
           {/* GRID BARIS 2 & 3: Dibagi 2 Kolom Kiri-Kanan */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             
-            {/* Kiri: Total Pengeluaran (Dengan Prefix Rp) */}
+            {/* Kiri: Total Pengeluaran */}
             <label className="form-control w-full">
               <div className="label pb-1"><span className="label-text font-bold text-black text-base">Total Pengeluaran</span></div>
-              {/* Trik DaisyUI: input wrapper dengan flex agar Rp statis di dalam kotak */}
               <div className="input input-bordered flex items-center gap-2 rounded-md border-gray-300 bg-white focus-within:border-black focus-within:ring-1 focus-within:ring-black">
                 <span className="font-bold text-gray-500">Rp</span>
+                
+                {/* ================= TUGAS FE 2: MODIFIKASI ATRIBUT INPUT ================= */}
                 <input 
-                  type="number" 
+                  type="text" // Diubah ke text agar fungsi regex replace di handleInputChange berjalan mulus
+                  inputMode="numeric" // Memaksa keyboard smartphone langsung memunculkan angka
                   name="totalPengeluaran"
                   placeholder="0"
                   value={formData.totalPengeluaran}
