@@ -4,6 +4,7 @@ import Login from './pages/Login.jsx'
 import Register from './pages/Register.jsx'
 import Kuesioner from './pages/onboarding/Kuesioner.jsx'
 import Dashboard from './pages/Dashboard.jsx'
+import AddTransaction from './pages/TambahPengeluaran.jsx'
 
 // PENTING: Karena kita mendaftarkan rute /dashboard, 
 // pastikan FE 1 atau FE 2 sudah membuat file dummy (kosong) bernama Dashboard.jsx di dalam folder pages agar tidak error.
@@ -27,6 +28,9 @@ function App() {
 
         {/* Jalur halaman Dashboard (setelah sukses login) */}
         <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+
+        {/* Jalur Tambah Pengeluaran */}
+        <Route path="/tambah-pengeluaran" element={<ProtectedRoute><AddTransaction /></ProtectedRoute>} />
       </Routes>
     </Router>
   )
