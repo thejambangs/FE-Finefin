@@ -3,10 +3,11 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Login from './pages/Login.jsx' 
 import Register from './pages/Register.jsx'
 import Kuesioner from './pages/onboarding/Kuesioner.jsx'
+import Dashboard from './pages/Dashboard.jsx'
 
 // PENTING: Karena kita mendaftarkan rute /dashboard, 
 // pastikan FE 1 atau FE 2 sudah membuat file dummy (kosong) bernama Dashboard.jsx di dalam folder pages agar tidak error.
-import Dashboard from './pages/Dashboard.jsx'
+import ProtectedRoute from './pages/onboarding/components/ProtectedRoute.jsx';
 
 function App() {
   return (
@@ -25,10 +26,10 @@ function App() {
         <Route path="/kuesioner" element={<Kuesioner />} />
 
         {/* Jalur halaman Dashboard (setelah sukses login) */}
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
       </Routes>
     </Router>
   )
 }
 
-export default App
+export default App;

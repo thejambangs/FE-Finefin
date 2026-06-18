@@ -1,342 +1,386 @@
 // src/pages/Dashboard.jsx
 import React from 'react';
-// === 1. PERBAIKAN: Import gambar dompet kartun pilihanmu ===
-// Silakan sesuaikan jalur (path) dan nama file sesuai dengan tempat kamu menyimpan gambarnya
+import { useNavigate } from 'react-router-dom'; // Import useNavigate untuk fungsionalitas tombol logout
 import WalletImage from '../assets/images/dompet digital.jpg'; 
 import Kebutuhan from '../assets/images/kebutuhan.jpg'; 
 import Investasi from '../assets/images/investasi.jpg'; 
 import Hiburan from '../assets/images/keinginan.jpg'; 
 
 const Dashboard = () => {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    // Menghapus token autentikasi dari penyimpanan lokal browser
+    localStorage.removeItem('token');
+    // Tendang user kembali ke pintu login utama
+    navigate('/login');
+  };
+
   return (
-    <div className="min-h-screen w-full bg-base-100 text-neutral font-sans p-6 lg:p-12 flex flex-col gap-12">
+    <div className="min-h-screen w-full bg-base-100 text-neutral font-sans p-6 lg:p-12 flex flex-col gap-6">
       
-      {/* ================= HERO SECTION: SEKILAS TENTANG DOMPET ANDA ================= */}
-      <div className="w-full bg-neutral text-neutral-content p-8 lg:p-12 rounded-2xl flex flex-col lg:flex-row justify-between items-center gap-8 shadow-md">
-        <div className="flex flex-col gap-4 max-w-xl">
-          <h1 className="text-4xl lg:text-5xl font-black tracking-tight text-white">Sekilas tentang Dompet Anda</h1>
-          <p className="text-gray-400 text-lg">Kelola dan pantau seluruh arus keuanganmu secara realtime dengan asisten pintar kami.</p>
+      {/* ================= HEADER NAVIGATION (SESUAI GAMBAR BARU) ================= */}
+      <div className="navbar bg-white border-b border-gray-100 px-4 md:px-8 shrink-0">
+        {/* Sisi Kiri: Logo Branding */}
+        <div className="flex-1">
+          <a href="/dashboard" className="text-3xl font-black text-black tracking-tighter uppercase select-none">
+            FineFin
+          </a>
         </div>
         
-        {/* === 2. PERBAIKAN VISUAL: Menggunakan gambar dompet kartun pilihanmu === */}
-        <div className="w-full lg:w-[400px] h-[220px] rounded-xl overflow-hidden shadow-md bg-[#2cbce8]">
-          <img 
-            src={WalletImage} 
-            alt="Wallet and money cartoon _ Free Vector" 
-            className="w-full h-full object-cover"
-          />
+        {/* Sisi Tengah: Pilihan Menu Utama */}
+        <div className="flex-none">
+          <ul className="menu menu-horizontal px-1 gap-6 text-lg font-semibold">
+            <li>
+              {/* Indikator Menu Aktif: Teks hitam pekat dengan border bawah solid */}
+              <a href="/dashboard" className="text-black border-b-2 border-black rounded-none px-1 pb-2 pt-2 bg-transparent hover:bg-transparent">
+                Dasbor
+              </a>
+            </li>
+            <li>
+              <a href="/dashboard" className="text-gray-400 rounded-none px-1 pb-2 pt-2 bg-transparent hover:bg-transparent hover:text-black">
+                Transaksi
+              </a>
+            </li>
+            <li>
+              <a href="/kuesioner" className="text-gray-400 rounded-none px-1 pb-2 pt-2 bg-transparent hover:bg-transparent hover:text-black">
+                Kuesioner
+              </a>
+            </li>
+          </ul>
+        </div>
+        
+        {/* Sisi Kanan: Akses Aksi Pengguna */}
+        <div className="flex-none ml-8">
+          <button 
+            onClick={handleLogout}
+            className="btn btn-outline min-h-0 h-10 rounded-full px-6 border-black text-black font-semibold text-sm hover:bg-black hover:text-white hover:border-black uppercase transition-all duration-200"
+          >
+            Log out
+          </button>
         </div>
       </div>
 
-      {/* ================= REKAP BULANAN ================= */}
-      <div className="w-full flex flex-col gap-6 items-center">
-        <div className="text-center">
-          <h2 className="text-3xl font-extrabold text-black">Rekap Bulanan</h2>
-          <p className="text-gray-500">Analisis perbandingan persentase antara alokasi dana dan realisasi pengeluaran Anda.</p>
-        </div>
-        
-        <div className="w-full max-w-4xl border border-gray-100 shadow-sm p-8 rounded-2xl flex flex-col md:flex-row items-center justify-around gap-8 bg-white">
-          <div className="flex justify-center items-center">
-            <div className="radial-progress text-neutral bg-gray-100 border-4 border-gray-100 font-bold" style={{ "--value": 70, "--size": "12rem", "--thickness": "2rem" }} role="progressbar">
-              70%
-            </div>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 w-full md:w-auto">
-            <div className="text-center md:text-left">
-              <span className="text-sm text-gray-400 font-medium">Pemasukan</span>
-              <p className="text-2xl font-bold text-black mt-1">Rp5.200.000</p>
-            </div>
-            <div className="text-center md:text-left">
-              <span className="text-sm text-gray-400 font-medium">Pengeluaran</span>
-              <p className="text-2xl font-bold text-black mt-1">Rp3.150.000</p>
-            </div>
-            <div className="text-center md:text-left">
-              <span className="text-sm text-gray-400 font-medium">Anggaran Tersisa</span>
-              <p className="text-2xl font-bold text-black mt-1">Rp2.050.000</p>
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* Jeda Spacing Pemisah Header dengan Konten Utama */}
+      <div className="mt-4 flex flex-col gap-12">
 
-      {/* ================= GRAFIK PENGELUARAN ================= */}
-      <div className="w-full flex flex-col gap-6">
-        <div className="text-center">
-          <h2 className="text-3xl font-extrabold text-black">Grafik Pengeluaran</h2>
-          <p className="text-gray-500">Detail visualisasi grafik tren pengeluaran mingguan dan dompet cerdas Anda.</p>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* ================= HERO SECTION: SEKILAS TENTANG DOMPET ANDA ================= */}
+        <div className="w-full bg-neutral text-neutral-content p-8 lg:p-12 rounded-2xl flex flex-col lg:flex-row justify-between items-center gap-8 shadow-md">
+          <div className="flex flex-col gap-4 max-w-xl">
+            <h1 className="text-4xl lg:text-5xl font-black tracking-tight text-white">Sekilas tentang Dompet Anda</h1>
+            <p className="text-gray-400 text-lg">Kelola dan pantau seluruh arus keuanganmu secara realtime dengan asisten pintar kami.</p>
+          </div>
           
-          {/* Grafik 1: Pengeluaran Mingguan (PERBAIKAN: Menggunakan Trik SVG Area Chart) */}
-          <div className="border border-gray-100 shadow-sm p-6 rounded-2xl bg-white flex flex-col gap-4">
-            <h3 className="text-lg font-bold text-black">Pengeluaran Mingguan</h3>
-            <div className="w-full h-48 bg-gray-50 rounded-xl flex items-end relative overflow-hidden p-2">
-              
-              {/* Trik Praktis: Menggunakan elemen SVG Bawaan HTML untuk menggambar gelombang meliuk */}
-              <svg viewBox="0 0 500 150" className="w-full h-36" preserveAspectRatio="none">
-                <defs>
-                  {/* Membuat efek gradien abu-abu memudar ke transparan di bagian bawah */}
-                  <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#9ca3af" stopOpacity="0.5" />
-                    <stop offset="100%" stopColor="#9ca3af" stopOpacity="0.0" />
-                  </linearGradient>
-                </defs>
-                
-                {/* 1. Area Isi Gelombang (Sisi Bawah) */}
-                <path 
-                  d="M 0 150 L 0 100 C 60 50, 90 130, 140 90 C 190 50, 230 140, 290 100 C 350 60, 390 30, 440 70 L 500 40 L 500 150 Z" 
-                  fill="url(#areaGradient)" 
-                />
-                
-                {/* 2. Garis Stroke Atas Gelombang agar terlihat tegas */}
-                <path 
-                  d="M 0 100 C 60 50, 90 130, 140 90 C 190 50, 230 140, 290 100 C 350 60, 390 30, 440 70 L 500 40" 
-                  fill="none" 
-                  stroke="#4b5563" 
-                  strokeWidth="3" 
-                  strokeLinecap="round"
-                />
-              </svg>
-              
-              {/* Label Indikator Waktu Grafik */}
-              <div className="absolute bottom-2 right-4 text-xs font-semibold text-gray-400">Minggu ini</div>
-            </div>
+          <div className="w-full lg:w-[400px] h-[220px] rounded-xl overflow-hidden shadow-md bg-[#2cbce8]">
+            <img 
+              src={WalletImage} 
+              alt="Wallet and money cartoon _ Free Vector" 
+              className="w-full h-full object-cover"
+            />
           </div>
+        </div>
 
-          {/* Grafik 2: Dompet Cerdas (Tetap Menggunakan Bar Grafik) */}
-          <div className="border border-gray-100 shadow-sm p-6 rounded-2xl bg-white flex flex-col gap-4">
-            <h3 className="text-lg font-bold text-black">Dompet Cerdas</h3>
-            <div className="w-full h-48 bg-gray-50 rounded-xl flex items-end justify-between p-6 gap-3">
-              <div className="w-8 bg-neutral h-32 rounded-t-sm"></div>
-              <div className="w-8 bg-neutral h-16 rounded-t-sm"></div>
-              <div className="w-8 bg-neutral h-24 rounded-t-sm"></div>
-              <div className="w-8 bg-neutral h-12 rounded-t-sm"></div>
-              <div className="w-8 bg-neutral h-36 rounded-t-sm"></div>
-              <div className="w-8 bg-neutral h-20 rounded-t-sm"></div>
-            </div>
+        {/* ================= REKAP BULANAN ================= */}
+        <div className="w-full flex flex-col gap-6 items-center">
+          <div className="text-center">
+            <h2 className="text-3xl font-extrabold text-black">Rekap Bulanan</h2>
+            <p className="text-gray-500">Analisis perbandingan persentase antara alokasi dana dan realisasi pengeluaran Anda.</p>
           </div>
-
-        </div>
-      </div>
-
-      {/* ================= RINGKASAN PENGELUARAN ================= */}
-      <div className="w-full flex flex-col gap-6">
-        <div className="text-center">
-          <h2 className="text-3xl font-extrabold text-black">Ringkasan Pengeluaran</h2>
-          <p className="text-gray-500">Rangkuman kategori pengeluaran terbesar yang paling sering kamu lakukan.</p>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto w-full">
-          <div className="flex items-center gap-4 p-4 border border-gray-100 rounded-xl bg-white shadow-sm">
-            <div className="w-14 h-14 bg-gray-100 text-neutral rounded-xl shrink-0 flex items-center justify-center text-2xl font-bold select-none">
-              🍱
-            </div>
-            <div className="flex flex-col">
-              <h4 className="font-bold text-black text-lg">Makan siang di warteg Bahari bu aminah</h4>
-              <p className="text-sm text-gray-400 mt-0.5">Kategori: Makanan • Total: Rp345.000</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-4 p-4 border border-gray-100 rounded-xl bg-white shadow-sm">
-            <div className="w-14 h-14 bg-gray-100 text-neutral rounded-xl shrink-0 flex items-center justify-center text-2xl font-bold select-none">
-              🎯
-            </div>
-            <div className="flex flex-col">
-              <h4 className="font-bold text-black text-lg">Nongkrong di warkop sukarasa</h4>
-              <p className="text-sm text-gray-400 mt-0.5">Kategori: Hiburan • Total: Rp180.000</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* ================= DANA & ALOKASI YANG DISARANKAN ================= */}
-      <div className="w-full flex flex-col gap-6">
-        <div className="text-center">
-          <h2 className="text-3xl font-extrabold text-black">Dana & alokasi yang disarankan</h2>
-          <p className="text-gray-500">Rekomendasi pembagian pos keuangan ideal berdasarkan algoritma cerdas FineFin.</p>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="border border-gray-100 rounded-2xl p-6 bg-white shadow-sm flex flex-col gap-4">
-            <div className="w-full h-48 rounded-xl overflow-hidden bg-gray-50 shadow-inner">
-              <img 
-                src={Kebutuhan} 
-                alt="Kebutuhan Pokok - Karir & Fondasi" 
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div>
-              <h4 className="font-bold text-black text-lg">Kebutuhan Pokok (50%)</h4>
-              <p className="text-sm text-gray-400 mt-1">Disarankan: Rp2.600.000 • Untuk makan, kosan, dan tagihan wajib.</p>
-            </div>
-          </div>
-          <div className="border border-gray-100 rounded-2xl p-6 bg-white shadow-sm flex flex-col gap-4">
-            <div className="w-full h-48 rounded-xl overflow-hidden bg-gray-50 shadow-inner">
-              <img 
-                src={Investasi} 
-                alt="Tabungan & Investasi - Pertumbuhan" 
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div>
-              <h4 className="font-bold text-black text-lg">Tabungan & Investasi (30%)</h4>
-              <p className="text-sm text-gray-400 mt-1">Disarankan: Rp1.560.000 • Membangun masa depan aman.</p>
-            </div>
-          </div>
-          <div className="border border-gray-100 rounded-2xl p-6 bg-white shadow-sm flex flex-col gap-4">
-            <div className="w-full h-48 rounded-xl overflow-hidden bg-gray-50 shadow-inner">
-              <img 
-                src={Hiburan} 
-                alt="Keinginan & Hiburan - Rencana Impian" 
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div>
-              <h4 className="font-bold text-black text-lg">Keinginan & Hiburan (20%)</h4>
-              <p className="text-sm text-gray-400 mt-1">Disarankan: Rp1.040.000 • Menjaga kesehatan mentalmu.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* ================= TRANSAKSI TERKINI ================= */}
-      <div className="w-full flex flex-col gap-6">
-        <div className="text-center">
-          <h2 className="text-3xl font-extrabold text-black">Transaksi Terkini</h2>
-          <p className="text-gray-500">Daftar pengeluaran dan pemasukan paling baru yang kamu catat.</p>
-        </div>
-        
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 justify-items-center max-w-5xl mx-auto w-full">
           
-          <div className="flex flex-col items-center gap-2 text-center bg-gray-50/50 p-4 rounded-xl w-full">
-            <div className="avatar placeholder">
-              <div className="bg-neutral text-neutral-content rounded-full w-14 h-14 shadow-sm text-xl flex items-center justify-center">
-                🛒
+          <div className="w-full max-w-4xl border border-gray-100 shadow-sm p-8 rounded-2xl flex flex-col md:flex-row items-center justify-around gap-8 bg-white">
+            <div className="flex justify-center items-center">
+              <div className="radial-progress text-neutral bg-gray-100 border-4 border-gray-100 font-bold" style={{ "--value": 70, "--size": "12rem", "--thickness": "2rem" }} role="progressbar">
+                70%
               </div>
             </div>
-            <div>
-              <h4 className="font-bold text-black text-sm">Kebutuhan</h4>
-              <span className="text-xs text-gray-400">Belanja Bulanan</span>
-              <p className="text-red-500 font-semibold text-sm mt-1">-Rp548.230</p>
-            </div>
-          </div>
-
-          <div className="flex flex-col items-center gap-2 text-center bg-gray-50/50 p-4 rounded-xl w-full">
-            <div className="avatar placeholder">
-              <div className="bg-neutral text-neutral-content rounded-full w-14 h-14 shadow-sm text-xl flex items-center justify-center">
-                ☕
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 w-full md:w-auto">
+              <div className="text-center md:text-left">
+                <span className="text-sm text-gray-400 font-medium">Pemasukan</span>
+                <p className="text-2xl font-bold text-black mt-1">Rp5.200.000</p>
+              </div>
+              <div className="text-center md:text-left">
+                <span className="text-sm text-gray-400 font-medium">Pengeluaran</span>
+                <p className="text-2xl font-bold text-black mt-1">Rp3.150.000</p>
+              </div>
+              <div className="text-center md:text-left">
+                <span className="text-sm text-gray-400 font-medium">Anggaran Tersisa</span>
+                <p className="text-2xl font-bold text-black mt-1">Rp2.050.000</p>
               </div>
             </div>
-            <div>
-              <h4 className="font-bold text-black text-sm">Coffee</h4>
-              <span className="text-xs text-gray-400">Nongkrong Senja</span>
-              <p className="text-red-500 font-semibold text-sm mt-1">-Rp100.750</p>
-            </div>
-          </div>
-
-          <div className="flex flex-col items-center gap-2 text-center bg-gray-50/50 p-4 rounded-xl w-full">
-            <div className="avatar placeholder">
-              <div className="bg-neutral text-neutral-content rounded-full w-14 h-14 shadow-sm text-xl flex items-center justify-center">
-                🚗
-              </div>
-            </div>
-            <div>
-              <h4 className="font-bold text-black text-sm">Bensin</h4>
-              <span className="text-xs text-gray-400">Bahan Bakar Mobil</span>
-              <p className="text-red-500 font-semibold text-sm mt-1">-Rp600.000</p>
-            </div>
-          </div>
-
-          <div className="flex flex-col items-center gap-2 text-center bg-gray-50/50 p-4 rounded-xl w-full">
-            <div className="avatar placeholder">
-              <div className="bg-neutral text-neutral-content rounded-full w-14 h-14 shadow-sm text-xl flex items-center justify-center">
-                🧴
-              </div>
-            </div>
-            <div>
-              <h4 className="font-bold text-black text-sm">Kesehatan</h4>
-              <span className="text-xs text-gray-400">Skincare / Vitamin</span>
-              <p className="text-red-500 font-semibold text-sm mt-1">-Rp100.000</p>
-            </div>
-          </div>
-
-          <div className="flex flex-col items-center gap-2 text-center bg-gray-50/50 p-4 rounded-xl w-full">
-            <div className="avatar placeholder">
-              <div className="bg-neutral text-neutral-content rounded-full w-14 h-14 shadow-sm text-xl flex items-center justify-center">
-                📱
-              </div>
-            </div>
-            <div>
-              <h4 className="font-bold text-black text-sm">Paket Internet</h4>
-              <span className="text-xs text-gray-400">Kerja & Kuliah</span>
-              <p className="text-red-500 font-semibold text-sm mt-1">-Rp80.000</p>
-            </div>
-          </div>
-
-          <div className="flex flex-col items-center gap-2 text-center bg-gray-50/50 p-4 rounded-xl w-full">
-            <div className="avatar placeholder">
-              <div className="bg-neutral text-neutral-content rounded-full w-14 h-14 shadow-sm text-xl flex items-center justify-center">
-                💰
-              </div>
-            </div>
-            <div>
-              <h4 className="font-bold text-black text-sm">Gaji Utama</h4>
-              <span className="text-xs text-gray-400">Pemasukan Tetap</span>
-              <p className="text-green-600 font-semibold text-sm mt-1">+Rp10.000.000</p>
-            </div>
-          </div>
-
-        </div>
-      </div>
-
-      {/* ================= MEMBER SUCCESS STORIES ================= */}
-      <div className="w-full flex flex-col gap-6">
-        <div className="text-center">
-          <h2 className="text-3xl font-extrabold text-black">Member success stories</h2>
-          <p className="text-gray-500">Apa kata mereka yang berhasil mengatur finansial sehat bersama FineFin.</p>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto w-full">
-          <div className="p-6 border border-gray-100 rounded-2xl bg-white shadow-sm flex flex-col gap-3">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center font-bold text-xs select-none">AR</div>
-              <div>
-                <h5 className="font-bold text-black text-sm">Arkan R.</h5>
-                <span className="text-xs text-warning">★★★★★</span>
-              </div>
-            </div>
-            <p className="text-sm text-gray-500">"Sangat terbantu mengatur uang bulanan anak kos. Sekarang gak ada lagi cerita merana di akhir bulan!"</p>
-          </div>
-
-          <div className="p-6 border border-gray-100 rounded-2xl bg-white shadow-sm flex flex-col gap-3">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center font-bold text-xs select-none">NZ</div>
-              <div>
-                <h5 className="font-bold text-black text-sm">Nabila Z.</h5>
-                <span className="text-xs text-warning">★★★★★</span>
-              </div>
-            </div>
-            <p className="text-sm text-gray-500">"Fitur Dompet Cerdasnya juara banget buat ngetrack pengeluaran impulsif beli kopi tiap sore."</p>
-          </div>
-
-          <div className="p-6 border border-gray-100 rounded-2xl bg-white shadow-sm flex flex-col gap-3">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center font-bold text-xs select-none">FA</div>
-              <div>
-                <h5 className="font-bold text-black text-sm">Fahmi A.</h5>
-                <span className="text-xs text-warning">★★★★★</span>
-              </div>
-            </div>
-            <p className="text-sm text-gray-500">"Rekomendasi alokasi dananya akurat. Kerangka UI webnya juga responsif dan super minimalis."</p>
           </div>
         </div>
-      </div>
 
-      {/* ================= FOOTER ================= */}
-      <div className="text-center border-t border-gray-100 pt-8 mt-4">
-        <p className="text-sm font-bold text-black mb-1">Tips: Jauhkan pencatatan tanpa sandi untuk mencegah kebocoran data pribadi anggaranmu!</p>
-        <p className="text-xs text-gray-400">Privasi Anda dilindungi secara enkripsi end-to-end oleh protokol pengamanan internal FineFin. © 2026 All rights reserved.</p>
-      </div>
+        {/* ================= GRAFIK PENGELUARAN ================= */}
+        <div className="w-full flex flex-col gap-6">
+          <div className="text-center">
+            <h2 className="text-3xl font-extrabold text-black">Grafik Pengeluaran</h2>
+            <p className="text-gray-500">Detail visualisasi grafik tren pengeluaran mingguan dan dompet cerdas Anda.</p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            
+            {/* Grafik 1: Pengeluaran Mingguan */}
+            <div className="border border-gray-100 shadow-sm p-6 rounded-2xl bg-white flex flex-col gap-4">
+              <h3 className="text-lg font-bold text-black">Pengeluaran Mingguan</h3>
+              <div className="w-full h-48 bg-gray-50 rounded-xl flex items-end relative overflow-hidden p-2">
+                <svg viewBox="0 0 500 150" className="w-full h-36" preserveAspectRatio="none">
+                  <defs>
+                    <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#9ca3af" stopOpacity="0.5" />
+                      <stop offset="100%" stopColor="#9ca3af" stopOpacity="0.0" />
+                    </linearGradient>
+                  </defs>
+                  <path 
+                    d="M 0 150 L 0 100 C 60 50, 90 130, 140 90 C 190 50, 230 140, 290 100 C 350 60, 390 30, 440 70 L 500 40 L 500 150 Z" 
+                    fill="url(#areaGradient)" 
+                  />
+                  <path 
+                    d="M 0 100 C 60 50, 90 130, 140 90 C 190 50, 230 140, 290 100 C 350 60, 390 30, 440 70 L 500 40" 
+                    fill="none" 
+                    stroke="#4b5563" 
+                    strokeWidth="3" 
+                    strokeLinecap="round"
+                  />
+                </svg>
+                <div className="absolute bottom-2 right-4 text-xs font-semibold text-gray-400">Minggu ini</div>
+              </div>
+            </div>
 
+            {/* Grafik 2: Dompet Cerdas */}
+            <div className="border border-gray-100 shadow-sm p-6 rounded-2xl bg-white flex flex-col gap-4">
+              <h3 className="text-lg font-bold text-black">Dompet Cerdas</h3>
+              <div className="w-full h-48 bg-gray-50 rounded-xl flex items-end justify-between p-6 gap-3">
+                <div className="w-8 bg-neutral h-32 rounded-t-sm"></div>
+                <div className="w-8 bg-neutral h-16 rounded-t-sm"></div>
+                <div className="w-8 bg-neutral h-24 rounded-t-sm"></div>
+                <div className="w-8 bg-neutral h-12 rounded-t-sm"></div>
+                <div className="w-8 bg-neutral h-36 rounded-t-sm"></div>
+                <div className="w-8 bg-neutral h-20 rounded-t-sm"></div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        {/* ================= RINGKASAN PENGELUARAN ================= */}
+        <div className="w-full flex flex-col gap-6">
+          <div className="text-center">
+            <h2 className="text-3xl font-extrabold text-black">Ringkasan Pengeluaran</h2>
+            <p className="text-gray-500">Rangkuman kategori pengeluaran terbesar yang paling sering kamu lakukan.</p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto w-full">
+            <div className="flex items-center gap-4 p-4 border border-gray-100 rounded-xl bg-white shadow-sm">
+              <div className="w-14 h-14 bg-gray-100 text-neutral rounded-xl shrink-0 flex items-center justify-center text-2xl font-bold select-none">
+                🍱
+              </div>
+              <div className="flex flex-col">
+                <h4 className="font-bold text-black text-lg">Makan siang di warteg Bahari bu aminah</h4>
+                <p className="text-sm text-gray-400 mt-0.5">Kategori: Makanan • Total: Rp345.000</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-4 p-4 border border-gray-100 rounded-xl bg-white shadow-sm">
+              <div className="w-14 h-14 bg-gray-100 text-neutral rounded-xl shrink-0 flex items-center justify-center text-2xl font-bold select-none">
+                🎯
+              </div>
+              <div className="flex flex-col">
+                <h4 className="font-bold text-black text-lg">Nongkrong di warkop sukarasa</h4>
+                <p className="text-sm text-gray-400 mt-0.5">Kategori: Hiburan • Total: Rp180.000</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ================= DANA & ALOKASI YANG DISARANKAN ================= */}
+        <div className="w-full flex flex-col gap-6">
+          <div className="text-center">
+            <h2 className="text-3xl font-extrabold text-black">Dana & alokasi yang disarankan</h2>
+            <p className="text-gray-500">Rekomendasi pembagian pos keuangan ideal berdasarkan algoritma cerdas FineFin.</p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="border border-gray-100 rounded-2xl p-6 bg-white shadow-sm flex flex-col gap-4">
+              <div className="w-full h-48 rounded-xl overflow-hidden bg-gray-50 shadow-inner">
+                <img 
+                  src={Kebutuhan} 
+                  alt="Kebutuhan Pokok - Karir & Fondasi" 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div>
+                <h4 className="font-bold text-black text-lg">Kebutuhan Pokok (50%)</h4>
+                <p className="text-sm text-gray-400 mt-1">Disarankan: Rp2.600.000 • Untuk makan, kosan, dan tagihan wajib.</p>
+              </div>
+            </div>
+            <div className="border border-gray-100 rounded-2xl p-6 bg-white shadow-sm flex flex-col gap-4">
+              <div className="w-full h-48 rounded-xl overflow-hidden bg-gray-50 shadow-inner">
+                <img 
+                  src={Investasi} 
+                  alt="Tabungan & Investasi - Pertumbuhan" 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div>
+                <h4 className="font-bold text-black text-lg">Tabungan & Investasi (30%)</h4>
+                <p className="text-sm text-gray-400 mt-1">Disarankan: Rp1.560.000 • Membangun masa depan aman.</p>
+              </div>
+            </div>
+            <div className="border border-gray-100 rounded-2xl p-6 bg-white shadow-sm flex flex-col gap-4">
+              <div className="w-full h-48 rounded-xl overflow-hidden bg-gray-50 shadow-inner">
+                <img 
+                  src={Hiburan} 
+                  alt="Keinginan & Hiburan - Rencana Impian" 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div>
+                <h4 className="font-bold text-black text-lg">Keinginan & Hiburan (20%)</h4>
+                <p className="text-sm text-gray-400 mt-1">Disarankan: Rp1.040.000 • Menjaga kesehatan mentalmu.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ================= TRANSAKSI TERKINI ================= */}
+        <div className="w-full flex flex-col gap-6">
+          <div className="text-center">
+            <h2 className="text-3xl font-extrabold text-black">Transaksi Terkini</h2>
+            <p className="text-gray-500">Daftar pengeluaran dan pemasukan paling baru yang kamu catat.</p>
+          </div>
+          
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 justify-items-center max-w-5xl mx-auto w-full">
+            
+            <div className="flex flex-col items-center gap-2 text-center bg-gray-50/50 p-4 rounded-xl w-full">
+              <div className="avatar placeholder">
+                <div className="bg-neutral text-neutral-content rounded-full w-14 h-14 shadow-sm text-xl flex items-center justify-center">
+                  🛒
+                </div>
+              </div>
+              <div>
+                <h4 className="font-bold text-black text-sm">Kebutuhan</h4>
+                <span className="text-xs text-gray-400">Belanja Bulanan</span>
+                <p className="text-red-500 font-semibold text-sm mt-1">-Rp548.230</p>
+              </div>
+            </div>
+
+            <div className="flex flex-col items-center gap-2 text-center bg-gray-50/50 p-4 rounded-xl w-full">
+              <div className="avatar placeholder">
+                <div className="bg-neutral text-neutral-content rounded-full w-14 h-14 shadow-sm text-xl flex items-center justify-center">
+                  ☕
+                </div>
+              </div>
+              <div>
+                <h4 className="font-bold text-black text-sm">Coffee</h4>
+                <span className="text-xs text-gray-400">Nongkrong Senja</span>
+                <p className="text-red-500 font-semibold text-sm mt-1">-Rp100.750</p>
+              </div>
+            </div>
+
+            <div className="flex flex-col items-center gap-2 text-center bg-gray-50/50 p-4 rounded-xl w-full">
+              <div className="avatar placeholder">
+                <div className="bg-neutral text-neutral-content rounded-full w-14 h-14 shadow-sm text-xl flex items-center justify-center">
+                  🚗
+                </div>
+              </div>
+              <div>
+                <h4 className="font-bold text-black text-sm">Bensin</h4>
+                <span className="text-xs text-gray-400">Bahan Bakar Mobil</span>
+                <p className="text-red-500 font-semibold text-sm mt-1">-Rp600.000</p>
+              </div>
+            </div>
+
+            <div className="flex flex-col items-center gap-2 text-center bg-gray-50/50 p-4 rounded-xl w-full">
+              <div className="avatar placeholder">
+                <div className="bg-neutral text-neutral-content rounded-full w-14 h-14 shadow-sm text-xl flex items-center justify-center">
+                  🧴
+                </div>
+              </div>
+              <div>
+                <h4 className="font-bold text-black text-sm">Kesehatan</h4>
+                <span className="text-xs text-gray-400">Skincare / Vitamin</span>
+                <p className="text-red-500 font-semibold text-sm mt-1">-Rp100.000</p>
+              </div>
+            </div>
+
+            <div className="flex flex-col items-center gap-2 text-center bg-gray-50/50 p-4 rounded-xl w-full">
+              <div className="avatar placeholder">
+                <div className="bg-neutral text-neutral-content rounded-full w-14 h-14 shadow-sm text-xl flex items-center justify-center">
+                  📱
+                </div>
+              </div>
+              <div>
+                <h4 className="font-bold text-black text-sm">Paket Internet</h4>
+                <span className="text-xs text-gray-400">Kerja & Kuliah</span>
+                <p className="text-red-500 font-semibold text-sm mt-1">-Rp80.000</p>
+              </div>
+            </div>
+
+            <div className="flex flex-col items-center gap-2 text-center bg-gray-50/50 p-4 rounded-xl w-full">
+              <div className="avatar placeholder">
+                <div className="bg-neutral text-neutral-content rounded-full w-14 h-14 shadow-sm text-xl flex items-center justify-center">
+                  💰
+                </div>
+              </div>
+              <div>
+                <h4 className="font-bold text-black text-sm">Gaji Utama</h4>
+                <span className="text-xs text-gray-400">Pemasukan Tetap</span>
+                <p className="text-green-600 font-semibold text-sm mt-1">+Rp10.000.000</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        {/* ================= MEMBER SUCCESS STORIES ================= */}
+        <div className="w-full flex flex-col gap-6">
+          <div className="text-center">
+            <h2 className="text-3xl font-extrabold text-black">Member success stories</h2>
+            <p className="text-gray-500">Apa kata mereka yang berhasil mengatur finansial sehat bersama FineFin.</p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto w-full">
+            <div className="p-6 border border-gray-100 rounded-2xl bg-white shadow-sm flex flex-col gap-3">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center font-bold text-xs select-none">AR</div>
+                <div>
+                  <h5 className="font-bold text-black text-sm">Arkan R.</h5>
+                  <span className="text-xs text-warning">★★★★★</span>
+                </div>
+              </div>
+              <p className="text-sm text-gray-500">"Sangat terbantu mengatur uang bulanan anak kos. Sekarang gak ada lagi cerita merana di akhir bulan!"</p>
+            </div>
+
+            <div className="p-6 border border-gray-100 rounded-2xl bg-white shadow-sm flex flex-col gap-3">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center font-bold text-xs select-none">NZ</div>
+                <div>
+                  <h5 className="font-bold text-black text-sm">Nabila Z.</h5>
+                  <span className="text-xs text-warning">★★★★★</span>
+                </div>
+              </div>
+              <p className="text-sm text-gray-500">"Fitur Dompet Cerdasnya juara banget buat ngetrack pengeluaran impulsif beli kopi tiap sore."</p>
+            </div>
+
+            <div className="p-6 border border-gray-100 rounded-2xl bg-white shadow-sm flex flex-col gap-3">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center font-bold text-xs select-none">FA</div>
+                <div>
+                  <h5 className="font-bold text-black text-sm">Fahmi A.</h5>
+                  <span className="text-xs text-warning">★★★★★</span>
+                </div>
+              </div>
+              <p className="text-sm text-gray-500">"Rekomendasi alokasi dananya akurat. Kerangka UI webnya juga responsif dan super minimalis."</p>
+            </div>
+          </div>
+        </div>
+
+        {/* ================= FOOTER ================= */}
+        <div className="text-center border-t border-gray-100 pt-8 mt-4">
+          <p className="text-sm font-bold text-black mb-1">Tips: Jauhkan pencatatan tanpa sandi untuk mencegah kebocoran data pribadi anggaranmu!</p>
+          <p className="text-xs text-gray-400">Privasi Anda dilindungi secara enkripsi end-to-end oleh protokol pengamanan internal FineFin. © 2026 All rights reserved.</p>
+        </div>
+
+      </div>
     </div>
   );
 };

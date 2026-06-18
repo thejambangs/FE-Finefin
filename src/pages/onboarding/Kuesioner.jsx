@@ -125,6 +125,12 @@ useEffect(() => {
       axiosInstance.post('/api/onboarding', finalPayload)
         .then((response) => {
             alert(response.data.message); // Akan memunculkan "Kuesioner berhasil! Profil risiko Anda: ..."
+
+            //Simpan token ke dalam local Storage
+            localStorage.setItem('token', response.data.token);
+
+            //Simpan status onboarding yang baru saja ditambahkan oleh BE 1
+            localStorage.setItem('is_onboarded', response.data.is_onboarded);
             
             // Hapus draf kuesioner jika berhasil
             localStorage.removeItem('kuesioner');
