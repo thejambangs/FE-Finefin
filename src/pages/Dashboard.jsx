@@ -1,6 +1,6 @@
 // src/pages/Dashboard.jsx
 import React from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate untuk fungsionalitas tombol logout
+import { useNavigate, Link } from 'react-router-dom'; // Import useNavigate untuk fungsionalitas tombol logout
 import WalletImage from '../assets/images/dompet digital.jpg'; 
 import Kebutuhan from '../assets/images/kebutuhan.jpg'; 
 import Investasi from '../assets/images/investasi.jpg'; 
@@ -24,9 +24,9 @@ const Dashboard = () => {
       <div className="navbar bg-white border-b border-gray-100 px-4 md:px-8 shrink-0">
         {/* Sisi Kiri: Logo Branding */}
         <div className="flex-1">
-          <link to="/dashboard" className="text-3xl font-black text-black tracking-tighter uppercase select-none">
+          <Link to="/dashboard" className="text-3xl font-black text-black tracking-tighter uppercase select-none">
             FineFin
-          </link>
+          </Link>
         </div>
         
         {/* Sisi Tengah: Pilihan Menu Utama */}
@@ -34,19 +34,19 @@ const Dashboard = () => {
           <ul className="menu menu-horizontal px-1 gap-6 text-lg font-semibold">
             <li>
               {/* Indikator Menu Aktif: Teks hitam pekat dengan border bawah solid */}
-              <link to="/dashboard" className="text-black border-b-2 border-black rounded-none px-1 pb-2 pt-2 bg-transparent hover:bg-transparent">
+              <Link to="/dashboard" className="text-black border-b-2 border-black rounded-none px-1 pb-2 pt-2 bg-transparent hover:bg-transparent">
                 Dasbor
-              </link>
+              </Link>
             </li>
             <li>
-              <link to="/transactions" className="text-gray-400 rounded-none px-1 pb-2 pt-2 bg-transparent hover:bg-transparent hover:text-black">
+              <Link to="/transactions" className="text-gray-400 rounded-none px-1 pb-2 pt-2 bg-transparent hover:bg-transparent hover:text-black">
                 Transaksi
-              </link>
+              </Link>
             </li>
             <li>
-              <link to="/kuesioner" className="text-gray-400 rounded-none px-1 pb-2 pt-2 bg-transparent hover:bg-transparent hover:text-black">
+              <Link to="/kuesioner" className="text-gray-400 rounded-none px-1 pb-2 pt-2 bg-transparent hover:bg-transparent hover:text-black">
                 Kuesioner
-              </link>
+              </Link>
             </li>
           </ul>
         </div>
