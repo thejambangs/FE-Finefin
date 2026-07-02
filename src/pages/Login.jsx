@@ -46,16 +46,20 @@ const Login = () => {
         password: password
       });
 
-      if (response.status === 200 || response.data.success) {
+      if (response.status === 200) {
         if (response.data.token) {
           localStorage.setItem('token', response.data.token);
         }
 
-        // ✅ TOAST SUKSES
         toast.success("Login berhasil! Selamat datang.");
-        
+
         setIsLoading(false);
-        navigate('/kuesioner');
+
+        if (response.data.isOnboarded) {
+          navigate("/dashboard");
+        } else {
+          navigate("/kuesioner");
+        }
       }
 
     } catch (error) {
