@@ -2,8 +2,7 @@ import React from "react";
 import { Navigate } from "react-router-dom";
 
 const ProtectedRoute = ({ children }) => {
-  const token = localStorage.getItem("token");
-  const isOnboarded = localStorage.getItem("is_onboarded");
+  if (token && isOnboarded !== 'true') {
   if (!token) {
     return <Navigate to="/login" replace />;
   }
@@ -11,6 +10,7 @@ const ProtectedRoute = ({ children }) => {
   if (token && !isOnboarded) {
     return <Navigate to="/kuesioner" replace />;
   }
+}
 
   return children;
 };
