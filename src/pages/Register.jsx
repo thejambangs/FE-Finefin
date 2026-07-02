@@ -1,172 +1,89 @@
-// src/pages/Register.jsx
-import axiosInstance from "../Utils/axiosInstance";
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import RegisterImage from "../assets/images/login-register.jpg";
+// src/pages/AddTransaction.jsx
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axiosInstance from '../utils/axiosInstance'; 
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-const Register = () => {
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-
+const AddTransaction = () => {
   const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    namaPengeluaran: '',
+    totalPengeluaran: '',
+    kategori: '',
+    metodePembayaran: '',
+    tanggal: ''
+  });
 
-  const handleRegister = async (e) => {
-    e.preventDefault();
-
-    // === TAMBAHKAN VALIDASI EMAIL DI SINI ===
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      alert("Format email tidak valid! (Contoh: nama@email.com)");
-      return; // Stop proses registrasi jika bukan format email
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    if (name === 'totalPengeluaran') {
+      let cleanValue = value.replace(/[^0-9]/g, '');
+      if (cleanValue.length > 1 && cleanValue.startsWith('0')) cleanValue = cleanValue.replace(/^0+/, '');
+      const formattedValue = cleanValue.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+      setFormData((prev) => ({ ...prev, [name]: formattedValue }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
     }
-    // ========================================
+  };
 
-    // Validasi Client-Side Sederhana sebelum kirim ke database
-    if (password !== confirmPassword) {
-      alert("Kata sandi dan konfirmasi kata sandi tidak cocok!");
+  const handleSimpan = async (e) => {
+    e.preventDefault();
+    
+    // --- VALIDASI FORM (SATPAM) ---
+    if (!formData.namaPengeluaran.trim()) {
+      toast.error("Nama pengeluaran tidak boleh kosong!");
+      return;
+    }
+    if (!formData.kategori) {
+      toast.warning("Silakan pilih kategori!");
+      return;
+    }
+    if (!formData.totalPengeluaran || parseInt(formData.totalPengeluaran.replace(/\./g, ''), 10) <= 0) {
+      toast.error("Total pengeluaran harus lebih dari 0!");
+      return;
+    }
+    if (!formData.metodePembayaran) {
+      toast.warning("Pilih metode pembayaran!");
+      return;
+    }
+    if (!formData.tanggal) {
+      toast.warning("Pilih tanggal transaksi!");
       return;
     }
 
-    setIsLoading(true);
-
     try {
-      const response = await axiosInstance.post(
-        "http://localhost:5000/api/auth/register",
-        {
-          username: username,
-          email: email,
-          password: password,
-        },
-      );
+      const rawNominal = formData.totalPengeluaran.replace(/\./g, '');
+      const dataPayload = {
+        ...formData,
+        totalPengeluaran: parseInt(rawNominal, 10)
+      };
 
-      if (response.status === 201 || response.data.success) {
-        setIsLoading(false);
-        alert("Registrasi Berhasil! Data sudah tersimpan di database.");
-        navigate("/login");
-      }
+      await axiosInstance.post('/transaction', dataPayload);
+
+      // --- SUKSES (GANTI ALERT KE TOAST) ---
+      toast.success("Transaksi berhasil ditambahkan!");
+      
+      // Jeda 2 detik sebelum pindah
+      setTimeout(() => navigate('/dashboard'), 2000);
+
     } catch (error) {
-      setIsLoading(false);
-
-      if (error.response) {
-        alert(
-          `Gagal Daftar: ${error.response.data.message || "Data tidak valid!"}`,
-        );
-      } else {
-        alert("Gagal menyambung ke server database backend.");
-      }
-      console.error("Error Register:", error);
+      // --- ERROR (GANTI ALERT KE TOAST) ---
+      const errorMessage = error.response?.data?.message || "Terjadi kesalahan server.";
+      toast.error(`Gagal menyimpan: ${errorMessage}`);
     }
   };
 
   return (
-    <div className="flex h-screen w-full bg-white">
-      {/* PANEL KIRI: Visual Gambar */}
-      <div className="w-1/2 h-full bg-gray-100 border-r border-gray-200 overflow-hidden flex items-center justify-center">
-        <img
-          src={RegisterImage}
-          alt="FineFin Register Visual"
-          className="w-full h-full object-cover"
-        />
-      </div>
-
-      {/* PANEL KANAN: Formulir Registrasi */}
-      <div className="w-1/2 h-full flex flex-col justify-center px-16 lg:px-32 xl:px-40 gap-8 bg-white">
-        <h1 className="text-5xl font-extrabold text-black uppercase tracking-tight">
-          REGISTRASI
-        </h1>
-
-        {/* FORM GROUP: USERNAME */}
-        <label className="form-control w-full gap-2">
-          <div className="label p-0"><span className="label-text text-xl font-medium text-black">Username</span></div>
-          <input 
-            type="text"
-            placeholder="Masukkan username" 
-            value={username} 
-            onChange={(e) => setUsername(e.target.value)} 
-            className="input input-bordered w-full rounded-full border-gray-300 h-14 text-lg text-black bg-white focus:border-black focus:ring-0" 
-          />
-        </label>
-
-        {/* FORM GROUP: EMAIL */}
-        <label className="form-control w-full gap-2">
-          <div className="label p-0">
-            <span className="label-text text-xl font-medium text-black">
-              Email
-            </span>
-          </div>
-          <input
-            type="email"
-            required
-            placeholder="contoh@email.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="input input-bordered w-full rounded-full border-gray-300 h-14 text-lg text-black bg-white focus:border-black focus:ring-0"
-          />
-        </label>
-
-        {/* FORM GROUP: KATA SANDI BARU */}
-        <label className="form-control w-full gap-2">
-          <div className="label p-0">
-            <span className="label-text text-xl font-medium text-black">
-              Isi Kata Sandi Baru
-            </span>
-          </div>
-          <input
-            type="password"
-            required
-            placeholder="••••••••"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="input input-bordered w-full rounded-full border-gray-300 h-14 text-lg text-black bg-white focus:border-black focus:ring-0"
-          />
-        </label>
-
-        {/* FORM GROUP: KONFIRMASI KATA SANDI */}
-        <label className="form-control w-full gap-2">
-          <div className="label p-0">
-            <span className="label-text text-xl font-medium text-black">
-              Konfirmasi Kata Sandi
-            </span>
-          </div>
-          <input
-            type="password"
-            required
-            placeholder="••••••••"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            className="input input-bordered w-full rounded-full border-gray-300 h-14 text-lg text-black bg-white focus:border-black focus:ring-0"
-          />
-        </label>
-
-        {/* TOMBOL CONTAINER: SINKRONISASI NAVIGASI */}
-        <div className="flex flex-row gap-5 mt-2">
-          {/* 1. TOMBOL KEMBALI */}
-          <button
-            type="button"
-            onClick={() => navigate("/login")}
-            className="btn grow rounded-full text-base h-14 text-black border-black bg-white hover:bg-gray-100 font-semibold"
-          >
-            Sudah punya akun? Masuk
-          </button>
-
-          {/* 2. TOMBOL DAFTAR */}
-          <button
-            onClick={handleRegister}
-            disabled={isLoading}
-            className="btn grow rounded-full text-lg h-14 text-white bg-black hover:bg-neutral-800 disabled:bg-neutral-700 disabled:text-neutral-400 uppercase font-semibold"
-          >
-            {isLoading && (
-              <span className="loading loading-spinner text-neutral-400"></span>
-            )}
-            {isLoading ? "Memproses..." : "Daftar"}
-          </button>
-        </div>
-      </div>
+    <div className="min-h-screen w-full bg-white text-neutral font-sans flex flex-col items-center">
+      <ToastContainer position="top-right" autoClose={3000} />
+      
+      {/* Struktur form kamu tetap sama di sini... */}
+      <form onSubmit={handleSimpan} className="flex flex-col gap-8 w-full">
+         {/* Pastikan input-input kamu menggunakan value={formData.xxx} dan onChange={handleInputChange} */}
+      </form>
     </div>
   );
 };
 
-export default Register;
+export default AddTransaction;
