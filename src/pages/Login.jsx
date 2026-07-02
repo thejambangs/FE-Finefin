@@ -41,7 +41,7 @@ const Login = () => {
     
     try {
       // Tembak data ke backend tanpa perlu hardcode URL / config token
-      const response = await axiosInstance.post('/auth/login', {
+      const response = await axiosInstance.post('/api/auth/login', {
         email: email,
         password: password
       });
@@ -83,7 +83,7 @@ const Login = () => {
         <label className="form-control w-full gap-2">
           <div className="label p-0"><span className="label-text text-xl font-medium text-black">Email</span></div>
           <input 
-            type="email" 
+            type="email"  
             required
             placeholder="contoh@email.com" 
             value={email} 
@@ -113,6 +113,7 @@ const Login = () => {
             Belum punya akun? Daftar
           </button>
           <button 
+            type="button"
             onClick={handleLogin}
             disabled={isLoading}
             className="btn flex-grow rounded-full text-lg h-14 text-white bg-black hover:bg-neutral-800 disabled:bg-neutral-700 disabled:text-neutral-400 uppercase font-semibold"
