@@ -101,7 +101,11 @@ const Kuesioner = () => {
             // ✅ GANTI ALERT JADI TOAST SUKSES
             toast.success(response.data.message || "Kuesioner berhasil disimpan!");
 
-            localStorage.setItem('is_Onboarded', "true");
+            // 👇 PERBAIKAN: Ubah is_onboarded menjadi isOnboarded, dan set nilainya jadi 'true'
+            if (response.data.token) {
+                localStorage.setItem('token', response.data.token);
+            }
+            localStorage.setItem('isOnboarded', 'true'); 
             localStorage.removeItem('kuesioner');
             
             setTimeout(() => navigate('/dashboard'), 2000);
