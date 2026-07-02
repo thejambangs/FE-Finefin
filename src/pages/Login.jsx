@@ -46,20 +46,23 @@ const Login = () => {
         password: password
       });
 
-      if (response.status === 200) {
+      if (response.status === 200 || response.data.success) {
         if (response.data.token) {
           localStorage.setItem('token', response.data.token);
         }
 
+        // 👇 TAMBAHAN BARU: Simpan status isOnboarded dari backend ke browser
+        // (Pastikan BE mengirimkan data isOnboarded saat login sukses)
+        const statusOnboard = response.data.user?.isOnboarded ?? response.data.isOnboarded;
+        localStorage.setItem('isOnboarded', statusOnboard);
+
+        // ✅ TOAST SUKSES
         toast.success("Login berhasil! Selamat datang.");
-
+        
         setIsLoading(false);
-
-        if (response.data.isOnboarded) {
-          navigate("/dashboard");
-        } else {
-          navigate("/kuesioner");
-        }
+        
+        // 👇 UBAH TUJUAN: Arahkan ke dashboard. Biar ProtectedRoute yang nyeleksi nantinya!
+        navigate('/dashboard'); 
       }
 
     } catch (error) {
