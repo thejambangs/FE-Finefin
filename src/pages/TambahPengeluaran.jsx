@@ -1,7 +1,7 @@
 // src/pages/AddTransaction.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axiosInstance from '../utils/axiosInstance'; 
+import axiosInstance from '../Utils/axiosInstance';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
