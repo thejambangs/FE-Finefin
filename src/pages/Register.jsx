@@ -7,7 +7,7 @@ import { toast } from 'react-toastify';
 import RegisterImage from "../assets/images/login-register.jpg";
 
 const Register = () => {
-  const [username, setUsername] = useState("");
+  const [username, setUsername] = useState(""); 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -48,7 +48,7 @@ const Register = () => {
     setIsLoading(true);
 
     try {
-      const response = await axiosInstance.post("/auth/register", {
+      const response = await axiosInstance.post("/api/auth/register", {
         username: username,
         email: email,
         password: password,
