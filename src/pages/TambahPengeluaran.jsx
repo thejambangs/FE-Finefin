@@ -63,7 +63,7 @@ const AddTransaction = () => {
         totalPengeluaran: parseInt(rawNominal, 10),
       };
 
-      await axiosInstance.post("/transaction", dataPayload);
+      await axiosInstance.post("/api/transaction", dataPayload);
 
       // --- SUKSES (GANTI ALERT KE TOAST) ---
       toast.success("Transaksi berhasil ditambahkan!");
