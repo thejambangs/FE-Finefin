@@ -61,7 +61,7 @@ const Login = () => {
         toast.success("Login berhasil! Selamat datang.");
 
         setIsLoading(false);
-        navigate("/kuesioner");
+        navigate("/dashboard");
       }
     } catch (error) {
       setIsLoading(false);
