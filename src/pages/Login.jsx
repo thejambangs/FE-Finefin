@@ -51,6 +51,12 @@ const Login = () => {
           localStorage.setItem("token", response.data.token);
         }
 
+        // 👇 TAMBAHAN BARU: Simpan status isOnboarded dari backend ke browser
+        // (Pastikan BE mengirimkan data isOnboarded saat login sukses)
+        const statusOnboard =
+          response.data.user?.isOnboarded ?? response.data.isOnboarded;
+        localStorage.setItem("isOnboarded", statusOnboard);
+
         // ✅ TOAST SUKSES
         toast.success("Login berhasil! Selamat datang.");
 

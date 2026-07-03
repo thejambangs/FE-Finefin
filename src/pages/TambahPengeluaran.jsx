@@ -1,4 +1,4 @@
-// src/pages/TambahPengeluaran.jsx
+// src/pages/AddTransaction.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../utils/axiosInstance";
