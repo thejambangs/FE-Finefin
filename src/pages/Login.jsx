@@ -59,8 +59,8 @@ const Login = () => {
 
         // ✅ TOAST SUKSES
         toast.success("Login berhasil! Selamat datang.");
-
         setIsLoading(false);
+
         navigate("/dashboard");
       }
     } catch (error) {

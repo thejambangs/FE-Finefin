@@ -1,12 +1,10 @@
 // src/pages/Dashboard.jsx
 import React from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate untuk fungsionalitas tombol logout
+import { Link, useNavigate } from "react-router-dom"; // Import useNavigate untuk fungsionalitas tombol logout
 import WalletImage from "../assets/images/dompet digital.jpg";
 import Kebutuhan from "../assets/images/kebutuhan.jpg";
 import Investasi from "../assets/images/investasi.jpg";
 import Hiburan from "../assets/images/keinginan.jpg";
-import Link from "daisyui/components/link";
-
 const Dashboard = () => {
   const navigate = useNavigate();
 
@@ -46,7 +44,7 @@ const Dashboard = () => {
             </li>
             <li>
               <Link
-                to="/transactions"
+                to="/transaction"
                 className="text-gray-400 rounded-none px-1 pb-2 pt-2 bg-transparent hover:bg-transparent hover:text-black"
               >
                 Transaksi
