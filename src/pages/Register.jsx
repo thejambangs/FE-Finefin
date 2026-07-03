@@ -2,10 +2,12 @@
 import axiosInstance from "../Utils/axiosInstance";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+// ✅ IMPORT TOAST
+import { toast } from 'react-toastify';
 import RegisterImage from "../assets/images/login-register.jpg";
 
 const Register = () => {
-  const [username, setUsername] = useState("");
+  const [username, setUsername] = useState(""); 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -16,47 +18,56 @@ const Register = () => {
   const handleRegister = async (e) => {
     e.preventDefault();
 
-    // === TAMBAHKAN VALIDASI EMAIL DI SINI ===
+    // === VALIDASI FORM (SATPAM) ===
+    if (!username.trim()) {
+      toast.error("Username tidak boleh kosong!");
+      return;
+    }
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      alert("Format email tidak valid! (Contoh: nama@email.com)");
-      return; // Stop proses registrasi jika bukan format email
+      toast.warning("Format email tidak valid!");
+      return;
     }
-    // ========================================
 
-    // Validasi Client-Side Sederhana sebelum kirim ke database
+    if (!password) {
+      toast.error("Kata sandi tidak boleh kosong!");
+      return;
+    }
+
+    if (password.length < 8) {
+      toast.warning("Kata sandi minimal 8 karakter!");
+      return;
+    }
+
     if (password !== confirmPassword) {
-      alert("Kata sandi dan konfirmasi kata sandi tidak cocok!");
+      toast.error("Kata sandi dan konfirmasi kata sandi tidak cocok!");
       return;
     }
 
     setIsLoading(true);
 
     try {
-      const response = await axiosInstance.post(
-        "http://localhost:5000/api/auth/register",
-        {
-          username: username,
-          email: email,
-          password: password,
-        },
-      );
+      const response = await axiosInstance.post("/api/auth/register", {
+        username: username,
+        email: email,
+        password: password,
+      });
 
       if (response.status === 201 || response.data.success) {
+        // ✅ TOAST SUKSES
+        toast.success("Registrasi berhasil! Silakan login.");
+        
         setIsLoading(false);
-        alert("Registrasi Berhasil! Data sudah tersimpan di database.");
         navigate("/login");
       }
     } catch (error) {
       setIsLoading(false);
 
-      if (error.response) {
-        alert(
-          `Gagal Daftar: ${error.response.data.message || "Data tidak valid!"}`,
-        );
-      } else {
-        alert("Gagal menyambung ke server database backend.");
-      }
+      // ✅ TOAST ERROR
+      const errorMessage = error.response?.data?.message || "Terjadi kesalahan saat registrasi.";
+      toast.error(`Gagal Daftar: ${errorMessage}`);
+      
       console.error("Error Register:", error);
     }
   };
@@ -78,11 +89,12 @@ const Register = () => {
           REGISTRASI
         </h1>
 
-        {/* FORM GROUP: USERNAME */}
+        {/* INPUT USERNAME */}
         <label className="form-control w-full gap-2">
           <div className="label p-0"><span className="label-text text-xl font-medium text-black">Username</span></div>
           <input 
             type="text"
+            required
             placeholder="Masukkan username" 
             value={username} 
             onChange={(e) => setUsername(e.target.value)} 
@@ -90,13 +102,9 @@ const Register = () => {
           />
         </label>
 
-        {/* FORM GROUP: EMAIL */}
+        {/* INPUT EMAIL */}
         <label className="form-control w-full gap-2">
-          <div className="label p-0">
-            <span className="label-text text-xl font-medium text-black">
-              Email
-            </span>
-          </div>
+          <div className="label p-0"><span className="label-text text-xl font-medium text-black">Email</span></div>
           <input
             type="email"
             required
@@ -107,13 +115,9 @@ const Register = () => {
           />
         </label>
 
-        {/* FORM GROUP: KATA SANDI BARU */}
+        {/* INPUT PASSWORD */}
         <label className="form-control w-full gap-2">
-          <div className="label p-0">
-            <span className="label-text text-xl font-medium text-black">
-              Isi Kata Sandi Baru
-            </span>
-          </div>
+          <div className="label p-0"><span className="label-text text-xl font-medium text-black">Isi Kata Sandi Baru</span></div>
           <input
             type="password"
             required
@@ -124,13 +128,9 @@ const Register = () => {
           />
         </label>
 
-        {/* FORM GROUP: KONFIRMASI KATA SANDI */}
+        {/* INPUT KONFIRMASI PASSWORD */}
         <label className="form-control w-full gap-2">
-          <div className="label p-0">
-            <span className="label-text text-xl font-medium text-black">
-              Konfirmasi Kata Sandi
-            </span>
-          </div>
+          <div className="label p-0"><span className="label-text text-xl font-medium text-black">Konfirmasi Kata Sandi</span></div>
           <input
             type="password"
             required
@@ -141,9 +141,8 @@ const Register = () => {
           />
         </label>
 
-        {/* TOMBOL CONTAINER: SINKRONISASI NAVIGASI */}
+        {/* TOMBOL AKSI */}
         <div className="flex flex-row gap-5 mt-2">
-          {/* 1. TOMBOL KEMBALI */}
           <button
             type="button"
             onClick={() => navigate("/login")}
@@ -151,17 +150,12 @@ const Register = () => {
           >
             Sudah punya akun? Masuk
           </button>
-
-          {/* 2. TOMBOL DAFTAR */}
           <button
             onClick={handleRegister}
             disabled={isLoading}
             className="btn grow rounded-full text-lg h-14 text-white bg-black hover:bg-neutral-800 disabled:bg-neutral-700 disabled:text-neutral-400 uppercase font-semibold"
           >
-            {isLoading && (
-              <span className="loading loading-spinner text-neutral-400"></span>
-            )}
-            {isLoading ? "Memproses..." : "Daftar"}
+            {isLoading ? <span className="loading loading-spinner text-neutral-400"></span> : "Daftar"}
           </button>
         </div>
       </div>

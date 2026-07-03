@@ -44,7 +44,7 @@ function App() {
 
         {/* Jalur Tambah Pengeluaran */}
         <Route
-          path="/tambah-pengeluaran"
+          path="/transaction"
           element={
             <ProtectedRoute>
               <AddTransaction />
