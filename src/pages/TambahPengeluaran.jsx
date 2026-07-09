@@ -10,8 +10,9 @@ const AddTransaction = () => {
   
   // 1. STATE FORM
   const [formData, setFormData] = useState({
-    namaPengeluaran: '',
-    totalPengeluaran: '',
+    namaTransaksi: '',
+    tipeTransaksi: '',
+    nominal: '',
     kategori: '',
     metodePembayaran: '',
     tanggal: ''
@@ -52,7 +53,7 @@ const AddTransaction = () => {
     e.preventDefault();
     
     // --- VALIDASI FORM ---
-    if (!formData.namaPengeluaran.trim()) {
+    if (!formData.namaTransaksi.trim()) {
       toast.error("Nama pengeluaran tidak boleh kosong!");
       return;
     }
@@ -60,7 +61,7 @@ const AddTransaction = () => {
       toast.warning("Silakan pilih kategori!");
       return;
     }
-    if (!formData.totalPengeluaran || parseInt(formData.totalPengeluaran.replace(/\./g, '')) <= 0) {
+    if (!formData.nominal || parseInt(formData.totalPengeluaran.replace(/\./g, '')) <= 0) {
       toast.error("Total pengeluaran harus lebih dari 0!");
       return;
     }
@@ -90,8 +91,8 @@ const AddTransaction = () => {
       
       // Kosongkan form kembali setelah sukses
       setFormData({
-        namaPengeluaran: '',
-        totalPengeluaran: '',
+        namaTransaksi: '',
+        nominal: '',
         kategori: '',
         metodePembayaran: '',
         tanggal: ''
@@ -141,9 +142,9 @@ const AddTransaction = () => {
             <div className="label pb-1"><span className="label-text font-bold text-black text-sm">Nama Pengeluaran</span></div>
             <input 
               type="text" 
-              name="namaPengeluaran"
+              name="namaTransaksi"
               placeholder="Makanan" 
-              value={formData.namaPengeluaran}
+              value={formData.namaTransaksi}
               onChange={handleInputChange}
               className="input input-bordered w-full rounded-md border-gray-200 bg-white text-black focus:outline-none focus:border-gray-400" 
             />
@@ -157,11 +158,9 @@ const AddTransaction = () => {
                 <span className="text-gray-500">Rp.</span>
                 <input 
                   type="text" 
-                  name="totalPengeluaran"
+                  name="nominal"
                   placeholder="xxxxxxxxx"
-                  value={formData.totalPengeluaran}
-                  onChange={handleInputChange}
-                  className="grow bg-transparent text-black border-none focus:outline-none focus:ring-0" 
+                  value={formData.nominal} onChange={handleInputChange} className="grow bg-transparent text-black border-none focus:outline-none focus:ring-0" 
                 />
               </div>
               <div className="label pt-1"><span className="label-text-alt text-gray-400">Gunakan angka desimal jika diperlukan.</span></div>
