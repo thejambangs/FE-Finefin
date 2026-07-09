@@ -12,7 +12,7 @@ const TambahPengeluaran = () => {
   const [formData, setFormData] = useState({
     namaTransaksi: '',
     tipeTransaksi: '', // STATE BARU
-    totalTransaksi: '',
+    nominal: '',
     kategori: '',
     metodePembayaran: '',
     tanggal: ''
@@ -20,6 +20,10 @@ const TambahPengeluaran = () => {
 
   // 2. STATE UNTUK TABEL
   const [transactions, setTransactions] = useState([]);
+
+  // === STATE BARU UNTUK FITUR EDIT ===
+  // Menyimpan ID transaksi yang sedang diedit. Jika null, berarti sedang tambah data baru.
+  const [editId, setEditId] = useState(null);
 
   // 3. EFFECT UNTUK MENARIK DATA TRANSAKSI SAAT HALAMAN DIMUAT
   useEffect(() => {
@@ -37,6 +41,32 @@ const TambahPengeluaran = () => {
     }
   };
 
+  // FUNGSI UNTUK MENGHAPUS
+  const handleDelete = async (_id) => {
+    if (!window.confirm("Apakah Anda yakin ingin menghapus transaksi ini?")) return;
+    try {
+      await axiosInstance.delete(`/api/transaction/${_id}`);
+      setTransactions((prev) => prev.filter((trx) => (trx._id || trx._id) !== _id));
+      toast.success("Transaksi berhasil dihapus!");
+    } catch (error) {
+      toast.error("Gagal menghapus data.");
+    }
+  };
+
+  // FUNGSI UNTUK KLIK EDIT
+  const handleEditClick = (trx) => {
+    setEditId(trx._id || trx.id);
+    setFormData({
+      namaTransaksi: trx.namaTransaksi,
+      tipeTransaksi: trx.tipeTransaksi,
+      nominal: trx.nominal,
+      kategori: trx.kategori,
+      metodePembayaran: trx.metodePembayaran,
+      tanggal: trx.tanggal ? trx.tanggal.split('T')[0] : ''
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     if (name === 'totalTransaksi') {
@@ -49,11 +79,15 @@ const TambahPengeluaran = () => {
     }
   };
 
-  const handleSimpan = async (e) => {
+ const handleSimpan = async (e) => {
     e.preventDefault();
     
-    // VALIDASI FORM KETAT
-    if (!formData.namaTransaksi.trim()) {
+    // 1. BERSIHKAN NOMINAL
+    const safeTotalTransaksi = String(formData.nominal || '');
+    const rawNominal = safeTotalTransaksi.replace(/\./g, '');
+    
+    // 2. VALIDASI FORM KETAT
+    if (!formData.namaTransaksi?.trim()) {
       toast.error("Nama transaksi tidak boleh kosong!");
       return;
     }
@@ -61,7 +95,7 @@ const TambahPengeluaran = () => {
       toast.warning("Silakan pilih tipe transaksi!");
       return;
     }
-    if (!formData.totalTransaksi || parseInt(formData.totalTransaksi.replace(/\./g, '')) <= 0) {
+    if (!rawNominal || parseInt(rawNominal, 10) <= 0) {
       toast.error("Total transaksi harus lebih dari 0!");
       return;
     }
@@ -79,32 +113,46 @@ const TambahPengeluaran = () => {
     }
 
     try {
-      const rawNominal = formData.totalTransaksi.replace(/\./g, '');
       const dataPayload = {
         ...formData,
-        totalTransaksi: parseInt(rawNominal, 10)
+        nominal: parseInt(rawNominal, 10)
       };
 
-      // Tembak API POST ke Backend
-      const response = await axiosInstance.post('/api/transaction', dataPayload);
+      // 3. CEK MODE EDIT ATAU TAMBAH
+      if (editId) {
+        // --- PROSES UPDATE (EDIT) ---
+        const response = await axiosInstance.put(`/api/transaction/${editId}`, dataPayload);
+        
+        // Ambil data terbaru dari backend (fallback ke data lama jika struktur beda)
+        const updatedTransaction = response.data.data || { ...dataPayload, _id: editId };
+        
+        // Update tabel tanpa menduplikasi data
+        setTransactions((prev) => 
+          prev.map((trx) => ((trx._id || trx.id) === editId ? updatedTransaction : trx))
+        );
 
-      // 3. MASUKKAN DATA KE DALAM STATE TABEL
-      const newTransaction = {
-        id: Date.now(),
-        ...formData,
-        totalTransaksi: parseInt(rawNominal, 10)
-      };
-      
-      // Update array transactions dengan menambahkan data baru di akhir (append)
-      setTransactions((prev) => [...prev, newTransaction]);
+        toast.success("Transaksi berhasil diperbarui!");
+        setEditId(null); // Keluar dari mode edit
 
-      toast.success("Transaksi berhasil ditambahkan!");
+      } else {
+        // --- PROSES SIMPAN (TAMBAH BARU) ---
+        const response = await axiosInstance.post('/api/transaction', dataPayload);
+        
+        // Ambil data dari backend atau buat id sementara
+        const newTransaction = response.data.data || { 
+          _id: Date.now().toString(), 
+          ...dataPayload 
+        };
+        
+        setTransactions((prev) => [...prev, newTransaction]);
+        toast.success("Transaksi berhasil ditambahkan!");
+      }
       
-      // Kosongkan form kembali setelah sukses
+      // 4. KOSONGKAN FORM SETELAH SUKSES
       setFormData({
         namaTransaksi: '',
         tipeTransaksi: '',
-        totalTransaksi: '',
+        nominal: '',
         kategori: '',
         metodePembayaran: '',
         tanggal: ''
@@ -187,10 +235,10 @@ const TambahPengeluaran = () => {
               <div className="input input-bordered flex items-center gap-2 rounded-md border-gray-200 bg-white focus-within:border-gray-400">
                 <span className="text-gray-500">Rp.</span>
                 <input 
-                  type="text" 
-                  name="totalTransaksi"
+                  type="number" 
+                  name="nominal"
                   placeholder="0"
-                  value={formData.totalTransaksi}
+                  value={formData.nominal}
                   onChange={handleInputChange}
                   className="grow bg-transparent text-black border-none focus:outline-none focus:ring-0" 
                 />
@@ -299,7 +347,7 @@ const TambahPengeluaran = () => {
                   <th className="bg-transparent py-4 pl-6">No</th>
                   <th className="bg-transparent py-4">Tanggal</th>
                   <th className="bg-transparent py-4">Nama Transaksi</th>
-                  <th className="bg-transparent py-4">Tipe</th> {/* Kolom Baru */}
+                  <th className="bg-transparent py-4">Tipe</th>
                   <th className="bg-transparent py-4">Total</th>
                   <th className="bg-transparent py-4">Kategori</th>
                   <th className="bg-transparent py-4">Metode Pembayaran</th>
@@ -317,9 +365,9 @@ const TambahPengeluaran = () => {
                   </tr>
                 ) : (
                   transactions.map((trx, index) => (
-                    <tr key={trx.id} className="border-b border-gray-100 hover:bg-gray-50">
+                    <tr key={trx._id} className="border-b border-gray-100 hover:bg-gray-50">
                       <td className="pl-6">{index + 1}</td>
-                      <td>{trx.tanggal.split('-').reverse().join('/')}</td>
+                      <td>{trx.tanggal ? trx.tanggal.substring(0, 10).split('-').reverse().join('/') : '-'}</td>
                       <td className="font-medium">{trx.namaTransaksi}</td>
                       
                       {/* Tipe Transaksi Badges */}
@@ -328,9 +376,8 @@ const TambahPengeluaran = () => {
                           {trx.tipeTransaksi}
                         </span>
                       </td>
-
                       <td className={`font-semibold ${trx.tipeTransaksi === 'Pemasukan' ? 'text-green-600' : 'text-red-500'}`}>
-                        {trx.tipeTransaksi === 'Pemasukan' ? '+' : '-'}Rp. {trx.totalTransaksi.toLocaleString('id-ID')}
+                        {trx.tipeTransaksi === 'Pemasukan' ? '+' : '-'}Rp. {Number(trx.nominal || 0).toLocaleString('id-ID')}
                       </td>
                       <td>
                         <span className="px-3 py-1 bg-gray-100 text-gray-600 rounded-md text-xs font-semibold">
@@ -339,12 +386,24 @@ const TambahPengeluaran = () => {
                       </td>
                       <td>{trx.metodePembayaran}</td>
                       <td className="flex justify-center gap-4 pr-6 py-4">
-                        <button className="text-blue-500 hover:text-blue-700 transition-colors" title="Edit">
+                        {/* Tombol Edit: Tambahkan () => dan masukkan objek 'trx' */}
+                        <button 
+                          onClick={() => handleEditClick(trx)} 
+                          name="update" 
+                          className="text-blue-500 hover:text-blue-700 transition-colors" 
+                          title="Edit"
+                        >
                           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                             <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
                           </svg>
                         </button>
-                        <button className="text-red-500 hover:text-red-700 transition-colors" title="Hapus">
+
+                        {/* Tombol Hapus: Tambahkan () => dan masukkan 'trx._id' */}
+                        <button 
+                          onClick={() => handleDelete(trx._id)} 
+                          className="text-red-500 hover:text-red-700 transition-colors" 
+                          title="Hapus"
+                        >
                           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                             <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
                           </svg>
@@ -358,7 +417,8 @@ const TambahPengeluaran = () => {
           </div>
         </div>
       </div>
-
+    </>
+    )}
     </div>
   );
 };
