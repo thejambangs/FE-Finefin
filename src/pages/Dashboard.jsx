@@ -1,19 +1,57 @@
 // src/pages/Dashboard.jsx
-import React from "react";
-import { Link, useNavigate } from "react-router-dom"; // Import useNavigate untuk fungsionalitas tombol logout
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom"; 
+import axiosInstance from "../Utils/axiosInstance"; // 👇 Import Axios Instance kalian
 import WalletImage from "../assets/images/dompet digital.jpg";
 import Kebutuhan from "../assets/images/kebutuhan.jpg";
 import Investasi from "../assets/images/investasi.jpg";
 import Hiburan from "../assets/images/keinginan.jpg";
+
 const Dashboard = () => {
   const navigate = useNavigate();
+  
+  // 👇 State untuk menyimpan data transaksi dari backend
+  const [transactions, setTransactions] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // 👇 Ambil data saat halaman pertama kali dimuat
+  useEffect(() => {
+    fetchTransactions();
+  }, []);
+
+  const fetchTransactions = async () => {
+    try {
+      // Pastikan endpoint ini sesuai dengan route BE (Sprint 6)
+      const response = await axiosInstance.get('/api/transaction');
+      // Asumsi backend mereturn response.data.data berupa array
+      setTransactions(response.data.data); 
+    } catch (error) {
+      console.error("Gagal menarik riwayat transaksi:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleLogout = () => {
-    // Menghapus token autentikasi dari penyimpanan lokal browser
     localStorage.removeItem("token");
     localStorage.removeItem("is_Onboarded");
-    // Tendang user kembali ke pintu login utama
     navigate("/login");
+  };
+
+  const handleDelete = async (id) => {
+    // 👇 Optimistic UI Update: Hapus dari layar duluan biar terasa instan!
+    const previousTransactions = [...transactions];
+    setTransactions((prev) => prev.filter((trx) => trx._id !== id));
+
+    try {
+      // Tembak API delete ke backend
+      await axiosInstance.delete(`/api/transaction/${id}`);
+    } catch (error) {
+      console.error("Gagal menghapus transaksi:", error);
+      // Kalau gagal di server, kembalikan data ke layar (Rollback)
+      setTransactions(previousTransactions);
+      alert("Gagal menghapus data. Periksa koneksi atau coba lagi nanti.");
+    }
   };
 
   return (
