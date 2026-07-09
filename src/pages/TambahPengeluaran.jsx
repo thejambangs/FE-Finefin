@@ -1,5 +1,5 @@
 // src/pages/TambahPengeluaran.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axiosInstance from '../utils/axiosInstance'; 
 import { ToastContainer, toast } from 'react-toastify';
@@ -42,10 +42,6 @@ const AddTransaction = () => {
       let cleanValue = value.replace(/[^0-9]/g, '');
       if (cleanValue.length > 1 && cleanValue.startsWith('0')) cleanValue = cleanValue.replace(/^0+/, '');
       const formattedValue = cleanValue.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-    if (name === 'totalPengeluaran') {
-      let cleanValue = value.replace(/[^0-9]/g, '');
-      if (cleanValue.length > 1 && cleanValue.startsWith('0')) cleanValue = cleanValue.replace(/^0+/, '');
-      const formattedValue = cleanValue.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
       setFormData((prev) => ({ ...prev, [name]: formattedValue }));
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
@@ -54,8 +50,8 @@ const AddTransaction = () => {
 
   const handleSimpan = async (e) => {
     e.preventDefault();
-
-    // --- VALIDASI FORM (SATPAM) ---
+    
+    // --- VALIDASI FORM ---
     if (!formData.namaPengeluaran.trim()) {
       toast.error("Nama pengeluaran tidak boleh kosong!");
       return;
@@ -65,27 +61,22 @@ const AddTransaction = () => {
       return;
     }
     if (!formData.totalPengeluaran || parseInt(formData.totalPengeluaran.replace(/\./g, '')) <= 0) {
-    if (!formData.totalPengeluaran || parseInt(formData.totalPengeluaran.replace(/\./g, '')) <= 0) {
       toast.error("Total pengeluaran harus lebih dari 0!");
       return;
     }
     if (!formData.metodePembayaran) {
       toast.warning("Silakan pilih metode pembayaran!");
-      toast.warning("Silakan pilih metode pembayaran!");
       return;
     }
     if (!formData.tanggal) {
-      toast.warning("Silakan pilih tanggal!");
       toast.warning("Silakan pilih tanggal!");
       return;
     }
 
     try {
       const rawNominal = formData.totalPengeluaran.replace(/\./g, '');
-      const rawNominal = formData.totalPengeluaran.replace(/\./g, '');
       const dataPayload = {
         ...formData,
-        totalPengeluaran: parseInt(rawNominal, 10)
         totalPengeluaran: parseInt(rawNominal, 10)
       };
 
@@ -107,8 +98,6 @@ const AddTransaction = () => {
       });
 
     } catch (error) {
-      const errorMessage = error.response?.data?.message || "Terjadi kesalahan server.";
-      toast.error(`Gagal: ${errorMessage}`);
       const errorMessage = error.response?.data?.message || "Terjadi kesalahan server.";
       toast.error(`Gagal: ${errorMessage}`);
     }
@@ -140,15 +129,14 @@ const AddTransaction = () => {
         </div>
       </div>
 
-      {/* ================= KONTEN FORM ================= */}
-      <div className="w-full max-w-4xl px-6 py-12 flex flex-col gap-10 mt-8">
+      {/* ================= KONTEN FORM ATAS ================= */}
+      <div className="w-full max-w-5xl px-6 py-12 flex flex-col gap-10 mt-2">
         <div className="flex flex-col gap-2">
           <h1 className="text-4xl font-bold text-black">Tambahkan Pengeluaran</h1>
           <p className="text-base text-gray-600">Catat pengeluaran dalam hitungan detik—dasbor Anda akan langsung diperbarui.</p>
         </div>
 
-        <form onSubmit={handleSimpan} className="flex flex-col gap-8 w-full">
-          {/* Nama Pengeluaran */}
+        <form onSubmit={handleSimpan} className="flex flex-col gap-6 w-full">
           <label className="form-control w-full">
             <div className="label pb-1"><span className="label-text font-bold text-black text-sm">Nama Pengeluaran</span></div>
             <input 
@@ -163,7 +151,6 @@ const AddTransaction = () => {
           </label>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Total Pengeluaran (Sudah Berformat Titik & Anti-Negatif) */}
             <label className="form-control w-full">
               <div className="label pb-1"><span className="label-text font-bold text-black text-sm">Total Pengeluaran</span></div>
               <div className="input input-bordered flex items-center gap-2 rounded-md border-gray-200 bg-white focus-within:border-gray-400">
@@ -201,11 +188,11 @@ const AddTransaction = () => {
                 onChange={handleInputChange}
                 className="select select-bordered w-full rounded-md border-gray-200 bg-white text-gray-500 focus:outline-none focus:border-gray-400 font-normal"
               >
-                <option value="" disabled>
-                  Pilih metode...
-                </option>
-                <option value="Cashless">💳 Cashless (Qris/Transfer)</option>
-                <option value="Cash">💵 Cash (Tunai)</option>
+                <option value="" disabled>Pilih metode...</option>
+                <option value="Kartu Kredit">Kartu Kredit</option>
+                <option value="Transfer Bank">Transfer Bank</option>
+                <option value="Gopay">Gopay</option>
+                <option value="Tunai">Tunai</option>
               </select>
               <div className="label pt-1">
                 <span className="label-text-alt text-gray-400">
@@ -231,12 +218,11 @@ const AddTransaction = () => {
             </label>
           </div>
 
-          {/* ================= TOMBOL AKSI ================= */}
-          <div className="flex flex-row justify-center gap-6 mt-8 w-full max-w-md mx-auto">
-            <button
-              type="button"
-              onClick={() => navigate("/dashboard")}
-              className="btn flex-grow rounded-md text-lg h-14 bg-white text-black border border-black hover:bg-gray-100 font-bold"
+          <div className="flex flex-row justify-center gap-4 mt-6 w-full max-w-sm mx-auto">
+            <button 
+              type="button" 
+              onClick={() => navigate('/dashboard')}
+              className="btn flex-1 rounded-md text-sm bg-white text-black border border-black hover:bg-gray-50 font-semibold"
             >
               Batal
             </button>
@@ -250,74 +236,64 @@ const AddTransaction = () => {
         </form>
       </div>
 
-      {/* ================= GARIS PEMBATAS ================= */}
-      <div className="w-full max-w-5xl px-6 my-6">
-        <hr className="border-gray-100" />
-      </div>
-
-      {/* ================= KONTEN TABEL BAWAH ================= */}
-      <div className="w-full max-w-5xl px-6">
-        <div className="border border-gray-200 rounded-xl overflow-hidden bg-white shadow-sm">
-          <div className="overflow-x-auto">
-            <table className="table w-full text-black">
-              {/* Header Tabel */}
-              <thead className="bg-white border-b border-gray-200 text-black font-bold">
-                <tr>
-                  <th className="bg-transparent py-4 pl-6">No</th>
-                  <th className="bg-transparent py-4">Tanggal</th>
-                  <th className="bg-transparent py-4">Nama Pengeluaran</th>
-                  <th className="bg-transparent py-4">Total Pengeluaran</th>
-                  <th className="bg-transparent py-4">Kategori</th>
-                  <th className="bg-transparent py-4">Metode Pembayaran</th>
-                  <th className="bg-transparent py-4 text-center pr-6">Aksi</th>
-                </tr>
-              </thead>
-              
-              {/* Body Tabel */}
-              <tbody>
-                {transactions.length === 0 ? (
-                  <tr>
-                    <td colSpan="7" className="text-center py-12 text-gray-400">
-                      Belum ada transaksi. Silakan input pengeluaran di atas.
-                    </td>
-                  </tr>
-                ) : (
-                  // Melakukan perulangan (map) data dari state transactions
-                  transactions.map((trx, index) => (
-                    <tr key={trx.id} className="border-b border-gray-100 hover:bg-gray-50">
-                      <td className="pl-6">{index + 1}</td>
-                      <td>{trx.tanggal.split('-').reverse().join('/')} {/* Mengubah format YYYY-MM-DD jadi DD/MM/YYYY */}</td>
-                      <td className="font-medium">{trx.namaPengeluaran}</td>
-                      <td>Rp. {trx.totalPengeluaran.toLocaleString('id-ID')}</td>
-                      <td>
-                        <span className="px-3 py-1 bg-gray-100 text-gray-600 rounded-md text-xs font-semibold">
-                          {trx.kategori}
-                        </span>
-                      </td>
-                      <td>{trx.metodePembayaran}</td>
-                      <td className="flex justify-center gap-4 pr-6 py-4">
-                        {/* Ikon Edit (Pensil Biru) */}
-                        <button className="text-blue-500 hover:text-blue-700 transition-colors" title="Edit">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                          </svg>
-                        </button>
-                        {/* Ikon Hapus (Tong Sampah Merah) */}
-                        <button className="text-red-500 hover:text-red-700 transition-colors" title="Hapus">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
-                          </svg>
-                        </button>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+      {/* ================= KONDISI: TAMPILKAN TABEL JIKA ADA TRANSAKSI ================= */}
+      {transactions.length > 0 && (
+        <>
+          <div className="w-full max-w-5xl px-6 my-6">
+            <hr className="border-gray-100" />
           </div>
-        </div>
-      </div>
 
+          <div className="w-full max-w-5xl px-6">
+            <div className="border border-gray-200 rounded-xl overflow-hidden bg-white shadow-sm">
+              <div className="overflow-x-auto">
+                <table className="table w-full text-black">
+                  <thead className="bg-white border-b border-gray-200 text-black font-bold">
+                    <tr>
+                      <th className="bg-transparent py-4 pl-6">No</th>
+                      <th className="bg-transparent py-4">Tanggal</th>
+                      <th className="bg-transparent py-4">Nama Pengeluaran</th>
+                      <th className="bg-transparent py-4">Total Pengeluaran</th>
+                      <th className="bg-transparent py-4">Kategori</th>
+                      <th className="bg-transparent py-4">Metode Pembayaran</th>
+                      <th className="bg-transparent py-4 text-center pr-6">Aksi</th>
+                    </tr>
+                  </thead>
+                  
+                  <tbody>
+                    {transactions.map((trx, index) => (
+                      <tr key={trx._id || index} className="border-b border-gray-100 hover:bg-gray-50">
+                        <td className="pl-6">{index + 1}</td>
+                        {/* Validasi jika format tanggal trx.tanggal valid dari string ISO */}
+                        <td>{trx.tanggal ? trx.tanggal.substring(0, 10).split('-').reverse().join('/') : '-'}</td>
+                        <td className="font-medium">{trx.namaPengeluaran}</td>
+                        <td>Rp. {(trx.totalPengeluaran || 0).toLocaleString('id-ID')}</td>
+                        <td>
+                          <span className="px-3 py-1 bg-gray-100 text-gray-600 rounded-md text-xs font-semibold">
+                            {trx.kategori}
+                          </span>
+                        </td>
+                        <td>{trx.metodePembayaran}</td>
+                        <td className="flex justify-center gap-4 pr-6 py-4">
+                          <button className="text-blue-500 hover:text-blue-700 transition-colors" title="Edit">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                              <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                            </svg>
+                          </button>
+                          <button className="text-red-500 hover:text-red-700 transition-colors" title="Hapus">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                              <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                            </svg>
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };
