@@ -223,7 +223,7 @@ const getCategoryIcon = (kategori) => {
                   Pengeluaran
                 </span>
                 <p className="text-2xl font-bold text-black mt-1">
-                  {formatRupiah(summary?.expenses)}
+                  {formatRupiah(summary?.expense)}
                 </p>
               </div>
               <div className="text-center md:text-left">
@@ -323,33 +323,34 @@ const getCategoryIcon = (kategori) => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto w-full">
-            <div className="flex items-center gap-4 p-4 border border-gray-100 rounded-xl bg-white shadow-sm">
-              <div className="w-14 h-14 bg-gray-100 text-neutral rounded-xl shrink-0 flex items-center justify-center text-2xl font-bold select-none">
-                🍱
-              </div>
-              <div className="flex flex-col">
-                <h4 className="font-bold text-black text-lg">
-                  Makan siang di warteg Bahari bu aminah
-                </h4>
-                <p className="text-sm text-gray-400 mt-0.5">
-                  Kategori: Makanan • Total: Rp345.000
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center gap-4 p-4 border border-gray-100 rounded-xl bg-white shadow-sm">
-              <div className="w-14 h-14 bg-gray-100 text-neutral rounded-xl shrink-0 flex items-center justify-center text-2xl font-bold select-none">
-                🎯
-              </div>
-              <div className="flex flex-col">
-                <h4 className="font-bold text-black text-lg">
-                  Nongkrong di warkop sukarasa
-                </h4>
-                <p className="text-sm text-gray-400 mt-0.5">
-                  Kategori: Hiburan • Total: Rp180.000
-                </p>
-              </div>
-            </div>
+         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto w-full">
+            {summary?.categories?.length > 0 ? (
+              summary.categories.map((category) => (
+                <div
+                  key={category.kategori}
+                  className="flex items-center gap-4 p-4 border border-gray-100 rounded-xl bg-white shadow-sm"
+                >
+                  <div className="w-14 h-14 bg-gray-100 text-neutral rounded-xl shrink-0 flex items-center justify-center text-2xl font-bold">
+                    {getCategoryIcon(category.kategori)}
+                  </div>
+                  <div className="flex flex-col">
+                    <h4 className="font-bold text-black text-lg">
+                      {category.kategori}
+                    </h4>
+                    <p className="text-sm text-gray-400 mt-1">
+                      Total Pengeluaran
+                    </p>
+                    <p className="font-bold text-red-500">
+                      {formatRupiah(category.total)}
+                    </p>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p className="col-span-full text-center text-gray-400">
+                Belum ada data kategori.
+              </p>
+            )}
           </div>
         </div>
 
