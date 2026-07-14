@@ -12,12 +12,14 @@ const Dashboard = () => {
   
   // 👇 State untuk menyimpan data transaksi dari backend
   const [transactions, setTransactions] = useState([]);
+  const [summary, setSummary] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
   // 👇 Ambil data saat halaman pertama kali dimuat
   useEffect(() => {
-    fetchTransactions();
-  }, []);
+  fetchTransactions();
+  fetchSummary();
+}, []);
 
   const fetchTransactions = async () => {
     try {
@@ -31,6 +33,18 @@ const Dashboard = () => {
       setIsLoading(false);
     }
   };
+
+  const fetchSummary = async () => {
+  try {
+    const response = await axiosInstance.get("/api/transaction/summary");
+
+    console.log(response.data.data);
+
+    setSummary(response.data.data);
+  } catch (error) {
+    console.error("Gagal mengambil ringkasan:", error);
+  }
+};
 
   const handleLogout = () => {
     localStorage.removeItem("token");
