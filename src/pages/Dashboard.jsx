@@ -81,22 +81,6 @@ const getCategoryIcon = (kategori) => {
     navigate("/login");
   };
 
-  const handleDelete = async (id) => {
-    // 👇 Optimistic UI Update: Hapus dari layar duluan biar terasa instan!
-    const previousTransactions = [...transactions];
-    setTransactions((prev) => prev.filter((trx) => trx._id !== id));
-
-    try {
-      // Tembak API delete ke backend
-      await axiosInstance.delete(`/api/transaction/${id}`);
-    } catch (error) {
-      console.error("Gagal menghapus transaksi:", error);
-      // Kalau gagal di server, kembalikan data ke layar (Rollback)
-      setTransactions(previousTransactions);
-      alert("Gagal menghapus data. Periksa koneksi atau coba lagi nanti.");
-    }
-  };
-
   const percentage =
   summary && summary.income > 0
     ? Math.min(
