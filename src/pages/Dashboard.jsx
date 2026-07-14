@@ -97,12 +97,17 @@ const getCategoryIcon = (kategori) => {
     }
   };
 
-  const percentage = summary
-  ? Math.min(
-      Math.round((summary.expense / summary.income) * 100),
-      100
-    )
-  : 0;
+  const percentage =
+  summary && summary.income > 0
+    ? Math.min(
+        Math.round((summary.expense / summary.income) * 100),
+        100
+      )
+    : 0;
+
+  const kebutuhan = (summary?.income || 0) * 0.5;
+  const investasi = (summary?.income || 0) * 0.3;
+  const hiburan = (summary?.income || 0) * 0.2;
 
   return (
     <div className="min-h-screen w-full bg-base-100 text-neutral font-sans p-6 lg:p-12 flex flex-col gap-6">
@@ -380,8 +385,7 @@ const getCategoryIcon = (kategori) => {
                   Kebutuhan Pokok (50%)
                 </h4>
                 <p className="text-sm text-gray-400 mt-1">
-                  Disarankan: Rp2.600.000 • Untuk makan, kosan, dan tagihan
-                  wajib.
+                  {formatRupiah(kebutuhan)}
                 </p>
               </div>
             </div>
@@ -398,7 +402,7 @@ const getCategoryIcon = (kategori) => {
                   Tabungan & Investasi (30%)
                 </h4>
                 <p className="text-sm text-gray-400 mt-1">
-                  Disarankan: Rp1.560.000 • Membangun masa depan aman.
+                  {formatRupiah(investasi)}
                 </p>
               </div>
             </div>
@@ -415,7 +419,7 @@ const getCategoryIcon = (kategori) => {
                   Keinginan & Hiburan (20%)
                 </h4>
                 <p className="text-sm text-gray-400 mt-1">
-                  Disarankan: Rp1.040.000 • Menjaga kesehatan mentalmu.
+                  {formatRupiah(hiburan)} 
                 </p>
               </div>
             </div>
