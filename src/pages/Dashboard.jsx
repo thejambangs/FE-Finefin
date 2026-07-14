@@ -1,7 +1,7 @@
 // src/pages/Dashboard.jsx
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom"; 
-import axiosInstance from "../Utils/axiosInstance"; // 👇 Import Axios Instance kalian
+import axiosInstance from "../Utils/axiosInstance"; 
 import WalletImage from "../assets/images/dompet digital.jpg";
 import Kebutuhan from "../assets/images/kebutuhan.jpg";
 import Investasi from "../assets/images/investasi.jpg";
@@ -10,20 +10,18 @@ import Hiburan from "../assets/images/keinginan.jpg";
 const Dashboard = () => {
   const navigate = useNavigate();
   
-  // 👇 State untuk menyimpan data transaksi dari backend
+  // State untuk menyimpan data transaksi dari backend
   const [transactions, setTransactions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // 👇 Ambil data saat halaman pertama kali dimuat
+  // Ambil data saat halaman pertama kali dimuat
   useEffect(() => {
     fetchTransactions();
   }, []);
 
   const fetchTransactions = async () => {
     try {
-      // Pastikan endpoint ini sesuai dengan route BE (Sprint 6)
       const response = await axiosInstance.get('/api/transaction');
-      // Asumsi backend mereturn response.data.data berupa array
       setTransactions(response.data.data); 
     } catch (error) {
       console.error("Gagal menarik riwayat transaksi:", error);
@@ -39,16 +37,13 @@ const Dashboard = () => {
   };
 
   const handleDelete = async (id) => {
-    // 👇 Optimistic UI Update: Hapus dari layar duluan biar terasa instan!
     const previousTransactions = [...transactions];
     setTransactions((prev) => prev.filter((trx) => trx._id !== id));
 
     try {
-      // Tembak API delete ke backend
       await axiosInstance.delete(`/api/transaction/${id}`);
     } catch (error) {
       console.error("Gagal menghapus transaksi:", error);
-      // Kalau gagal di server, kembalikan data ke layar (Rollback)
       setTransactions(previousTransactions);
       alert("Gagal menghapus data. Periksa koneksi atau coba lagi nanti.");
     }
@@ -56,50 +51,35 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen w-full bg-base-100 text-neutral font-sans p-6 lg:p-12 flex flex-col gap-6">
-      {/* ================= HEADER NAVIGATION (SESUAI GAMBAR BARU) ================= */}
+      
+      {/* ================= HEADER NAVIGATION ================= */}
       <div className="navbar bg-white border-b border-gray-100 px-4 md:px-8 shrink-0">
-        {/* Sisi Kiri: Logo Branding */}
         <div className="flex-1">
-          <Link
-            to="/dashboard"
-            className="text-3xl font-black text-black tracking-tighter uppercase select-none"
-          >
+          <Link to="/dashboard" className="text-3xl font-black text-black tracking-tighter uppercase select-none">
             FineFin
           </Link>
         </div>
 
-        {/* Sisi Tengah: Pilihan Menu Utama */}
         <div className="flex-none">
           <ul className="menu menu-horizontal px-1 gap-6 text-lg font-semibold">
             <li>
-              {/* Indikator Menu Aktif: Teks hitam pekat dengan border bawah solid */}
-              <Link
-                to="/dashboard"
-                className="text-black border-b-2 border-black rounded-none px-1 pb-2 pt-2 bg-transparent hover:bg-transparent"
-              >
+              <Link to="/dashboard" className="text-black border-b-2 border-black rounded-none px-1 pb-2 pt-2 bg-transparent hover:bg-transparent">
                 Dasbor
               </Link>
             </li>
             <li>
-              <Link
-                to="/transaction"
-                className="text-gray-400 rounded-none px-1 pb-2 pt-2 bg-transparent hover:bg-transparent hover:text-black"
-              >
+              <Link to="/transaction" className="text-gray-400 rounded-none px-1 pb-2 pt-2 bg-transparent hover:bg-transparent hover:text-black">
                 Transaksi
               </Link>
             </li>
             <li>
-              <Link
-                to="/kuesioner"
-                className="text-gray-400 rounded-none px-1 pb-2 pt-2 bg-transparent hover:bg-transparent hover:text-black"
-              >
+              <Link to="/kuesioner" className="text-gray-400 rounded-none px-1 pb-2 pt-2 bg-transparent hover:bg-transparent hover:text-black">
                 Kuesioner
               </Link>
             </li>
           </ul>
         </div>
 
-        {/* Sisi Kanan: Akses Aksi Pengguna */}
         <div className="flex-none ml-8">
           <button
             onClick={handleLogout}
@@ -110,9 +90,8 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Jeda Spacing Pemisah Header dengan Konten Utama */}
       <div className="mt-4 flex flex-col gap-12">
-        {/* ================= HERO SECTION: SEKILAS TENTANG DOMPET ANDA ================= */}
+        {/* ================= HERO SECTION ================= */}
         <div className="w-full bg-neutral text-neutral-content p-8 lg:p-12 rounded-2xl flex flex-col lg:flex-row justify-between items-center gap-8 shadow-md">
           <div className="flex flex-col gap-4 max-w-xl">
             <h1 className="text-4xl lg:text-5xl font-black tracking-tight text-white">
@@ -133,136 +112,59 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* ================= REKAP BULANAN ================= */}
-        <div className="w-full flex flex-col gap-6 items-center">
-          <div className="text-center">
-            <h2 className="text-3xl font-extrabold text-black">
-              Rekap Bulanan
-            </h2>
-            <p className="text-gray-500">
-              Analisis perbandingan persentase antara alokasi dana dan realisasi
-              pengeluaran Anda.
-            </p>
-          </div>
-
-          <div className="w-full max-w-4xl border border-gray-100 shadow-sm p-8 rounded-2xl flex flex-col md:flex-row items-center justify-around gap-8 bg-white">
-            <div className="flex justify-center items-center">
-              <div
-                className="radial-progress text-neutral bg-gray-100 border-4 border-gray-100 font-bold"
-                style={{
-                  "--value": 70,
-                  "--size": "12rem",
-                  "--thickness": "2rem",
-                }}
-                role="progressbar"
-              >
-                70%
-              </div>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 w-full md:w-auto">
-              <div className="text-center md:text-left">
-                <span className="text-sm text-gray-400 font-medium">
-                  Pemasukan
-                </span>
-                <p className="text-2xl font-bold text-black mt-1">
-                  Rp5.200.000
-                </p>
-              </div>
-              <div className="text-center md:text-left">
-                <span className="text-sm text-gray-400 font-medium">
-                  Pengeluaran
-                </span>
-                <p className="text-2xl font-bold text-black mt-1">
-                  Rp3.150.000
-                </p>
-              </div>
-              <div className="text-center md:text-left">
-                <span className="text-sm text-gray-400 font-medium">
-                  Anggaran Tersisa
-                </span>
-                <p className="text-2xl font-bold text-black mt-1">
-                  Rp2.050.000
-                </p>
+        {/* ================= IMPLEMENTASI SPRINT 7: VISUALISASI KEUANGAN ================= */}
+        <div className="w-full flex flex-col gap-8">
+          
+          {/* 1. KARTU SISA SALDO (Hero Stat) */}
+          <div className="stats bg-black text-white shadow-xl rounded-2xl w-full py-8 px-4 md:px-8">
+            <div className="stat flex flex-col gap-2">
+              <div className="stat-title text-gray-400 font-medium text-lg uppercase tracking-wider">Sisa Saldo Uang Kamu</div>
+              {/* Nantinya nominal ini bisa dihubungkan dengan state transaksi oleh FE 2 */}
+              <div className="stat-value text-5xl md:text-7xl font-black text-white drop-shadow-md">Rp 2.050.000</div>
+              <div className="stat-desc text-green-400 mt-2 text-base font-semibold flex items-center gap-1">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+                +14% dari bulan lalu
               </div>
             </div>
           </div>
-        </div>
 
-        {/* ================= GRAFIK PENGELUARAN ================= */}
-        <div className="w-full flex flex-col gap-6">
-          <div className="text-center">
-            <h2 className="text-3xl font-extrabold text-black">
-              Grafik Pengeluaran
-            </h2>
-            <p className="text-gray-500">
-              Detail visualisasi grafik tren pengeluaran mingguan dan dompet
-              cerdas Anda.
-            </p>
-          </div>
-
+          {/* 2. WADAH GRAFIK UNTUK RECHARTS (Tugas FE 1: Membuat panggung untuk FE 2) */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Grafik 1: Pengeluaran Mingguan */}
-            <div className="border border-gray-100 shadow-sm p-6 rounded-2xl bg-white flex flex-col gap-4">
-              <h3 className="text-lg font-bold text-black">
-                Pengeluaran Mingguan
-              </h3>
-              <div className="w-full h-48 bg-gray-50 rounded-xl flex items-end relative overflow-hidden p-2">
-                <svg
-                  viewBox="0 0 500 150"
-                  className="w-full h-36"
-                  preserveAspectRatio="none"
-                >
-                  <defs>
-                    <linearGradient
-                      id="areaGradient"
-                      x1="0"
-                      y1="0"
-                      x2="0"
-                      y2="1"
-                    >
-                      <stop offset="0%" stopColor="#9ca3af" stopOpacity="0.5" />
-                      <stop
-                        offset="100%"
-                        stopColor="#9ca3af"
-                        stopOpacity="0.0"
-                      />
-                    </linearGradient>
-                  </defs>
-                  <path
-                    d="M 0 150 L 0 100 C 60 50, 90 130, 140 90 C 190 50, 230 140, 290 100 C 350 60, 390 30, 440 70 L 500 40 L 500 150 Z"
-                    fill="url(#areaGradient)"
-                  />
-                  <path
-                    d="M 0 100 C 60 50, 90 130, 140 90 C 190 50, 230 140, 290 100 C 350 60, 390 30, 440 70 L 500 40"
-                    fill="none"
-                    stroke="#4b5563"
-                    strokeWidth="3"
-                    strokeLinecap="round"
-                  />
-                </svg>
-                <div className="absolute bottom-2 right-4 text-xs font-semibold text-gray-400">
-                  Minggu ini
+            
+            {/* Wadah Kiri: Proporsi Kategori (Pie Chart) */}
+            <div className="border border-gray-200 shadow-sm p-6 rounded-2xl bg-white flex flex-col gap-4 min-h-[400px]">
+              <div>
+                <h3 className="text-xl font-bold text-black">Proporsi Kategori</h3>
+                <p className="text-sm text-gray-500">Distribusi pengeluaranmu bulan ini.</p>
+              </div>
+              <div className="flex-grow flex items-center justify-center bg-gray-50 rounded-xl border-2 border-dashed border-gray-200 hover:bg-gray-100 transition-colors">
+                <div className="text-center">
+                  <span className="text-gray-400 font-semibold block mb-2">[ Area Pie Chart Recharts ]</span>
+                  <span className="text-xs text-gray-400">FE 2 akan menyisipkan grafik di sini</span>
                 </div>
               </div>
             </div>
 
-            {/* Grafik 2: Dompet Cerdas */}
-            <div className="border border-gray-100 shadow-sm p-6 rounded-2xl bg-white flex flex-col gap-4">
-              <h3 className="text-lg font-bold text-black">Dompet Cerdas</h3>
-              <div className="w-full h-48 bg-gray-50 rounded-xl flex items-end justify-between p-6 gap-3">
-                <div className="w-8 bg-neutral h-32 rounded-t-sm"></div>
-                <div className="w-8 bg-neutral h-16 rounded-t-sm"></div>
-                <div className="w-8 bg-neutral h-24 rounded-t-sm"></div>
-                <div className="w-8 bg-neutral h-12 rounded-t-sm"></div>
-                <div className="w-8 bg-neutral h-36 rounded-t-sm"></div>
-                <div className="w-8 bg-neutral h-20 rounded-t-sm"></div>
+            {/* Wadah Kanan: Tren Pengeluaran (Area/Line Chart) */}
+            <div className="border border-gray-200 shadow-sm p-6 rounded-2xl bg-white flex flex-col gap-4 min-h-[400px]">
+              <div>
+                <h3 className="text-xl font-bold text-black">Tren Pengeluaran</h3>
+                <p className="text-sm text-gray-500">Grafik arus kas mingguan.</p>
+              </div>
+              <div className="flex-grow flex items-center justify-center bg-gray-50 rounded-xl border-2 border-dashed border-gray-200 hover:bg-gray-100 transition-colors">
+                <div className="text-center">
+                  <span className="text-gray-400 font-semibold block mb-2">[ Area Line Chart Recharts ]</span>
+                  <span className="text-xs text-gray-400">FE 2 akan menyisipkan grafik di sini</span>
+                </div>
               </div>
             </div>
+
           </div>
         </div>
+        {/* ================= AKHIR IMPLEMENTASI SPRINT 7 ================= */}
 
         {/* ================= RINGKASAN PENGELUARAN ================= */}
-        <div className="w-full flex flex-col gap-6">
+        <div className="w-full flex flex-col gap-6 mt-6">
           <div className="text-center">
             <h2 className="text-3xl font-extrabold text-black">
               Ringkasan Pengeluaran
