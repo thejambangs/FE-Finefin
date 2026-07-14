@@ -23,6 +23,27 @@ const Dashboard = () => {
   }).format(number || 0);
 };
 
+const getCategoryIcon = (kategori) => {
+  switch (kategori) {
+    case "Makanan & Minuman":
+      return "🍱";
+    case "Transport":
+      return "🚗";
+    case "Belanja":
+      return "🛒";
+    case "Hiburan":
+      return "🎮";
+    case "Kesehatan":
+      return "💊";
+    case "Investasi":
+      return "📈";
+    case "Gaji":
+      return "💰";
+    default:
+      return "💳";
+  }
+};
+
   // 👇 Ambil data saat halaman pertama kali dimuat
   useEffect(() => {
   fetchTransactions();
@@ -412,97 +433,44 @@ const Dashboard = () => {
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 justify-items-center max-w-5xl mx-auto w-full">
-            <div className="flex flex-col items-center gap-2 text-center bg-gray-50/50 p-4 rounded-xl w-full">
-              <div className="avatar placeholder">
-                <div className="bg-neutral text-neutral-content rounded-full w-14 h-14 shadow-sm text-xl flex items-center justify-center">
-                  🛒
+            {transactions.length === 0 ? (
+              <p className="col-span-full text-center text-gray-400">
+                Belum ada transaksi.
+              </p>
+            ) : (
+            transactions.slice(0, 6).map((item) => (
+              <div
+                key={item._id}
+                className="flex flex-col items-center gap-2 text-center bg-gray-50/50 p-4 rounded-xl w-full"
+              >
+                <div className="avatar placeholder">
+                  <div className="bg-neutral text-neutral-content rounded-full w-14 h-14 shadow-sm text-xl flex items-center justify-center">
+                    {getCategoryIcon(item.kategori)}
+                  </div>
                 </div>
-              </div>
-              <div>
-                <h4 className="font-bold text-black text-sm">Kebutuhan</h4>
-                <span className="text-xs text-gray-400">Belanja Bulanan</span>
-                <p className="text-red-500 font-semibold text-sm mt-1">
-                  -Rp548.230
-                </p>
-              </div>
-            </div>
 
-            <div className="flex flex-col items-center gap-2 text-center bg-gray-50/50 p-4 rounded-xl w-full">
-              <div className="avatar placeholder">
-                <div className="bg-neutral text-neutral-content rounded-full w-14 h-14 shadow-sm text-xl flex items-center justify-center">
-                  ☕
-                </div>
-              </div>
-              <div>
-                <h4 className="font-bold text-black text-sm">Coffee</h4>
-                <span className="text-xs text-gray-400">Nongkrong Senja</span>
-                <p className="text-red-500 font-semibold text-sm mt-1">
-                  -Rp100.750
-                </p>
-              </div>
-            </div>
+                <div>
+                  <h4 className="font-bold text-black text-sm">
+                    {item.namaTransaksi}
+                  </h4>
 
-            <div className="flex flex-col items-center gap-2 text-center bg-gray-50/50 p-4 rounded-xl w-full">
-              <div className="avatar placeholder">
-                <div className="bg-neutral text-neutral-content rounded-full w-14 h-14 shadow-sm text-xl flex items-center justify-center">
-                  🚗
-                </div>
-              </div>
-              <div>
-                <h4 className="font-bold text-black text-sm">Bensin</h4>
-                <span className="text-xs text-gray-400">Bahan Bakar Mobil</span>
-                <p className="text-red-500 font-semibold text-sm mt-1">
-                  -Rp600.000
-                </p>
-              </div>
-            </div>
+                  <span className="text-xs text-gray-400">
+                    {item.kategori}
+                  </span>
 
-            <div className="flex flex-col items-center gap-2 text-center bg-gray-50/50 p-4 rounded-xl w-full">
-              <div className="avatar placeholder">
-                <div className="bg-neutral text-neutral-content rounded-full w-14 h-14 shadow-sm text-xl flex items-center justify-center">
-                  🧴
+                  <p
+                    className={`font-semibold text-sm mt-1 ${
+                      item.tipeTransaksi === "Pemasukan"
+                        ? "text-green-600"
+                        : "text-red-500"
+                    }`}
+                  >
+                    {item.tipeTransaksi === "Pemasukan" ? "+" : "-"}
+                    {formatRupiah(item.nominal)}
+                  </p>
                 </div>
               </div>
-              <div>
-                <h4 className="font-bold text-black text-sm">Kesehatan</h4>
-                <span className="text-xs text-gray-400">
-                  Skincare / Vitamin
-                </span>
-                <p className="text-red-500 font-semibold text-sm mt-1">
-                  -Rp100.000
-                </p>
-              </div>
-            </div>
-
-            <div className="flex flex-col items-center gap-2 text-center bg-gray-50/50 p-4 rounded-xl w-full">
-              <div className="avatar placeholder">
-                <div className="bg-neutral text-neutral-content rounded-full w-14 h-14 shadow-sm text-xl flex items-center justify-center">
-                  📱
-                </div>
-              </div>
-              <div>
-                <h4 className="font-bold text-black text-sm">Paket Internet</h4>
-                <span className="text-xs text-gray-400">Kerja & Kuliah</span>
-                <p className="text-red-500 font-semibold text-sm mt-1">
-                  -Rp80.000
-                </p>
-              </div>
-            </div>
-
-            <div className="flex flex-col items-center gap-2 text-center bg-gray-50/50 p-4 rounded-xl w-full">
-              <div className="avatar placeholder">
-                <div className="bg-neutral text-neutral-content rounded-full w-14 h-14 shadow-sm text-xl flex items-center justify-center">
-                  💰
-                </div>
-              </div>
-              <div>
-                <h4 className="font-bold text-black text-sm">Gaji Utama</h4>
-                <span className="text-xs text-gray-400">Pemasukan Tetap</span>
-                <p className="text-green-600 font-semibold text-sm mt-1">
-                  +Rp10.000.000
-                </p>
-              </div>
-            </div>
+            )))}
           </div>
         </div>
 
