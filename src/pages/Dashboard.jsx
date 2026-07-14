@@ -15,6 +15,14 @@ const Dashboard = () => {
   const [summary, setSummary] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  const formatRupiah = (number) => {
+  return new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    minimumFractionDigits: 0,
+  }).format(number || 0);
+};
+
   // 👇 Ambil data saat halaman pertama kali dimuat
   useEffect(() => {
   fetchTransactions();
@@ -67,6 +75,13 @@ const Dashboard = () => {
       alert("Gagal menghapus data. Periksa koneksi atau coba lagi nanti.");
     }
   };
+
+  const percentage = summary
+  ? Math.min(
+      Math.round((summary.expense / summary.income) * 100),
+      100
+    )
+  : 0;
 
   return (
     <div className="min-h-screen w-full bg-base-100 text-neutral font-sans p-6 lg:p-12 flex flex-col gap-6">
@@ -164,13 +179,13 @@ const Dashboard = () => {
               <div
                 className="radial-progress text-neutral bg-gray-100 border-4 border-gray-100 font-bold"
                 style={{
-                  "--value": 70,
+                  "--value": percentage,
                   "--size": "12rem",
                   "--thickness": "2rem",
                 }}
                 role="progressbar"
               >
-                70%
+                {percentage}%
               </div>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 w-full md:w-auto">
@@ -179,7 +194,7 @@ const Dashboard = () => {
                   Pemasukan
                 </span>
                 <p className="text-2xl font-bold text-black mt-1">
-                  Rp5.200.000
+                  {formatRupiah(summary?.income)}
                 </p>
               </div>
               <div className="text-center md:text-left">
@@ -187,7 +202,7 @@ const Dashboard = () => {
                   Pengeluaran
                 </span>
                 <p className="text-2xl font-bold text-black mt-1">
-                  Rp3.150.000
+                  {formatRupiah(summary?.expenses)}
                 </p>
               </div>
               <div className="text-center md:text-left">
@@ -195,7 +210,7 @@ const Dashboard = () => {
                   Anggaran Tersisa
                 </span>
                 <p className="text-2xl font-bold text-black mt-1">
-                  Rp2.050.000
+                  {formatRupiah(summary?.balance)}
                 </p>
               </div>
             </div>
