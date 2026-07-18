@@ -86,9 +86,6 @@ const RoboAdvisor = () => {
             <p className="text-gray-500 mt-2 text-sm font-medium">Performa dan progres target Anda bulan ini.</p>
           </div>
           <div className="flex flex-row gap-4">
-            <button className="btn btn-outline border-gray-300 text-black hover:bg-gray-50 font-bold px-8 rounded-md">
-              Lihat Rekomendasi
-            </button>
             <button className="btn bg-black text-white hover:bg-neutral-800 font-bold px-8 border-none rounded-md">
               Unduh Laporan
             </button>
@@ -108,12 +105,6 @@ const RoboAdvisor = () => {
                 Warna menunjukkan status sisa uang: merah = surplus, kuning = seimbang, merah = defisit.
                 <br/><span className="text-xs text-gray-400">(Catatan desain: Teks asli menulis merah=surplus dan merah=defisit, silakan sesuaikan logikanya nanti)</span>
               </p>
-            </div>
-            
-            <div>
-              <button className="btn btn-outline btn-sm h-10 border-gray-300 text-black hover:bg-gray-50 font-semibold px-6 rounded-md">
-                Ubah Profil Risiko
-              </button>
             </div>
 
             <div className="grid grid-cols-2 gap-4 mt-2">

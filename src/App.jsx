@@ -10,7 +10,7 @@ import Register from "./pages/Register.jsx";
 import Kuesioner from "./pages/onboarding/Kuesioner.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import AddTransaction from "./pages/TambahPengeluaran.jsx";
-import RoboAdvisor from "./pages/RoboAdviser.jsx";
+import RoboAdvisor from "./pages/RoboAdvisor.jsx";
 
 // PENTING: Karena kita mendaftarkan rute /dashboard,
 // pastikan FE 1 atau FE 2 sudah membuat file dummy (kosong) bernama Dashboard.jsx di dalam folder pages agar tidak error.

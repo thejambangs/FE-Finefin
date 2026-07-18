@@ -151,7 +151,7 @@ const getCategoryIcon = (kategori) => {
                 to="/robo-adviser"
                 className="text-gray-400 rounded-none px-1 pb-2 pt-2 bg-transparent hover:bg-transparent hover:text-black"
               >
-                Robo-Adviser
+                Robo-Advisor
               </Link>
             </li>
           </ul>
