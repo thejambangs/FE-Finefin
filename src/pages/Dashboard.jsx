@@ -2,6 +2,17 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom"; 
 import axiosInstance from "../Utils/axiosInstance"; // 👇 Import Axios Instance kalian
+import {
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  Cell,
+  XAxis,
+  YAxis,
+  Tooltip,
+} from "recharts";
 import WalletImage from "../assets/images/dompet digital.jpg";
 import Kebutuhan from "../assets/images/kebutuhan.jpg";
 import Investasi from "../assets/images/investasi.jpg";
@@ -108,6 +119,14 @@ const getCategoryIcon = (kategori) => {
   const kebutuhan = (summary?.income || 0) * 0.5;
   const investasi = (summary?.income || 0) * 0.3;
   const hiburan = (summary?.income || 0) * 0.2;
+
+  const COLORS = [
+  "#111827",
+  "#374151",
+  "#6B7280",
+  "#9CA3AF",
+  "#D1D5DB",
+];
 
   return (
     <div className="min-h-screen w-full bg-base-100 text-neutral font-sans p-6 lg:p-12 flex flex-col gap-6">
@@ -250,7 +269,7 @@ const getCategoryIcon = (kategori) => {
               Grafik Pengeluaran
             </h2>
             <p className="text-gray-500">
-              Detail visualisasi grafik tren pengeluaran mingguan dan dompet
+              Detail visualisasi grafik tren pengeluaran per kategori dan distribusi pengeluaran
               cerdas Anda.
             </p>
           </div>
@@ -259,42 +278,26 @@ const getCategoryIcon = (kategori) => {
             {/* Grafik 1: Pengeluaran Mingguan */}
             <div className="border border-gray-100 shadow-sm p-6 rounded-2xl bg-white flex flex-col gap-4">
               <h3 className="text-lg font-bold text-black">
-                Pengeluaran Mingguan
+                Pengeluaran per Kategori
               </h3>
               <div className="w-full h-48 bg-gray-50 rounded-xl flex items-end relative overflow-hidden p-2">
-                <svg
-                  viewBox="0 0 500 150"
-                  className="w-full h-36"
-                  preserveAspectRatio="none"
-                >
-                  <defs>
-                    <linearGradient
-                      id="areaGradient"
-                      x1="0"
-                      y1="0"
-                      x2="0"
-                      y2="1"
-                    >
-                      <stop offset="0%" stopColor="#9ca3af" stopOpacity="0.5" />
-                      <stop
-                        offset="100%"
-                        stopColor="#9ca3af"
-                        stopOpacity="0.0"
-                      />
-                    </linearGradient>
-                  </defs>
-                  <path
-                    d="M 0 150 L 0 100 C 60 50, 90 130, 140 90 C 190 50, 230 140, 290 100 C 350 60, 390 30, 440 70 L 500 40 L 500 150 Z"
-                    fill="url(#areaGradient)"
-                  />
-                  <path
-                    d="M 0 100 C 60 50, 90 130, 140 90 C 190 50, 230 140, 290 100 C 350 60, 390 30, 440 70 L 500 40"
-                    fill="none"
-                    stroke="#4b5563"
-                    strokeWidth="3"
-                    strokeLinecap="round"
-                  />
-                </svg>
+                <ResponsiveContainer width="100%" height={220}>
+                  <BarChart data={summary?.categories || []}>
+                    <XAxis
+                      dataKey="kategori"
+                      tick={{ fontSize: 12 }}
+                    />
+
+                    <YAxis />
+
+                    <Tooltip />
+
+                    <Bar
+                      dataKey="total"
+                      radius={[6, 6, 0, 0]}
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
                 <div className="absolute bottom-2 right-4 text-xs font-semibold text-gray-400">
                   Minggu ini
                 </div>
@@ -303,15 +306,27 @@ const getCategoryIcon = (kategori) => {
 
             {/* Grafik 2: Dompet Cerdas */}
             <div className="border border-gray-100 shadow-sm p-6 rounded-2xl bg-white flex flex-col gap-4">
-              <h3 className="text-lg font-bold text-black">Dompet Cerdas</h3>
-              <div className="w-full h-48 bg-gray-50 rounded-xl flex items-end justify-between p-6 gap-3">
-                <div className="w-8 bg-neutral h-32 rounded-t-sm"></div>
-                <div className="w-8 bg-neutral h-16 rounded-t-sm"></div>
-                <div className="w-8 bg-neutral h-24 rounded-t-sm"></div>
-                <div className="w-8 bg-neutral h-12 rounded-t-sm"></div>
-                <div className="w-8 bg-neutral h-36 rounded-t-sm"></div>
-                <div className="w-8 bg-neutral h-20 rounded-t-sm"></div>
-              </div>
+              <h3 className="text-lg font-bold text-black">Distribusi Pengeluaran</h3>
+              <ResponsiveContainer width="100%" height={220}>
+                <PieChart>
+                  <Pie
+                    data={summary?.categories || []}
+                    dataKey="total"
+                    nameKey="kategori"
+                    outerRadius={80}
+                    label
+                  >
+                    {(summary?.categories || []).map((entry, index) => (
+                      <Cell
+                        key={index}
+                        fill={COLORS[index % COLORS.length]}
+                      />
+                    ))}
+                  </Pie>
+
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
             </div>
           </div>
         </div>
