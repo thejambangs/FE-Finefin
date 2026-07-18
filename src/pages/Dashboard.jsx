@@ -2,6 +2,17 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom"; 
 import axiosInstance from "../Utils/axiosInstance"; // 👇 Import Axios Instance kalian
+import {
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  Cell,
+  XAxis,
+  YAxis,
+  Tooltip,
+} from "recharts";
 import WalletImage from "../assets/images/dompet digital.jpg";
 import Kebutuhan from "../assets/images/kebutuhan.jpg";
 import Investasi from "../assets/images/investasi.jpg";
@@ -12,12 +23,43 @@ const Dashboard = () => {
   
   // 👇 State untuk menyimpan data transaksi dari backend
   const [transactions, setTransactions] = useState([]);
+  const [summary, setSummary] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  const formatRupiah = (number) => {
+  return new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    minimumFractionDigits: 0,
+  }).format(number || 0);
+};
+
+const getCategoryIcon = (kategori) => {
+  switch (kategori) {
+    case "Makanan & Minuman":
+      return "🍱";
+    case "Transport":
+      return "🚗";
+    case "Belanja":
+      return "🛒";
+    case "Hiburan":
+      return "🎮";
+    case "Kesehatan":
+      return "💊";
+    case "Investasi":
+      return "📈";
+    case "Gaji":
+      return "💰";
+    default:
+      return "💳";
+  }
+};
 
   // 👇 Ambil data saat halaman pertama kali dimuat
   useEffect(() => {
-    fetchTransactions();
-  }, []);
+  fetchTransactions();
+  fetchSummary();
+}, []);
 
   const fetchTransactions = async () => {
     try {
@@ -32,27 +74,43 @@ const Dashboard = () => {
     }
   };
 
+  const fetchSummary = async () => {
+  try {
+    const response = await axiosInstance.get("/api/transaction/summary");
+
+    console.log(response.data.data);
+
+    setSummary(response.data.data);
+  } catch (error) {
+    console.error("Gagal mengambil ringkasan:", error);
+  }
+};
+
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("is_Onboarded");
     navigate("/login");
   };
 
-  const handleDelete = async (id) => {
-    // 👇 Optimistic UI Update: Hapus dari layar duluan biar terasa instan!
-    const previousTransactions = [...transactions];
-    setTransactions((prev) => prev.filter((trx) => trx._id !== id));
+  const percentage =
+  summary && summary.income > 0
+    ? Math.min(
+        Math.round((summary.expense / summary.income) * 100),
+        100
+      )
+    : 0;
 
-    try {
-      // Tembak API delete ke backend
-      await axiosInstance.delete(`/api/transaction/${id}`);
-    } catch (error) {
-      console.error("Gagal menghapus transaksi:", error);
-      // Kalau gagal di server, kembalikan data ke layar (Rollback)
-      setTransactions(previousTransactions);
-      alert("Gagal menghapus data. Periksa koneksi atau coba lagi nanti.");
-    }
-  };
+  const kebutuhan = (summary?.income || 0) * 0.5;
+  const investasi = (summary?.income || 0) * 0.3;
+  const hiburan = (summary?.income || 0) * 0.2;
+
+  const COLORS = [
+  "#111827",
+  "#374151",
+  "#6B7280",
+  "#9CA3AF",
+  "#D1D5DB",
+];
 
   return (
     <div className="min-h-screen w-full bg-base-100 text-neutral font-sans p-6 lg:p-12 flex flex-col gap-6">
@@ -150,13 +208,13 @@ const Dashboard = () => {
               <div
                 className="radial-progress text-neutral bg-gray-100 border-4 border-gray-100 font-bold"
                 style={{
-                  "--value": 70,
+                  "--value": percentage,
                   "--size": "12rem",
                   "--thickness": "2rem",
                 }}
                 role="progressbar"
               >
-                70%
+                {percentage}%
               </div>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 w-full md:w-auto">
@@ -165,7 +223,7 @@ const Dashboard = () => {
                   Pemasukan
                 </span>
                 <p className="text-2xl font-bold text-black mt-1">
-                  Rp5.200.000
+                  {formatRupiah(summary?.income)}
                 </p>
               </div>
               <div className="text-center md:text-left">
@@ -173,7 +231,7 @@ const Dashboard = () => {
                   Pengeluaran
                 </span>
                 <p className="text-2xl font-bold text-black mt-1">
-                  Rp3.150.000
+                  {formatRupiah(summary?.expense)}
                 </p>
               </div>
               <div className="text-center md:text-left">
@@ -181,7 +239,7 @@ const Dashboard = () => {
                   Anggaran Tersisa
                 </span>
                 <p className="text-2xl font-bold text-black mt-1">
-                  Rp2.050.000
+                  {formatRupiah(summary?.balance)}
                 </p>
               </div>
             </div>
@@ -195,7 +253,7 @@ const Dashboard = () => {
               Grafik Pengeluaran
             </h2>
             <p className="text-gray-500">
-              Detail visualisasi grafik tren pengeluaran mingguan dan dompet
+              Detail visualisasi grafik tren pengeluaran per kategori dan distribusi pengeluaran
               cerdas Anda.
             </p>
           </div>
@@ -204,42 +262,26 @@ const Dashboard = () => {
             {/* Grafik 1: Pengeluaran Mingguan */}
             <div className="border border-gray-100 shadow-sm p-6 rounded-2xl bg-white flex flex-col gap-4">
               <h3 className="text-lg font-bold text-black">
-                Pengeluaran Mingguan
+                Pengeluaran per Kategori
               </h3>
               <div className="w-full h-48 bg-gray-50 rounded-xl flex items-end relative overflow-hidden p-2">
-                <svg
-                  viewBox="0 0 500 150"
-                  className="w-full h-36"
-                  preserveAspectRatio="none"
-                >
-                  <defs>
-                    <linearGradient
-                      id="areaGradient"
-                      x1="0"
-                      y1="0"
-                      x2="0"
-                      y2="1"
-                    >
-                      <stop offset="0%" stopColor="#9ca3af" stopOpacity="0.5" />
-                      <stop
-                        offset="100%"
-                        stopColor="#9ca3af"
-                        stopOpacity="0.0"
-                      />
-                    </linearGradient>
-                  </defs>
-                  <path
-                    d="M 0 150 L 0 100 C 60 50, 90 130, 140 90 C 190 50, 230 140, 290 100 C 350 60, 390 30, 440 70 L 500 40 L 500 150 Z"
-                    fill="url(#areaGradient)"
-                  />
-                  <path
-                    d="M 0 100 C 60 50, 90 130, 140 90 C 190 50, 230 140, 290 100 C 350 60, 390 30, 440 70 L 500 40"
-                    fill="none"
-                    stroke="#4b5563"
-                    strokeWidth="3"
-                    strokeLinecap="round"
-                  />
-                </svg>
+                <ResponsiveContainer width="100%" height={220}>
+                  <BarChart data={summary?.categories || []}>
+                    <XAxis
+                      dataKey="kategori"
+                      tick={{ fontSize: 12 }}
+                    />
+
+                    <YAxis />
+
+                    <Tooltip />
+
+                    <Bar
+                      dataKey="total"
+                      radius={[6, 6, 0, 0]}
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
                 <div className="absolute bottom-2 right-4 text-xs font-semibold text-gray-400">
                   Minggu ini
                 </div>
@@ -248,15 +290,27 @@ const Dashboard = () => {
 
             {/* Grafik 2: Dompet Cerdas */}
             <div className="border border-gray-100 shadow-sm p-6 rounded-2xl bg-white flex flex-col gap-4">
-              <h3 className="text-lg font-bold text-black">Dompet Cerdas</h3>
-              <div className="w-full h-48 bg-gray-50 rounded-xl flex items-end justify-between p-6 gap-3">
-                <div className="w-8 bg-neutral h-32 rounded-t-sm"></div>
-                <div className="w-8 bg-neutral h-16 rounded-t-sm"></div>
-                <div className="w-8 bg-neutral h-24 rounded-t-sm"></div>
-                <div className="w-8 bg-neutral h-12 rounded-t-sm"></div>
-                <div className="w-8 bg-neutral h-36 rounded-t-sm"></div>
-                <div className="w-8 bg-neutral h-20 rounded-t-sm"></div>
-              </div>
+              <h3 className="text-lg font-bold text-black">Distribusi Pengeluaran</h3>
+              <ResponsiveContainer width="100%" height={220}>
+                <PieChart>
+                  <Pie
+                    data={summary?.categories || []}
+                    dataKey="total"
+                    nameKey="kategori"
+                    outerRadius={80}
+                    label
+                  >
+                    {(summary?.categories || []).map((entry, index) => (
+                      <Cell
+                        key={index}
+                        fill={COLORS[index % COLORS.length]}
+                      />
+                    ))}
+                  </Pie>
+
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
             </div>
           </div>
         </div>
@@ -273,33 +327,34 @@ const Dashboard = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto w-full">
-            <div className="flex items-center gap-4 p-4 border border-gray-100 rounded-xl bg-white shadow-sm">
-              <div className="w-14 h-14 bg-gray-100 text-neutral rounded-xl shrink-0 flex items-center justify-center text-2xl font-bold select-none">
-                🍱
-              </div>
-              <div className="flex flex-col">
-                <h4 className="font-bold text-black text-lg">
-                  Makan siang di warteg Bahari bu aminah
-                </h4>
-                <p className="text-sm text-gray-400 mt-0.5">
-                  Kategori: Makanan • Total: Rp345.000
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center gap-4 p-4 border border-gray-100 rounded-xl bg-white shadow-sm">
-              <div className="w-14 h-14 bg-gray-100 text-neutral rounded-xl shrink-0 flex items-center justify-center text-2xl font-bold select-none">
-                🎯
-              </div>
-              <div className="flex flex-col">
-                <h4 className="font-bold text-black text-lg">
-                  Nongkrong di warkop sukarasa
-                </h4>
-                <p className="text-sm text-gray-400 mt-0.5">
-                  Kategori: Hiburan • Total: Rp180.000
-                </p>
-              </div>
-            </div>
+         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto w-full">
+            {summary?.categories?.length > 0 ? (
+              summary.categories.map((category) => (
+                <div
+                  key={category.kategori}
+                  className="flex items-center gap-4 p-4 border border-gray-100 rounded-xl bg-white shadow-sm"
+                >
+                  <div className="w-14 h-14 bg-gray-100 text-neutral rounded-xl shrink-0 flex items-center justify-center text-2xl font-bold">
+                    {getCategoryIcon(category.kategori)}
+                  </div>
+                  <div className="flex flex-col">
+                    <h4 className="font-bold text-black text-lg">
+                      {category.kategori}
+                    </h4>
+                    <p className="text-sm text-gray-400 mt-1">
+                      Total Pengeluaran
+                    </p>
+                    <p className="font-bold text-red-500">
+                      {formatRupiah(category.total)}
+                    </p>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p className="col-span-full text-center text-gray-400">
+                Belum ada data kategori.
+              </p>
+            )}
           </div>
         </div>
 
@@ -329,8 +384,7 @@ const Dashboard = () => {
                   Kebutuhan Pokok (50%)
                 </h4>
                 <p className="text-sm text-gray-400 mt-1">
-                  Disarankan: Rp2.600.000 • Untuk makan, kosan, dan tagihan
-                  wajib.
+                  {formatRupiah(kebutuhan)}
                 </p>
               </div>
             </div>
@@ -347,7 +401,7 @@ const Dashboard = () => {
                   Tabungan & Investasi (30%)
                 </h4>
                 <p className="text-sm text-gray-400 mt-1">
-                  Disarankan: Rp1.560.000 • Membangun masa depan aman.
+                  {formatRupiah(investasi)}
                 </p>
               </div>
             </div>
@@ -364,7 +418,7 @@ const Dashboard = () => {
                   Keinginan & Hiburan (20%)
                 </h4>
                 <p className="text-sm text-gray-400 mt-1">
-                  Disarankan: Rp1.040.000 • Menjaga kesehatan mentalmu.
+                  {formatRupiah(hiburan)} 
                 </p>
               </div>
             </div>
@@ -383,160 +437,44 @@ const Dashboard = () => {
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 justify-items-center max-w-5xl mx-auto w-full">
-            <div className="flex flex-col items-center gap-2 text-center bg-gray-50/50 p-4 rounded-xl w-full">
-              <div className="avatar placeholder">
-                <div className="bg-neutral text-neutral-content rounded-full w-14 h-14 shadow-sm text-xl flex items-center justify-center">
-                  🛒
-                </div>
-              </div>
-              <div>
-                <h4 className="font-bold text-black text-sm">Kebutuhan</h4>
-                <span className="text-xs text-gray-400">Belanja Bulanan</span>
-                <p className="text-red-500 font-semibold text-sm mt-1">
-                  -Rp548.230
-                </p>
-              </div>
-            </div>
-
-            <div className="flex flex-col items-center gap-2 text-center bg-gray-50/50 p-4 rounded-xl w-full">
-              <div className="avatar placeholder">
-                <div className="bg-neutral text-neutral-content rounded-full w-14 h-14 shadow-sm text-xl flex items-center justify-center">
-                  ☕
-                </div>
-              </div>
-              <div>
-                <h4 className="font-bold text-black text-sm">Coffee</h4>
-                <span className="text-xs text-gray-400">Nongkrong Senja</span>
-                <p className="text-red-500 font-semibold text-sm mt-1">
-                  -Rp100.750
-                </p>
-              </div>
-            </div>
-
-            <div className="flex flex-col items-center gap-2 text-center bg-gray-50/50 p-4 rounded-xl w-full">
-              <div className="avatar placeholder">
-                <div className="bg-neutral text-neutral-content rounded-full w-14 h-14 shadow-sm text-xl flex items-center justify-center">
-                  🚗
-                </div>
-              </div>
-              <div>
-                <h4 className="font-bold text-black text-sm">Bensin</h4>
-                <span className="text-xs text-gray-400">Bahan Bakar Mobil</span>
-                <p className="text-red-500 font-semibold text-sm mt-1">
-                  -Rp600.000
-                </p>
-              </div>
-            </div>
-
-            <div className="flex flex-col items-center gap-2 text-center bg-gray-50/50 p-4 rounded-xl w-full">
-              <div className="avatar placeholder">
-                <div className="bg-neutral text-neutral-content rounded-full w-14 h-14 shadow-sm text-xl flex items-center justify-center">
-                  🧴
-                </div>
-              </div>
-              <div>
-                <h4 className="font-bold text-black text-sm">Kesehatan</h4>
-                <span className="text-xs text-gray-400">
-                  Skincare / Vitamin
-                </span>
-                <p className="text-red-500 font-semibold text-sm mt-1">
-                  -Rp100.000
-                </p>
-              </div>
-            </div>
-
-            <div className="flex flex-col items-center gap-2 text-center bg-gray-50/50 p-4 rounded-xl w-full">
-              <div className="avatar placeholder">
-                <div className="bg-neutral text-neutral-content rounded-full w-14 h-14 shadow-sm text-xl flex items-center justify-center">
-                  📱
-                </div>
-              </div>
-              <div>
-                <h4 className="font-bold text-black text-sm">Paket Internet</h4>
-                <span className="text-xs text-gray-400">Kerja & Kuliah</span>
-                <p className="text-red-500 font-semibold text-sm mt-1">
-                  -Rp80.000
-                </p>
-              </div>
-            </div>
-
-            <div className="flex flex-col items-center gap-2 text-center bg-gray-50/50 p-4 rounded-xl w-full">
-              <div className="avatar placeholder">
-                <div className="bg-neutral text-neutral-content rounded-full w-14 h-14 shadow-sm text-xl flex items-center justify-center">
-                  💰
-                </div>
-              </div>
-              <div>
-                <h4 className="font-bold text-black text-sm">Gaji Utama</h4>
-                <span className="text-xs text-gray-400">Pemasukan Tetap</span>
-                <p className="text-green-600 font-semibold text-sm mt-1">
-                  +Rp10.000.000
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* ================= MEMBER SUCCESS STORIES ================= */}
-        <div className="w-full flex flex-col gap-6">
-          <div className="text-center">
-            <h2 className="text-3xl font-extrabold text-black">
-              Member success stories
-            </h2>
-            <p className="text-gray-500">
-              Apa kata mereka yang berhasil mengatur finansial sehat bersama
-              FineFin.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto w-full">
-            <div className="p-6 border border-gray-100 rounded-2xl bg-white shadow-sm flex flex-col gap-3">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center font-bold text-xs select-none">
-                  AR
-                </div>
-                <div>
-                  <h5 className="font-bold text-black text-sm">Arkan R.</h5>
-                  <span className="text-xs text-warning">★★★★★</span>
-                </div>
-              </div>
-              <p className="text-sm text-gray-500">
-                "Sangat terbantu mengatur uang bulanan anak kos. Sekarang gak
-                ada lagi cerita merana di akhir bulan!"
+            {transactions.length === 0 ? (
+              <p className="col-span-full text-center text-gray-400">
+                Belum ada transaksi.
               </p>
-            </div>
-
-            <div className="p-6 border border-gray-100 rounded-2xl bg-white shadow-sm flex flex-col gap-3">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center font-bold text-xs select-none">
-                  NZ
+            ) : (
+            transactions.slice(0, 6).map((item) => (
+              <div
+                key={item._id}
+                className="flex flex-col items-center gap-2 text-center bg-gray-50/50 p-4 rounded-xl w-full"
+              >
+                <div className="avatar placeholder">
+                  <div className="bg-neutral text-neutral-content rounded-full w-14 h-14 shadow-sm text-xl flex items-center justify-center">
+                    {getCategoryIcon(item.kategori)}
+                  </div>
                 </div>
+
                 <div>
-                  <h5 className="font-bold text-black text-sm">Nabila Z.</h5>
-                  <span className="text-xs text-warning">★★★★★</span>
+                  <h4 className="font-bold text-black text-sm">
+                    {item.namaTransaksi}
+                  </h4>
+
+                  <span className="text-xs text-gray-400">
+                    {item.kategori}
+                  </span>
+
+                  <p
+                    className={`font-semibold text-sm mt-1 ${
+                      item.tipeTransaksi === "Pemasukan"
+                        ? "text-green-600"
+                        : "text-red-500"
+                    }`}
+                  >
+                    {item.tipeTransaksi === "Pemasukan" ? "+" : "-"}
+                    {formatRupiah(item.nominal)}
+                  </p>
                 </div>
               </div>
-              <p className="text-sm text-gray-500">
-                "Fitur Dompet Cerdasnya juara banget buat ngetrack pengeluaran
-                impulsif beli kopi tiap sore."
-              </p>
-            </div>
-
-            <div className="p-6 border border-gray-100 rounded-2xl bg-white shadow-sm flex flex-col gap-3">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center font-bold text-xs select-none">
-                  FA
-                </div>
-                <div>
-                  <h5 className="font-bold text-black text-sm">Fahmi A.</h5>
-                  <span className="text-xs text-warning">★★★★★</span>
-                </div>
-              </div>
-              <p className="text-sm text-gray-500">
-                "Rekomendasi alokasi dananya akurat. Kerangka UI webnya juga
-                responsif dan super minimalis."
-              </p>
-            </div>
+            )))}
           </div>
         </div>
 
