@@ -478,69 +478,6 @@ const getCategoryIcon = (kategori) => {
           </div>
         </div>
 
-        {/* ================= MEMBER SUCCESS STORIES ================= */}
-        <div className="w-full flex flex-col gap-6">
-          <div className="text-center">
-            <h2 className="text-3xl font-extrabold text-black">
-              Member success stories
-            </h2>
-            <p className="text-gray-500">
-              Apa kata mereka yang berhasil mengatur finansial sehat bersama
-              FineFin.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto w-full">
-            <div className="p-6 border border-gray-100 rounded-2xl bg-white shadow-sm flex flex-col gap-3">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center font-bold text-xs select-none">
-                  AR
-                </div>
-                <div>
-                  <h5 className="font-bold text-black text-sm">Arkan R.</h5>
-                  <span className="text-xs text-warning">★★★★★</span>
-                </div>
-              </div>
-              <p className="text-sm text-gray-500">
-                "Sangat terbantu mengatur uang bulanan anak kos. Sekarang gak
-                ada lagi cerita merana di akhir bulan!"
-              </p>
-            </div>
-
-            <div className="p-6 border border-gray-100 rounded-2xl bg-white shadow-sm flex flex-col gap-3">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center font-bold text-xs select-none">
-                  NZ
-                </div>
-                <div>
-                  <h5 className="font-bold text-black text-sm">Nabila Z.</h5>
-                  <span className="text-xs text-warning">★★★★★</span>
-                </div>
-              </div>
-              <p className="text-sm text-gray-500">
-                "Fitur Dompet Cerdasnya juara banget buat ngetrack pengeluaran
-                impulsif beli kopi tiap sore."
-              </p>
-            </div>
-
-            <div className="p-6 border border-gray-100 rounded-2xl bg-white shadow-sm flex flex-col gap-3">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center font-bold text-xs select-none">
-                  FA
-                </div>
-                <div>
-                  <h5 className="font-bold text-black text-sm">Fahmi A.</h5>
-                  <span className="text-xs text-warning">★★★★★</span>
-                </div>
-              </div>
-              <p className="text-sm text-gray-500">
-                "Rekomendasi alokasi dananya akurat. Kerangka UI webnya juga
-                responsif dan super minimalis."
-              </p>
-            </div>
-          </div>
-        </div>
-
         {/* ================= FOOTER ================= */}
         <div className="text-center border-t border-gray-100 pt-8 mt-4">
           <p className="text-sm font-bold text-black mb-1">
