@@ -29,47 +29,23 @@ const TambahPengeluaran = () => {
       const response = await axiosInstance.get('/api/transaction');
       setTransactions(response.data.data || []);
     } catch (error) {
-      console.error("Gagal menarik data transaksi:", error);
+      console.error("Gagal menarik data:", error);
     }
   };
 
-  const handleDelete = async (_id) => {
-    if (!window.confirm("Apakah Anda yakin ingin menghapus transaksi ini?")) return;
-    try {
-      await axiosInstance.delete(`/api/transaction/${_id}`);
-      setTransactions((prev) => prev.filter((trx) => (trx._id || trx.id) !== _id));
-      toast.success("Transaksi berhasil dihapus!");
-    } catch (error) {
-      toast.error("Gagal menghapus data.");
-    }
-  };
-
-  const handleEditClick = (trx) => {
-    setEditId(trx._id || trx.id);
-    setFormData({
-      namaTransaksi: trx.namaTransaksi,
-      tipeTransaksi: trx.tipeTransaksi,
-      // Mengubah angka dari DB menjadi format titik untuk input
-      nominal: new Intl.NumberFormat('id-ID').format(trx.nominal),
-      kategori: trx.kategori,
-      metodePembayaran: trx.metodePembayaran,
-      tanggal: trx.tanggal ? trx.tanggal.split('T')[0] : ''
-    });
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
+  // FUNGSI UTAMA YANG DIPERBAIKI
   const handleInputChange = (e) => {
     const { name, value } = e.target;
 
     if (name === 'nominal') {
-      const cleanValue = value.replace(/[^0-9]/g, '');
-      if (cleanValue === '') {
-        setFormData((prev) => ({ ...prev, nominal: '' }));
-      } else {
-        // Format otomatis ke format Rupiah (dengan titik)
-        const formattedValue = new Intl.NumberFormat('id-ID').format(cleanValue);
-        setFormData((prev) => ({ ...prev, nominal: formattedValue }));
-      }
+      // 1. Bersihkan semua karakter selain angka
+      let rawValue = value.replace(/[^0-9]/g, '');
+      
+      // 2. Format menjadi ribuan dengan titik
+      // Menggunakan regex untuk menambahkan titik di setiap 3 digit
+      let formatted = rawValue.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+      
+      setFormData((prev) => ({ ...prev, nominal: formatted }));
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
@@ -78,97 +54,95 @@ const TambahPengeluaran = () => {
   const handleSimpan = async (e) => {
     e.preventDefault();
     
-    // Menghapus titik sebelum kirim ke database
-    const rawNominal = String(formData.nominal).replace(/\./g, '');
+    // Hapus semua titik sebelum dikirim ke database
+    const nominalAngka = formData.nominal.replace(/\./g, '');
     
-    if (!formData.namaTransaksi?.trim()) {
-      toast.error("Nama transaksi tidak boleh kosong!");
-      return;
-    }
-    if (!formData.tipeTransaksi) {
-      toast.warning("Silakan pilih tipe transaksi!");
-      return;
-    }
-    if (!rawNominal || parseInt(rawNominal, 10) <= 0) {
-      toast.error("Total transaksi harus lebih dari 0!");
-      return;
-    }
-    if (!formData.kategori) {
-      toast.warning("Silakan pilih kategori!");
-      return;
-    }
-    if (!formData.metodePembayaran) {
-      toast.warning("Silakan pilih metode pembayaran!");
-      return;
-    }
-    if (!formData.tanggal) {
-      toast.warning("Silakan pilih tanggal!");
+    if (!formData.namaTransaksi || !formData.tipeTransaksi || !nominalAngka || !formData.kategori) {
+      toast.error("Mohon lengkapi semua data!");
       return;
     }
 
     try {
-      const dataPayload = {
-        ...formData,
-        nominal: parseInt(rawNominal, 10)
-      };
-
+      const payload = { ...formData, nominal: parseInt(nominalAngka, 10) };
+      
       if (editId) {
-        const response = await axiosInstance.put(`/api/transaction/${editId}`, dataPayload);
-        const updatedTransaction = response.data.data || { ...dataPayload, _id: editId };
-        setTransactions((prev) => prev.map((trx) => ((trx._id || trx.id) === editId ? updatedTransaction : trx)));
-        toast.success("Transaksi berhasil diperbarui!");
+        await axiosInstance.put(`/api/transaction/${editId}`, payload);
+        toast.success("Berhasil diperbarui!");
         setEditId(null);
       } else {
-        const response = await axiosInstance.post('/api/transaction', dataPayload);
-        const newTransaction = response.data.data || { _id: Date.now().toString(), ...dataPayload };
-        setTransactions((prev) => [...prev, newTransaction]);
-        toast.success("Transaksi berhasil ditambahkan!");
+        await axiosInstance.post('/api/transaction', payload);
+        toast.success("Berhasil ditambahkan!");
       }
       
       setFormData({ namaTransaksi: '', tipeTransaksi: '', nominal: '', kategori: '', metodePembayaran: '', tanggal: '' });
+      fetchTransactions();
     } catch (error) {
-      const errorMessage = error.response?.data?.message || "Terjadi kesalahan server.";
-      toast.error(`Gagal: ${errorMessage}`);
+      toast.error("Gagal menyimpan data.");
     }
   };
 
+  const handleEditClick = (trx) => {
+    setEditId(trx._id);
+    setFormData({
+      namaTransaksi: trx.namaTransaksi,
+      tipeTransaksi: trx.tipeTransaksi,
+      // Format angka mentah dari DB ke format titik saat edit
+      nominal: trx.nominal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."),
+      kategori: trx.kategori,
+      metodePembayaran: trx.metodePembayaran,
+      tanggal: trx.tanggal ? trx.tanggal.split('T')[0] : ''
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
-    <div className="min-h-screen w-full bg-white text-neutral font-sans flex flex-col items-center pb-20">
-      <ToastContainer position="top-right" autoClose={3000} />
+    <div className="min-h-screen w-full bg-white text-black p-8">
+      <ToastContainer />
+      <h1 className="text-3xl font-bold mb-6">Tambah Transaksi</h1>
       
-      <div className="navbar bg-white border-b border-gray-100 px-4 md:px-8 w-full shrink-0">
-        <div className="flex-1">
-          <Link to="/dashboard" className="text-3xl font-black text-black tracking-tighter uppercase select-none">FineFin</Link>
+      <form onSubmit={handleSimpan} className="flex flex-col gap-4 max-w-lg">
+        <input 
+          type="text" name="namaTransaksi" placeholder="Nama Transaksi" 
+          value={formData.namaTransaksi} onChange={handleInputChange} 
+          className="input input-bordered w-full" 
+        />
+
+        <select name="tipeTransaksi" value={formData.tipeTransaksi} onChange={handleInputChange} className="select select-bordered w-full">
+          <option value="">Pilih Tipe</option>
+          <option value="Pemasukan">Pemasukan</option>
+          <option value="Pengeluaran">Pengeluaran</option>
+        </select>
+
+        {/* INPUT NOMINAL DENGAN TITIK */}
+        <div className="flex items-center gap-2 border p-2 rounded">
+          <span>Rp</span>
+          <input 
+            type="text" name="nominal" placeholder="0" 
+            value={formData.nominal} onChange={handleInputChange} 
+            className="w-full outline-none" 
+          />
         </div>
-      </div>
 
-      <div className="w-full max-w-5xl px-6 py-12 flex flex-col gap-10">
-        <form onSubmit={handleSimpan} className="flex flex-col gap-6 w-full">
-          <label className="form-control w-full">
-            <div className="label pb-1"><span className="label-text font-bold text-black text-sm">Nama Transaksi</span></div>
-            <input type="text" name="namaTransaksi" value={formData.namaTransaksi} onChange={handleInputChange} className="input input-bordered w-full rounded-md border-gray-200" />
-          </label>
-
-          <label className="form-control w-full">
-            <div className="label pb-1"><span className="label-text font-bold text-black text-sm">Tipe Transaksi</span></div>
-            <select name="tipeTransaksi" value={formData.tipeTransaksi} onChange={handleInputChange} className="select select-bordered w-full rounded-md border-gray-200">
-              <option value="" disabled>Pilih tipe...</option>
-              <option value="Pengeluaran">Pengeluaran</option>
-              <option value="Pemasukan">Pemasukan</option>
-            </select>
-          </label>
-
-          <label className="form-control w-full">
-            <div className="label pb-1"><span className="label-text font-bold text-black text-sm">Total Transaksi</span></div>
-            <div className="input input-bordered flex items-center gap-2 rounded-md border-gray-200">
-              <span className="text-gray-500">Rp.</span>
-              <input type="text" name="nominal" placeholder="0" value={formData.nominal} onChange={handleInputChange} className="grow bg-transparent border-none focus:outline-none" />
-            </div>
-          </label>
-          
-          <button type="submit" className="btn w-full bg-black text-white">Simpan Data</button>
-        </form>
-      </div>
+        <button type="submit" className="btn btn-primary">Simpan</button>
+      </form>
+      
+      {/* Tabel Transaksi */}
+      <table className="table mt-10">
+        <thead>
+          <tr><th>Nama</th><th>Nominal</th><th>Aksi</th></tr>
+        </thead>
+        <tbody>
+          {transactions.map((trx) => (
+            <tr key={trx._id}>
+              <td>{trx.namaTransaksi}</td>
+              <td>Rp. {trx.nominal.toLocaleString('id-ID')}</td>
+              <td>
+                <button onClick={() => handleEditClick(trx)} className="text-blue-500 mr-2">Edit</button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };
