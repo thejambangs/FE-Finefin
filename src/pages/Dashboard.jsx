@@ -304,7 +304,7 @@ const Dashboard = () => {
               </div>
             </div>
 
-            {/* Donut Chart */}
+            {/* Donut Chart (Berisi Label Persentase) */}
             <div className="border border-slate-200/80 shadow-sm p-6 rounded-3xl bg-white flex flex-col gap-4">
               <h3 className="text-base font-bold text-slate-800">Distribusi Pengeluaran</h3>
               <div className="w-full h-64 flex items-center justify-center">
@@ -319,6 +319,8 @@ const Dashboard = () => {
                       innerRadius={55}
                       outerRadius={85}
                       paddingAngle={4}
+                      label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
+                      labelLine={true}
                     >
                       {(summary?.categories || []).map((_, index) => (
                         <Cell
