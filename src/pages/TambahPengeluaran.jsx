@@ -21,7 +21,7 @@ const TambahPengeluaran = () => {
   // 2. STATE UNTUK TABEL
   const [transactions, setTransactions] = useState([]);
 
-  // === STATE BARU UNTUK FITUR EDIT ===
+  // STATE UNTUK FITUR EDIT
   const [editId, setEditId] = useState(null);
 
   // 3. EFFECT UNTUK MENARIK DATA TRANSAKSI
@@ -61,7 +61,6 @@ const TambahPengeluaran = () => {
   const handleEditClick = (trx) => {
     setEditId(trx._id || trx.id);
     
-    // Format nominal dengan titik saat masuk mode edit
     const formattedNominal = String(trx.nominal || '').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 
     setFormData({
@@ -90,11 +89,9 @@ const TambahPengeluaran = () => {
   const handleSimpan = async (e) => {
     e.preventDefault();
     
-    // 1. BERSIHKAN NOMINAL
     const safeTotalTransaksi = String(formData.nominal || '');
     const rawNominal = safeTotalTransaksi.replace(/\./g, '');
     
-    // 2. VALIDASI FORM KETAT
     if (!formData.namaTransaksi?.trim()) {
       toast.error("Nama transaksi tidak boleh kosong!");
       return;
@@ -126,11 +123,8 @@ const TambahPengeluaran = () => {
         nominal: parseInt(rawNominal, 10)
       };
 
-      // 3. CEK MODE EDIT ATAU TAMBAH
       if (editId) {
-        // --- PROSES UPDATE (EDIT) ---
         const response = await axiosInstance.put(`/api/transaction/${editId}`, dataPayload);
-        
         const updatedTransaction = response.data.data || { ...dataPayload, _id: editId };
         
         setTransactions((prev) => 
@@ -139,11 +133,8 @@ const TambahPengeluaran = () => {
 
         toast.success("Transaksi berhasil diperbarui!");
         setEditId(null); 
-
       } else {
-        // --- PROSES SIMPAN (TAMBAH BARU) ---
         const response = await axiosInstance.post('/api/transaction', dataPayload);
-        
         const newTransaction = response.data.data || { 
           _id: Date.now().toString(), 
           ...dataPayload 
@@ -153,7 +144,6 @@ const TambahPengeluaran = () => {
         toast.success("Transaksi berhasil ditambahkan!");
       }
       
-      // 4. KOSONGKAN FORM SETELAH SUKSES
       setFormData({
         namaTransaksi: '',
         tipeTransaksi: '',
@@ -170,58 +160,53 @@ const TambahPengeluaran = () => {
   };
 
   return (
-    <div className="min-h-screen w-full bg-white text-neutral font-sans flex flex-col items-center pb-20">
+    <div className="min-h-screen w-full bg-slate-50 text-neutral font-sans flex flex-col items-center pb-20">
       
       <ToastContainer position="top-right" autoClose={3000} />
 
-      {/* ================= HEADER (SESUAI HEADER DASHBOARD) ================= */}
-      <header className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-gray-100 shadow-sm">
-        <div className="navbar max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
+      {/* ================= HEADER (PRESISI SESUAI DASHBOARD) ================= */}
+      <header className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-2">
+        <div className="bg-white rounded-2xl border border-gray-200/80 shadow-sm px-6 py-3 flex justify-between items-center">
           
           {/* LOGO BRAND */}
-          <div className="flex-1">
-            <Link to="/dashboard" className="text-2xl font-black text-black tracking-tighter uppercase select-none">
-              FineFin
+          <Link to="/dashboard" className="flex items-center gap-3 select-none">
+            <div className="bg-indigo-600 text-white font-black text-lg w-10 h-10 rounded-xl flex items-center justify-center tracking-tighter shadow-sm">
+              FF
+            </div>
+            <span className="text-2xl font-black text-black tracking-tight uppercase">
+              FINEFIN
+            </span>
+          </Link>
+
+          {/* MENU NAVIGASI UTAMA */}
+          <div className="hidden md:flex items-center gap-1">
+            <Link 
+              to="/dashboard" 
+              className="px-5 py-2.5 text-sm font-medium text-gray-600 hover:text-black rounded-xl transition-colors"
+            >
+              Dasbor
+            </Link>
+            <Link 
+              to="/pengeluaran" 
+              className="px-5 py-2.5 text-sm font-semibold text-indigo-600 bg-indigo-50 rounded-xl"
+            >
+              Transaksi
+            </Link>
+            <Link 
+              to="/robo-advisor" 
+              className="px-5 py-2.5 text-sm font-medium text-gray-600 hover:text-black rounded-xl transition-colors"
+            >
+              Robo-Advisor
             </Link>
           </div>
 
-          {/* MENU NAVIGASI UTAMA */}
-          <div className="flex-none hidden md:block">
-            <ul className="menu menu-horizontal px-1 gap-2 text-base font-semibold">
-              <li>
-                <Link 
-                  to="/dashboard" 
-                  className="text-gray-500 hover:text-black rounded-lg px-3 py-2 transition-colors"
-                >
-                  Dasbor
-                </Link>
-              </li>
-              <li>
-                <Link 
-                  to="/pengeluaran" 
-                  className="text-black border-b-2 border-black rounded-none px-3 py-2 font-bold bg-transparent"
-                >
-                  Pengeluaran
-                </Link>
-              </li>
-              <li>
-                <Link 
-                  to="/robo-advisor" 
-                  className="text-gray-500 hover:text-black rounded-lg px-3 py-2 transition-colors"
-                >
-                  Robo-Advisor
-                </Link>
-              </li>
-            </ul>
-          </div>
-
           {/* AKSI USER / LOGOUT */}
-          <div className="flex-none ml-4 flex items-center gap-3">
+          <div>
             <button 
               onClick={handleLogout}
-              className="btn btn-sm btn-ghost text-red-600 hover:bg-red-50 hover:text-red-700 rounded-lg text-sm font-semibold transition-colors"
+              className="border border-gray-300 hover:bg-gray-100 text-gray-700 text-xs font-bold px-4 py-2.5 rounded-xl transition-colors uppercase tracking-wider"
             >
-              Keluar
+              LOG OUT
             </button>
           </div>
 
@@ -229,13 +214,13 @@ const TambahPengeluaran = () => {
       </header>
 
       {/* ================= KONTEN FORM ATAS ================= */}
-      <div className="w-full max-w-5xl px-6 py-12 flex flex-col gap-10 mt-2">
+      <div className="w-full max-w-5xl px-6 py-10 flex flex-col gap-10">
         <div className="flex flex-col gap-2">
-          <h1 className="text-4xl font-bold text-black">Tambahkan Transaksi</h1>
-          <p className="text-base text-gray-600">Catat pengeluaran dalam hitungan detik—dasbor Anda akan langsung diperbarui.</p>
+          <h1 className="text-4xl font-extrabold text-black tracking-tight">Tambahkan Transaksi</h1>
+          <p className="text-base text-gray-500">Catat pengeluaran dalam hitungan detik—dasbor Anda akan langsung diperbarui.</p>
         </div>
 
-        <form onSubmit={handleSimpan} className="flex flex-col gap-6 w-full">
+        <form onSubmit={handleSimpan} className="flex flex-col gap-6 w-full bg-white p-8 rounded-2xl border border-gray-200/80 shadow-sm">
           
           {/* NAMA TRANSAKSI */}
           <label className="form-control w-full">
@@ -246,7 +231,7 @@ const TambahPengeluaran = () => {
               placeholder="Contoh: Beli Makan, Gaji Bulanan..." 
               value={formData.namaTransaksi}
               onChange={handleInputChange}
-              className="input input-bordered w-full rounded-md border-gray-200 bg-white text-black focus:outline-none focus:border-gray-400" 
+              className="input input-bordered w-full rounded-xl border-gray-200 bg-white text-black focus:outline-none focus:border-indigo-500" 
             />
             <div className="label pt-1"><span className="label-text-alt text-gray-400">Tuliskan deskripsi singkat.</span></div>
           </label>
@@ -258,7 +243,7 @@ const TambahPengeluaran = () => {
               name="tipeTransaksi"
               value={formData.tipeTransaksi}
               onChange={handleInputChange}
-              className={`select select-bordered w-full rounded-md border-gray-200 bg-white focus:outline-none focus:border-gray-400 font-normal ${formData.tipeTransaksi === '' ? 'text-gray-400' : 'text-black'}`}
+              className={`select select-bordered w-full rounded-xl border-gray-200 bg-white focus:outline-none focus:border-indigo-500 font-normal ${formData.tipeTransaksi === '' ? 'text-gray-400' : 'text-black'}`}
             >
               <option value="" disabled>Pilih tipe transaksi...</option>
               <option value="Pengeluaran">💸 Pengeluaran</option>
@@ -270,7 +255,7 @@ const TambahPengeluaran = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <label className="form-control w-full">
               <div className="label pb-1"><span className="label-text font-bold text-black text-sm">Total Transaksi</span></div>
-              <div className="input input-bordered flex items-center gap-2 rounded-md border-gray-200 bg-white focus-within:border-gray-400">
+              <div className="input input-bordered flex items-center gap-2 rounded-xl border-gray-200 bg-white focus-within:border-indigo-500">
                 <span className="text-gray-500">Rp.</span>
                 <input 
                   type="text" 
@@ -291,7 +276,7 @@ const TambahPengeluaran = () => {
                 name="kategori"
                 value={formData.kategori}
                 onChange={handleInputChange}
-                className={`select select-bordered w-full rounded-md border-gray-200 bg-white focus:outline-none focus:border-gray-400 font-normal ${formData.kategori === '' ? 'text-gray-400' : 'text-black'}`}
+                className={`select select-bordered w-full rounded-xl border-gray-200 bg-white focus:outline-none focus:border-indigo-500 font-normal ${formData.kategori === '' ? 'text-gray-400' : 'text-black'}`}
               >
                 <option value="" disabled>Pilih kategori...</option>
                 <option value="Makanan & Minuman">Makanan & Minuman</option>
@@ -317,7 +302,7 @@ const TambahPengeluaran = () => {
                 name="metodePembayaran"
                 value={formData.metodePembayaran}
                 onChange={handleInputChange}
-                className={`select select-bordered w-full rounded-md border-gray-200 bg-white focus:outline-none focus:border-gray-400 font-normal ${formData.metodePembayaran === '' ? 'text-gray-400' : 'text-black'}`}
+                className={`select select-bordered w-full rounded-xl border-gray-200 bg-white focus:outline-none focus:border-indigo-500 font-normal ${formData.metodePembayaran === '' ? 'text-gray-400' : 'text-black'}`}
               >
                 <option value="" disabled>Pilih metode pembayaran...</option>
                 <option value="Kartu Kredit">Kartu Kredit</option>
@@ -339,7 +324,7 @@ const TambahPengeluaran = () => {
                 name="tanggal"
                 value={formData.tanggal}
                 onChange={handleInputChange}
-                className={`input input-bordered w-full rounded-md border-gray-200 bg-white focus:outline-none focus:border-gray-400 ${formData.tanggal === '' ? 'text-gray-400' : 'text-black'}`} 
+                className={`input input-bordered w-full rounded-xl border-gray-200 bg-white focus:outline-none focus:border-indigo-500 ${formData.tanggal === '' ? 'text-gray-400' : 'text-black'}`} 
               />
               <div className="label pt-1">
                 <span className="label-text-alt text-gray-400">
@@ -353,13 +338,13 @@ const TambahPengeluaran = () => {
             <button 
               type="button" 
               onClick={() => navigate('/dashboard')}
-              className="btn flex-1 rounded-md text-sm bg-white text-black border border-black hover:bg-gray-50 font-semibold"
+              className="btn flex-1 rounded-xl text-sm bg-white text-black border border-black hover:bg-gray-50 font-semibold"
             >
               Kembali
             </button>
             <button 
               type="submit" 
-              className="btn flex-1 rounded-md text-sm bg-black text-white hover:bg-neutral-800 font-semibold border-none"
+              className="btn flex-1 rounded-xl text-sm bg-black text-white hover:bg-neutral-800 font-semibold border-none"
             >
               Simpan Data
             </button>
@@ -369,93 +354,72 @@ const TambahPengeluaran = () => {
 
       {/* ================= KONDISI: TAMPILKAN TABEL JIKA ADA TRANSAKSI ================= */}
       {transactions.length > 0 && (
-        <>
-          <div className="w-full max-w-5xl px-6 my-6">
-            <hr className="border-gray-100" />
-          </div>
+        <div className="w-full max-w-5xl px-6 mt-4">
+          <div className="border border-gray-200 rounded-2xl overflow-hidden bg-white shadow-sm">
+            <div className="overflow-x-auto">
+              <table className="table w-full text-black">
+                <thead className="bg-gray-50 border-b border-gray-200 text-black font-bold">
+                  <tr>
+                    <th className="py-4 pl-6">No</th>
+                    <th className="py-4">Tanggal</th>
+                    <th className="py-4">Nama Transaksi</th>
+                    <th className="py-4">Tipe</th>
+                    <th className="py-4">Total</th>
+                    <th className="py-4">Kategori</th>
+                    <th className="py-4">Metode Pembayaran</th>
+                    <th className="py-4 text-center pr-6">Aksi</th>
+                  </tr>
+                </thead>
+                
+                <tbody>
+                  {transactions.map((trx, index) => (
+                    <tr key={trx._id || index} className="border-b border-gray-100 hover:bg-gray-50">
+                      <td className="pl-6">{index + 1}</td>
+                      <td>{trx.tanggal ? trx.tanggal.substring(0, 10).split('-').reverse().join('/') : '-'}</td>
+                      <td className="font-medium">{trx.namaTransaksi}</td>
+                      
+                      <td>
+                        <span className={`px-2.5 py-1 rounded-lg text-xs font-bold ${trx.tipeTransaksi === 'Pemasukan' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                          {trx.tipeTransaksi}
+                        </span>
+                      </td>
+                      <td className={`font-semibold ${trx.tipeTransaksi === 'Pemasukan' ? 'text-green-600' : 'text-red-500'}`}>
+                        {trx.tipeTransaksi === 'Pemasukan' ? '+' : '-'}Rp. {Number(trx.nominal || 0).toLocaleString('id-ID')}
+                      </td>
+                      <td>
+                        <span className="px-3 py-1 bg-gray-100 text-gray-600 rounded-lg text-xs font-semibold">
+                          {trx.kategori}
+                        </span>
+                      </td>
+                      <td>{trx.metodePembayaran}</td>
+                      <td className="flex justify-center gap-4 pr-6 py-4">
+                        <button 
+                          onClick={() => handleEditClick(trx)} 
+                          className="text-blue-500 hover:text-blue-700 transition-colors" 
+                          title="Edit"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                          </svg>
+                        </button>
 
-          {/* ================= KONTEN TABEL BAWAH ================= */}
-          <div className="w-full max-w-5xl px-6">
-            <div className="border border-gray-200 rounded-xl overflow-hidden bg-white shadow-sm">
-              <div className="overflow-x-auto">
-                <table className="table w-full text-black">
-                  {/* Header Tabel */}
-                  <thead className="bg-white border-b border-gray-200 text-black font-bold">
-                    <tr>
-                      <th className="bg-transparent py-4 pl-6">No</th>
-                      <th className="bg-transparent py-4">Tanggal</th>
-                      <th className="bg-transparent py-4">Nama Transaksi</th>
-                      <th className="bg-transparent py-4">Tipe</th>
-                      <th className="bg-transparent py-4">Total</th>
-                      <th className="bg-transparent py-4">Kategori</th>
-                      <th className="bg-transparent py-4">Metode Pembayaran</th>
-                      <th className="bg-transparent py-4 text-center pr-6">Aksi</th>
+                        <button 
+                          onClick={() => handleDelete(trx._id)} 
+                          className="text-red-500 hover:text-red-700 transition-colors" 
+                          title="Hapus"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                          </svg>
+                        </button>
+                      </td>
                     </tr>
-                  </thead>
-                  
-                  {/* Body Tabel */}
-                  <tbody>
-                    {transactions.length === 0 ? (
-                      <tr>
-                        <td colSpan="8" className="text-center py-12 text-gray-400">
-                          Belum ada transaksi. Silakan input form di atas.
-                        </td>
-                      </tr>
-                    ) : (
-                      transactions.map((trx, index) => (
-                        <tr key={trx._id} className="border-b border-gray-100 hover:bg-gray-50">
-                          <td className="pl-6">{index + 1}</td>
-                          <td>{trx.tanggal ? trx.tanggal.substring(0, 10).split('-').reverse().join('/') : '-'}</td>
-                          <td className="font-medium">{trx.namaTransaksi}</td>
-                          
-                          {/* Tipe Transaksi Badges */}
-                          <td>
-                            <span className={`px-2 py-1 rounded-md text-xs font-bold ${trx.tipeTransaksi === 'Pemasukan' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                              {trx.tipeTransaksi}
-                            </span>
-                          </td>
-                          <td className={`font-semibold ${trx.tipeTransaksi === 'Pemasukan' ? 'text-green-600' : 'text-red-500'}`}>
-                            {trx.tipeTransaksi === 'Pemasukan' ? '+' : '-'}Rp. {Number(trx.nominal || 0).toLocaleString('id-ID')}
-                          </td>
-                          <td>
-                            <span className="px-3 py-1 bg-gray-100 text-gray-600 rounded-md text-xs font-semibold">
-                              {trx.kategori}
-                            </span>
-                          </td>
-                          <td>{trx.metodePembayaran}</td>
-                          <td className="flex justify-center gap-4 pr-6 py-4">
-                            {/* Tombol Edit */}
-                            <button 
-                              onClick={() => handleEditClick(trx)} 
-                              name="update" 
-                              className="text-blue-500 hover:text-blue-700 transition-colors" 
-                              title="Edit"
-                            >
-                              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                              </svg>
-                            </button>
-
-                            {/* Tombol Hapus */}
-                            <button 
-                              onClick={() => handleDelete(trx._id)} 
-                              className="text-red-500 hover:text-red-700 transition-colors" 
-                              title="Hapus"
-                            >
-                              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
-                              </svg>
-                            </button>
-                          </td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
-              </div>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
-        </>
+        </div>
       )}
     </div>
   );
