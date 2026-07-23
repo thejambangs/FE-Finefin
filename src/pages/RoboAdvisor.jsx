@@ -28,7 +28,7 @@ const RoboAdvisor = () => {
       style: 'currency',
       currency: 'IDR',
       minimumFractionDigits: 0
-    }).format(angka);
+    }).format(angka || 0);
   };
 
   const handleLogout = () => {
@@ -47,7 +47,7 @@ const RoboAdvisor = () => {
           return;
         }
 
-        // Sesuaikan dengan base URL backend kamu (contoh: http://localhost:5000)
+        // Sesuaikan dengan base URL backend kamu
         const response = await axios.get('http://localhost:5000/api/robo-advisor/projection', {
           headers: {
             Authorization: `Bearer ${token}`
@@ -180,17 +180,38 @@ const RoboAdvisor = () => {
             </div>
           </div>
 
-          <div className="border border-gray-100 shadow-sm p-6 rounded-2xl bg-white w-full h-[350px] flex flex-col items-center justify-center">
+          {/* VISUALISASI KONDISI DENGAN ANGKA DI TENGAH */}
+          <div className="border border-gray-100 shadow-sm p-6 rounded-2xl bg-white w-full h-[350px] flex flex-col items-center justify-center relative">
             <h3 className="text-sm font-bold text-black self-start">Visualisasi Kondisi</h3>
-            <div className="flex-grow w-full h-full mt-4">
+            
+            <div className="relative flex-grow w-full h-full mt-2 flex items-center justify-center">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
-                  <Pie data={pieData} innerRadius={80} outerRadius={110} dataKey="value" stroke="none">
+                  <Pie
+                    data={pieData}
+                    innerRadius={75}
+                    outerRadius={105}
+                    dataKey="value"
+                    stroke="none"
+                  >
                     <Cell fill={pieColor} />
                   </Pie>
                   <Tooltip />
                 </PieChart>
               </ResponsiveContainer>
+
+              {/* 🎯 TAMPILAN ANGKA & INFORMASI DI TENGAH DIAGRAM DONUT */}
+              <div className="absolute flex flex-col items-center justify-center text-center pointer-events-none">
+                <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">
+                  Sisa Uang
+                </span>
+                <span className={`text-xl font-black ${statusColor} my-0.5`}>
+                  {formatRupiah(roboData?.surplus)}
+                </span>
+                <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full border ${statusBg} ${statusColor} ${statusBorder}`}>
+                  Kondisi {roboData?.status}
+                </span>
+              </div>
             </div>
           </div>
 
@@ -230,7 +251,7 @@ const RoboAdvisor = () => {
         )}
 
         {/* ================= SECTION 3: GRAFIK MESIN WAKTU ================= */}
-        {isSurplus && roboData.projection.length > 0 && (
+        {isSurplus && roboData.projection?.length > 0 && (
           <div className="w-full flex flex-col gap-8 mt-4">
             <div className="text-center flex flex-col gap-2">
               <h2 className="text-3xl font-extrabold text-black">Grafik Simulasi Mesin Waktu</h2>
