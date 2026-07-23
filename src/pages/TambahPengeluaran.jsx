@@ -8,10 +8,10 @@ import 'react-toastify/dist/ReactToastify.css';
 const TambahPengeluaran = () => {
   const navigate = useNavigate();
   
-  // 1. STATE FORM (Menyesuaikan dengan penamaan variabel dari file kamu)
+  // 1. STATE FORM
   const [formData, setFormData] = useState({
     namaTransaksi: '',
-    tipeTransaksi: '', // STATE BARU
+    tipeTransaksi: '', 
     nominal: '',
     kategori: '',
     metodePembayaran: '',
@@ -22,19 +22,16 @@ const TambahPengeluaran = () => {
   const [transactions, setTransactions] = useState([]);
 
   // === STATE BARU UNTUK FITUR EDIT ===
-  // Menyimpan ID transaksi yang sedang diedit. Jika null, berarti sedang tambah data baru.
   const [editId, setEditId] = useState(null);
 
-  // 3. EFFECT UNTUK MENARIK DATA TRANSAKSI SAAT HALAMAN DIMUAT
+  // 3. EFFECT UNTUK MENARIK DATA TRANSAKSI
   useEffect(() => {
     fetchTransactions();
   }, []);
 
   const fetchTransactions = async () => {
     try {
-      // Backend akan otomatis memfilter data berdasarkan tanggal gajian user
       const response = await axiosInstance.get('/api/transaction');
-      // Pastikan backend mengembalikan struktur response.data.data berupa array
       setTransactions(response.data.data || []);
     } catch (error) {
       console.error("Gagal menarik data transaksi:", error);
@@ -56,10 +53,14 @@ const TambahPengeluaran = () => {
   // FUNGSI UNTUK KLIK EDIT
   const handleEditClick = (trx) => {
     setEditId(trx._id || trx.id);
+    
+    // Format nominal dengan titik saat masuk mode edit
+    const formattedNominal = String(trx.nominal || '').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
     setFormData({
       namaTransaksi: trx.namaTransaksi,
       tipeTransaksi: trx.tipeTransaksi,
-      nominal: trx.nominal,
+      nominal: formattedNominal,
       kategori: trx.kategori,
       metodePembayaran: trx.metodePembayaran,
       tanggal: trx.tanggal ? trx.tanggal.split('T')[0] : ''
@@ -69,7 +70,7 @@ const TambahPengeluaran = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    if (name === 'totalTransaksi') {
+    if (name === 'nominal') {
       let cleanValue = value.replace(/[^0-9]/g, '');
       if (cleanValue.length > 1 && cleanValue.startsWith('0')) cleanValue = cleanValue.replace(/^0+/, '');
       const formattedValue = cleanValue.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
@@ -123,22 +124,19 @@ const TambahPengeluaran = () => {
         // --- PROSES UPDATE (EDIT) ---
         const response = await axiosInstance.put(`/api/transaction/${editId}`, dataPayload);
         
-        // Ambil data terbaru dari backend (fallback ke data lama jika struktur beda)
         const updatedTransaction = response.data.data || { ...dataPayload, _id: editId };
         
-        // Update tabel tanpa menduplikasi data
         setTransactions((prev) => 
           prev.map((trx) => ((trx._id || trx.id) === editId ? updatedTransaction : trx))
         );
 
         toast.success("Transaksi berhasil diperbarui!");
-        setEditId(null); // Keluar dari mode edit
+        setEditId(null); 
 
       } else {
         // --- PROSES SIMPAN (TAMBAH BARU) ---
         const response = await axiosInstance.post('/api/transaction', dataPayload);
         
-        // Ambil data dari backend atau buat id sementara
         const newTransaction = response.data.data || { 
           _id: Date.now().toString(), 
           ...dataPayload 
@@ -213,7 +211,7 @@ const TambahPengeluaran = () => {
             <div className="label pt-1"><span className="label-text-alt text-gray-400">Tuliskan deskripsi singkat.</span></div>
           </label>
 
-          {/* TIPE TRANSAKSI (BARU) */}
+          {/* TIPE TRANSAKSI */}
           <label className="form-control w-full">
             <div className="label pb-1"><span className="label-text font-bold text-black text-sm">Tipe Transaksi</span></div>
             <select 
@@ -235,7 +233,7 @@ const TambahPengeluaran = () => {
               <div className="input input-bordered flex items-center gap-2 rounded-md border-gray-200 bg-white focus-within:border-gray-400">
                 <span className="text-gray-500">Rp.</span>
                 <input 
-                  type="number" 
+                  type="text" 
                   name="nominal"
                   placeholder="0"
                   value={formData.nominal}
@@ -243,10 +241,10 @@ const TambahPengeluaran = () => {
                   className="grow bg-transparent text-black border-none focus:outline-none focus:ring-0" 
                 />
               </div>
-              <div className="label pt-1"><span className="label-text-alt text-gray-400">Gunakan angka bulat tanpa titik.</span></div>
+              <div className="label pt-1"><span className="label-text-alt text-gray-400">Angka akan diformat secara otomatis.</span></div>
             </label>
 
-            {/* KATEGORI (PERBAIKAN: Menjadi Dropdown Lengkap) */}
+            {/* KATEGORI */}
             <label className="form-control w-full">
               <div className="label pb-1"><span className="label-text font-bold text-black text-sm">Kategori</span></div>
               <select 
@@ -272,7 +270,7 @@ const TambahPengeluaran = () => {
               <div className="label pt-1"><span className="label-text-alt text-gray-400">Pilih yang paling sesuai.</span></div>
             </label>
 
-            {/* METODE PEMBAYARAN (PERBAIKAN BUG) */}
+            {/* METODE PEMBAYARAN */}
             <label className="form-control w-full">
               <div className="label pb-1"><span className="label-text font-bold text-black text-sm">Metode Pembayaran</span></div>
               <select 
@@ -386,7 +384,7 @@ const TambahPengeluaran = () => {
                       </td>
                       <td>{trx.metodePembayaran}</td>
                       <td className="flex justify-center gap-4 pr-6 py-4">
-                        {/* Tombol Edit: Tambahkan () => dan masukkan objek 'trx' */}
+                        {/* Tombol Edit */}
                         <button 
                           onClick={() => handleEditClick(trx)} 
                           name="update" 
@@ -398,7 +396,7 @@ const TambahPengeluaran = () => {
                           </svg>
                         </button>
 
-                        {/* Tombol Hapus: Tambahkan () => dan masukkan 'trx._id' */}
+                        {/* Tombol Hapus */}
                         <button 
                           onClick={() => handleDelete(trx._id)} 
                           className="text-red-500 hover:text-red-700 transition-colors" 
