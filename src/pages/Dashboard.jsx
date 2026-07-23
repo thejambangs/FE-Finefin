@@ -104,23 +104,17 @@ const getCategoryIcon = (kategori) => {
   const investasi = (summary?.income || 0) * 0.3;
   const hiburan = (summary?.income || 0) * 0.2;
 
-  const COLORS = [
-  "#111827",
-  "#374151",
-  "#6B7280",
-  "#9CA3AF",
-  "#D1D5DB",
-];
+  const COLORS = ["#7C3AED", "#10B981", "#6366F1", "#34D399", "#8B5CF6"];
 
   return (
-    <div className="min-h-screen w-full bg-base-100 text-neutral font-sans p-6 lg:p-12 flex flex-col gap-6">
+    <div className="min-h-screen w-full bg-[#F8FAFC] text-neutral font-sans p-6 lg:p-12 flex flex-col gap-6">
       {/* ================= HEADER NAVIGATION (SESUAI GAMBAR BARU) ================= */}
       <div className="navbar bg-white border-b border-gray-100 px-4 md:px-8 shrink-0">
         {/* Sisi Kiri: Logo Branding */}
         <div className="flex-1">
           <Link
             to="/dashboard"
-            className="text-3xl font-black text-black tracking-tighter uppercase select-none"
+            className="text-3xl font-black tracking-tighter uppercase select-none text-transparent bg-clip-text bg-gradient-to-r from-[#7C3AED] to-[#10B981]"
           >
             FineFin
           </Link>
@@ -133,7 +127,7 @@ const getCategoryIcon = (kategori) => {
               {/* Indikator Menu Aktif: Teks hitam pekat dengan border bawah solid */}
               <Link
                 to="/dashboard"
-                className="text-black border-b-2 border-black rounded-none px-1 pb-2 pt-2 bg-transparent hover:bg-transparent"
+                className="text-[#7C3AED] border-b-2 border-[#7C3AED] rounded-none px-1 pb-2 pt-2 bg-transparent hover:bg-transparent"
               >
                 Dasbor
               </Link>
@@ -161,7 +155,7 @@ const getCategoryIcon = (kategori) => {
         <div className="flex-none ml-8">
           <button
             onClick={handleLogout}
-            className="btn btn-outline min-h-0 h-10 rounded-full px-6 border-black text-black font-semibold text-sm hover:bg-black hover:text-white hover:border-black uppercase transition-all duration-200"
+            className="btn btn-outline min-h-0 h-10 rounded-full px-6 border-[#7C3AED] text-[#7C3AED] font-semibold text-sm hover:bg-[#7C3AED] hover:text-white hover:border-[#7C3AED] uppercase transition-all duration-200"
           >
             Log out
           </button>
@@ -171,12 +165,12 @@ const getCategoryIcon = (kategori) => {
       {/* Jeda Spacing Pemisah Header dengan Konten Utama */}
       <div className="mt-4 flex flex-col gap-12">
         {/* ================= HERO SECTION: SEKILAS TENTANG DOMPET ANDA ================= */}
-        <div className="w-full bg-neutral text-neutral-content p-8 lg:p-12 rounded-2xl flex flex-col lg:flex-row justify-between items-center gap-8 shadow-md">
+        <div className="w-full bg-[#0F172A] text-white p-8 lg:p-12 rounded-2xl flex flex-col lg:flex-row justify-between items-center gap-8 shadow-md">
           <div className="flex flex-col gap-4 max-w-xl">
-            <h1 className="text-4xl lg:text-5xl font-black tracking-tight text-white">
+            <h1 className="text-4xl lg:text-5xl font-black tracking-tight text-[#0F172A]">
               Sekilas tentang Dompet Anda
             </h1>
-            <p className="text-gray-400 text-lg">
+            <p className="text-[#64748B] text-lg">
               Kelola dan pantau seluruh arus keuanganmu secara realtime dengan
               asisten pintar kami.
             </p>
@@ -194,10 +188,10 @@ const getCategoryIcon = (kategori) => {
         {/* ================= REKAP BULANAN ================= */}
         <div className="w-full flex flex-col gap-6 items-center">
           <div className="text-center">
-            <h2 className="text-3xl font-extrabold text-black">
+            <h2 className="text-3xl font-extrabold text-[#0F172A]">
               Rekap Bulanan
             </h2>
-            <p className="text-gray-500">
+            <p className="text-[#64748B]">
               Analisis perbandingan persentase antara alokasi dana dan realisasi
               pengeluaran Anda.
             </p>
@@ -206,7 +200,7 @@ const getCategoryIcon = (kategori) => {
           <div className="w-full max-w-4xl border border-gray-100 shadow-sm p-8 rounded-2xl flex flex-col md:flex-row items-center justify-around gap-8 bg-white">
             <div className="flex justify-center items-center">
               <div
-                className="radial-progress text-neutral bg-gray-100 border-4 border-gray-100 font-bold"
+                className="radial-progress text-[#10B981] bg-gray-100 border-4 border-gray-100 font-bold"
                 style={{
                   "--value": percentage,
                   "--size": "12rem",
@@ -219,7 +213,7 @@ const getCategoryIcon = (kategori) => {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 w-full md:w-auto">
               <div className="text-center md:text-left">
-                <span className="text-sm text-gray-400 font-medium">
+                <span className="text-sm text-[#64748B] font-medium">
                   Pemasukan
                 </span>
                 <p className="text-2xl font-bold text-black mt-1">
@@ -227,7 +221,7 @@ const getCategoryIcon = (kategori) => {
                 </p>
               </div>
               <div className="text-center md:text-left">
-                <span className="text-sm text-gray-400 font-medium">
+                <span className="text-sm text-[#64748B] font-medium">
                   Pengeluaran
                 </span>
                 <p className="text-2xl font-bold text-black mt-1">
@@ -235,7 +229,7 @@ const getCategoryIcon = (kategori) => {
                 </p>
               </div>
               <div className="text-center md:text-left">
-                <span className="text-sm text-gray-400 font-medium">
+                <span className="text-sm text-[#64748B] font-medium">
                   Anggaran Tersisa
                 </span>
                 <p className="text-2xl font-bold text-black mt-1">
@@ -249,10 +243,10 @@ const getCategoryIcon = (kategori) => {
         {/* ================= GRAFIK PENGELUARAN ================= */}
         <div className="w-full flex flex-col gap-6">
           <div className="text-center">
-            <h2 className="text-3xl font-extrabold text-black">
+            <h2 className="text-3xl font-extrabold text-[#0F172A]">
               Grafik Pengeluaran
             </h2>
-            <p className="text-gray-500">
+            <p className="text-[#64748B]">
               Detail visualisasi grafik tren pengeluaran per kategori dan distribusi pengeluaran
               cerdas Anda.
             </p>
@@ -261,7 +255,7 @@ const getCategoryIcon = (kategori) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Grafik 1: Pengeluaran Mingguan */}
             <div className="border border-gray-100 shadow-sm p-6 rounded-2xl bg-white flex flex-col gap-4">
-              <h3 className="text-lg font-bold text-black">
+              <h3 className="text-lg font-bold text-[#0F172A]">
                 Pengeluaran per Kategori
               </h3>
               <div className="w-full h-48 bg-gray-50 rounded-xl flex items-end relative overflow-hidden p-2">
@@ -290,7 +284,7 @@ const getCategoryIcon = (kategori) => {
 
             {/* Grafik 2: Dompet Cerdas */}
             <div className="border border-gray-100 shadow-sm p-6 rounded-2xl bg-white flex flex-col gap-4">
-              <h3 className="text-lg font-bold text-black">Distribusi Pengeluaran</h3>
+              <h3 className="text-lg font-bold text-[#0F172A]">Distribusi Pengeluaran</h3>
               <ResponsiveContainer width="100%" height={220}>
                 <PieChart>
                   <Pie
@@ -318,10 +312,10 @@ const getCategoryIcon = (kategori) => {
         {/* ================= RINGKASAN PENGELUARAN ================= */}
         <div className="w-full flex flex-col gap-6">
           <div className="text-center">
-            <h2 className="text-3xl font-extrabold text-black">
+            <h2 className="text-3xl font-extrabold text-[#0F172A]">
               Ringkasan Pengeluaran
             </h2>
-            <p className="text-gray-500">
+            <p className="text-[#64748B]">
               Rangkuman kategori pengeluaran terbesar yang paling sering kamu
               lakukan.
             </p>
@@ -361,10 +355,10 @@ const getCategoryIcon = (kategori) => {
         {/* ================= DANA & ALOKASI YANG DISARANKAN ================= */}
         <div className="w-full flex flex-col gap-6">
           <div className="text-center">
-            <h2 className="text-3xl font-extrabold text-black">
+            <h2 className="text-3xl font-extrabold text-[#0F172A]">
               Dana & alokasi yang disarankan
             </h2>
-            <p className="text-gray-500">
+            <p className="text-[#64748B]">
               Rekomendasi pembagian pos keuangan ideal berdasarkan algoritma
               cerdas FineFin.
             </p>
@@ -383,7 +377,7 @@ const getCategoryIcon = (kategori) => {
                 <h4 className="font-bold text-black text-lg">
                   Kebutuhan Pokok (50%)
                 </h4>
-                <p className="text-sm text-gray-400 mt-1">
+                <p className="text-sm text-[#64748B] mt-1">
                   {formatRupiah(kebutuhan)}
                 </p>
               </div>
@@ -400,7 +394,7 @@ const getCategoryIcon = (kategori) => {
                 <h4 className="font-bold text-black text-lg">
                   Tabungan & Investasi (30%)
                 </h4>
-                <p className="text-sm text-gray-400 mt-1">
+                <p className="text-sm text-[#64748B] mt-1">
                   {formatRupiah(investasi)}
                 </p>
               </div>
@@ -417,7 +411,7 @@ const getCategoryIcon = (kategori) => {
                 <h4 className="font-bold text-black text-lg">
                   Keinginan & Hiburan (20%)
                 </h4>
-                <p className="text-sm text-gray-400 mt-1">
+                <p className="text-sm text-[#64748B] mt-1">
                   {formatRupiah(hiburan)} 
                 </p>
               </div>
@@ -428,17 +422,17 @@ const getCategoryIcon = (kategori) => {
         {/* ================= TRANSAKSI TERKINI ================= */}
         <div className="w-full flex flex-col gap-6">
           <div className="text-center">
-            <h2 className="text-3xl font-extrabold text-black">
+            <h2 className="text-3xl font-extrabold text-[#0F172A]">
               Transaksi Terkini
             </h2>
-            <p className="text-gray-500">
+            <p className="text-[#64748B]">
               Daftar pengeluaran dan pemasukan paling baru yang kamu catat.
             </p>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 justify-items-center max-w-5xl mx-auto w-full">
             {transactions.length === 0 ? (
-              <p className="col-span-full text-center text-gray-400">
+              <p className="col-span-full text-center text-[#64748B]">
                 Belum ada transaksi.
               </p>
             ) : (
@@ -448,7 +442,7 @@ const getCategoryIcon = (kategori) => {
                 className="flex flex-col items-center gap-2 text-center bg-gray-50/50 p-4 rounded-xl w-full"
               >
                 <div className="avatar placeholder">
-                  <div className="bg-neutral text-neutral-content rounded-full w-14 h-14 shadow-sm text-xl flex items-center justify-center">
+                  <div className="bg-[#7C3AED] text-white rounded-full w-14 h-14 shadow-sm text-xl flex items-center justify-center">
                     {getCategoryIcon(item.kategori)}
                   </div>
                 </div>
@@ -458,7 +452,7 @@ const getCategoryIcon = (kategori) => {
                     {item.namaTransaksi}
                   </h4>
 
-                  <span className="text-xs text-gray-400">
+                  <span className="text-xs text-[#64748B]">
                     {item.kategori}
                   </span>
 
@@ -484,7 +478,7 @@ const getCategoryIcon = (kategori) => {
             Tips: Jauhkan pencatatan tanpa sandi untuk mencegah kebocoran data
             pribadi anggaranmu!
           </p>
-          <p className="text-xs text-gray-400">
+          <p className="text-xs text-[#64748B]">
             Privasi Anda dilindungi secara enkripsi end-to-end oleh protokol
             pengamanan internal FineFin. © 2026 All rights reserved.
           </p>

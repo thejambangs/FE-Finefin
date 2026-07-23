@@ -163,20 +163,20 @@ const TambahPengeluaran = () => {
   };
 
   return (
-    <div className="min-h-screen w-full bg-white text-neutral font-sans flex flex-col items-center pb-20">
+    <div className="min-h-screen w-full bg-[#F8FAFC] text-neutral font-sans flex flex-col items-center pb-20">
       
       <ToastContainer position="top-right" autoClose={3000} />
 
       {/* ================= HEADER ================= */}
       <div className="navbar bg-white border-b border-gray-100 px-4 md:px-8 w-full shrink-0">
         <div className="flex-1">
-          <Link to="/dashboard" className="text-3xl font-black text-black tracking-tighter uppercase select-none">
+          <Link to="/dashboard" className="text-3xl font-black tracking-tighter uppercase select-none text-transparent bg-clip-text bg-gradient-to-r from-[#7C3AED] to-[#10B981]">
             FineFin
           </Link>
         </div>
         <div className="flex-none">
           <ul className="menu menu-horizontal px-1 gap-6 text-lg font-semibold">
-            <li><Link to="/pengeluaran" className="text-black border-b-2 border-black rounded-none px-1 pb-2 pt-2 bg-transparent">Pengeluaran</Link></li>
+            <li><Link to="/pengeluaran" className="text-[#7C3AED] border-b-2 border-[#7C3AED] rounded-none px-1 pb-2 pt-2 bg-transparent">Pengeluaran</Link></li>
             <li><Link to="/robo-advisor" className="text-gray-400 hover:text-black rounded-none px-1 pb-2 pt-2 bg-transparent">Robo-Advisor</Link></li>
           </ul>
         </div>
@@ -191,34 +191,34 @@ const TambahPengeluaran = () => {
       {/* ================= KONTEN FORM ATAS ================= */}
       <div className="w-full max-w-5xl px-6 py-12 flex flex-col gap-10 mt-2">
         <div className="flex flex-col gap-2">
-          <h1 className="text-4xl font-bold text-black">Tambahkan Transaksi</h1>
-          <p className="text-base text-gray-600">Catat pengeluaran dalam hitungan detik—dasbor Anda akan langsung diperbarui.</p>
+          <h1 className="text-4xl font-bold text-[#0F172A]">Tambahkan Transaksi</h1>
+          <p className="text-base text-[#64748B]">Catat pengeluaran dalam hitungan detik—dasbor Anda akan langsung diperbarui.</p>
         </div>
 
         <form onSubmit={handleSimpan} className="flex flex-col gap-6 w-full">
           
           {/* NAMA TRANSAKSI */}
           <label className="form-control w-full">
-            <div className="label pb-1"><span className="label-text font-bold text-black text-sm">Nama Transaksi</span></div>
+            <div className="label pb-1"><span className="label-text font-bold text-[#0F172A] text-sm">Nama Transaksi</span></div>
             <input 
               type="text" 
               name="namaTransaksi"
               placeholder="Contoh: Beli Makan, Gaji Bulanan..." 
               value={formData.namaTransaksi}
               onChange={handleInputChange}
-              className="input input-bordered w-full rounded-md border-gray-200 bg-white text-black focus:outline-none focus:border-gray-400" 
+              className="input input-bordered w-full rounded-md border-gray-200 bg-white text-black focus:outline-none focus:border-[#7C3AED]" 
             />
             <div className="label pt-1"><span className="label-text-alt text-gray-400">Tuliskan deskripsi singkat.</span></div>
           </label>
 
           {/* TIPE TRANSAKSI */}
           <label className="form-control w-full">
-            <div className="label pb-1"><span className="label-text font-bold text-black text-sm">Tipe Transaksi</span></div>
+            <div className="label pb-1"><span className="label-text font-bold text-[#0F172A] text-sm">Tipe Transaksi</span></div>
             <select 
               name="tipeTransaksi"
               value={formData.tipeTransaksi}
               onChange={handleInputChange}
-              className={`select select-bordered w-full rounded-md border-gray-200 bg-white focus:outline-none focus:border-gray-400 font-normal ${formData.tipeTransaksi === '' ? 'text-gray-400' : 'text-black'}`}
+              className={`select select-bordered w-full rounded-md border-gray-200 bg-white focus:outline-none focus:border-[#7C3AED] font-normal ${formData.tipeTransaksi === '' ? 'text-gray-400' : 'text-black'}`}
             >
               <option value="" disabled>Pilih tipe transaksi...</option>
               <option value="Pengeluaran">💸 Pengeluaran</option>
@@ -229,8 +229,8 @@ const TambahPengeluaran = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <label className="form-control w-full">
-              <div className="label pb-1"><span className="label-text font-bold text-black text-sm">Total Transaksi</span></div>
-              <div className="input input-bordered flex items-center gap-2 rounded-md border-gray-200 bg-white focus-within:border-gray-400">
+              <div className="label pb-1"><span className="label-text font-bold text-[#0F172A] text-sm">Total Transaksi</span></div>
+              <div className="input input-bordered flex items-center gap-2 rounded-md border-gray-200 bg-white focus-within:border-[#7C3AED]">
                 <span className="text-gray-500">Rp.</span>
                 <input 
                   type="text" 
@@ -246,12 +246,12 @@ const TambahPengeluaran = () => {
 
             {/* KATEGORI */}
             <label className="form-control w-full">
-              <div className="label pb-1"><span className="label-text font-bold text-black text-sm">Kategori</span></div>
+              <div className="label pb-1"><span className="label-text font-bold text-[#0F172A] text-sm">Kategori</span></div>
               <select 
                 name="kategori"
                 value={formData.kategori}
                 onChange={handleInputChange}
-                className={`select select-bordered w-full rounded-md border-gray-200 bg-white focus:outline-none focus:border-gray-400 font-normal ${formData.kategori === '' ? 'text-gray-400' : 'text-black'}`}
+                className={`select select-bordered w-full rounded-md border-gray-200 bg-white focus:outline-none focus:border-[#7C3AED] font-normal ${formData.kategori === '' ? 'text-gray-400' : 'text-black'}`}
               >
                 <option value="" disabled>Pilih kategori...</option>
                 <option value="Makanan & Minuman">Makanan & Minuman</option>
@@ -272,12 +272,12 @@ const TambahPengeluaran = () => {
 
             {/* METODE PEMBAYARAN */}
             <label className="form-control w-full">
-              <div className="label pb-1"><span className="label-text font-bold text-black text-sm">Metode Pembayaran</span></div>
+              <div className="label pb-1"><span className="label-text font-bold text-[#0F172A] text-sm">Metode Pembayaran</span></div>
               <select 
                 name="metodePembayaran"
                 value={formData.metodePembayaran}
                 onChange={handleInputChange}
-                className={`select select-bordered w-full rounded-md border-gray-200 bg-white focus:outline-none focus:border-gray-400 font-normal ${formData.metodePembayaran === '' ? 'text-gray-400' : 'text-black'}`}
+                className={`select select-bordered w-full rounded-md border-gray-200 bg-white focus:outline-none focus:border-[#7C3AED] font-normal ${formData.metodePembayaran === '' ? 'text-gray-400' : 'text-black'}`}
               >
                 <option value="" disabled>Pilih metode pembayaran...</option>
                 <option value="Kartu Kredit">Kartu Kredit</option>
@@ -293,13 +293,13 @@ const TambahPengeluaran = () => {
             </label>
 
             <label className="form-control w-full">
-              <div className="label pb-1"><span className="label-text font-bold text-black text-sm">Tanggal</span></div>
+              <div className="label pb-1"><span className="label-text font-bold text-[#0F172A] text-sm">Tanggal</span></div>
               <input 
                 type="date" 
                 name="tanggal"
                 value={formData.tanggal}
                 onChange={handleInputChange}
-                className={`input input-bordered w-full rounded-md border-gray-200 bg-white focus:outline-none focus:border-gray-400 ${formData.tanggal === '' ? 'text-gray-400' : 'text-black'}`} 
+                className={`input input-bordered w-full rounded-md border-gray-200 bg-white focus:outline-none focus:border-[#7C3AED] ${formData.tanggal === '' ? 'text-gray-400' : 'text-black'}`} 
               />
               <div className="label pt-1">
                 <span className="label-text-alt text-gray-400">
@@ -313,13 +313,13 @@ const TambahPengeluaran = () => {
             <button 
               type="button" 
               onClick={() => navigate('/dashboard')}
-              className="btn flex-1 rounded-md text-sm bg-white text-black border border-black hover:bg-gray-50 font-semibold"
+              className="btn flex-1 rounded-md text-sm bg-white text-[#0F172A] border border-[#0F172A] hover:bg-gray-50 font-semibold"
             >
               Kembali
             </button>
             <button 
               type="submit" 
-              className="btn flex-1 rounded-md text-sm bg-black text-white hover:bg-neutral-800 font-semibold border-none"
+              className="btn flex-1 rounded-md text-sm bg-[#7C3AED] text-white hover:bg-[#4C1D95] font-semibold border-none"
             >
               Simpan Data
             </button>
@@ -340,7 +340,7 @@ const TambahPengeluaran = () => {
           <div className="overflow-x-auto">
             <table className="table w-full text-black">
               {/* Header Tabel */}
-              <thead className="bg-white border-b border-gray-200 text-black font-bold">
+              <thead className="bg-white border-b border-gray-200 text-[#0F172A] font-bold">
                 <tr>
                   <th className="bg-transparent py-4 pl-6">No</th>
                   <th className="bg-transparent py-4">Tanggal</th>

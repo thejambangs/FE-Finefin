@@ -126,14 +126,14 @@ const Kuesioner = () => {
   };
 
   return (
-    <div className="flex h-screen w-full bg-white overflow-hidden">
+    <div className="flex h-screen w-full bg-[#F8FAFC] overflow-hidden">
       {/* ✅ TAMBAHKAN TOAST CONTAINER */}
       <ToastContainer position="top-right" autoClose={3000} />
       
       {/* ... (Isi Panel Kiri dan Kanan tetap sama) ... */}
       <div className="w-1/2 h-full flex flex-col justify-center px-16 lg:px-32 xl:px-40 gap-4 bg-white select-none">
-        <h1 className="text-6xl font-extrabold text-black tracking-tight">Isi Kuisioner</h1>
-        <p className="text-xl font-medium text-gray-500">Tentukan jawaban sesuai pengalaman Anda.</p>
+        <h1 className="text-6xl font-extrabold text-[#0F172A] tracking-tight">Isi Kuisioner</h1>
+        <p className="text-xl font-medium text-[#64748B]">Tentukan jawaban sesuai pengalaman Anda.</p>
       </div>
 
       <div className="w-1/2 h-full bg-white flex flex-col">
@@ -153,11 +153,11 @@ const Kuesioner = () => {
 
           <div className="shrink-0 flex flex-row gap-5 px-16 lg:px-24 xl:px-32 py-6 border-t border-gray-100 bg-white z-20 w-full">
             {currentStep > 1 && (
-              <button type="button" onClick={handleBack} disabled={isLoading} className="btn flex-grow rounded-md text-lg h-14 text-black border-gray-300 bg-white hover:bg-gray-100 font-semibold">
+              <button type="button" onClick={handleBack} disabled={isLoading} className="btn flex-grow rounded-md text-lg h-14 text-[#0F172A] border-[#64748B] bg-white hover:bg-gray-100 font-semibold">
                 Kembali
               </button>
             )}
-            <button type="submit" disabled={isLoading} className="btn flex-grow rounded-md text-lg h-14 text-white bg-black hover:bg-neutral-800 font-semibold uppercase tracking-wide">
+            <button type="submit" disabled={isLoading} className="btn flex-grow rounded-md text-lg h-14 text-white bg-[#7C3AED] hover:bg-[#4C1D95] font-semibold uppercase tracking-wide">
               {isLoading ? 'Mengirim...' : currentStep === 7 ? 'Kirim Kuesioner' : 'Lanjut'}
             </button>
           </div>

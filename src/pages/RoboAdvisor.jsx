@@ -94,12 +94,12 @@ const RoboAdvisor = () => {
   const pieColor = isSurplus ? '#22c55e' : (roboData.status === 'Kuning' ? '#eab308' : '#ef4444');
 
   return (
-    <div className="min-h-screen w-full bg-white text-neutral font-sans pb-20">
+    <div className="min-h-screen w-full bg-[#F8FAFC] text-neutral font-sans pb-20">
       
       {/* ================= HEADER NAVIGATION ================= */}
       <div className="navbar bg-white border-b border-gray-100 px-4 md:px-12 shrink-0">
         <div className="flex-1">
-          <Link to="/dashboard" className="text-3xl font-black text-black tracking-tighter uppercase select-none">
+          <Link to="/dashboard" className="text-3xl font-black tracking-tighter uppercase select-none text-transparent bg-clip-text bg-gradient-to-r from-[#7C3AED] to-[#10B981]">
             FineFin
           </Link>
         </div>
@@ -116,7 +116,7 @@ const RoboAdvisor = () => {
               </Link>
             </li>
             <li>
-              <Link to="/robo-advisor" className="text-black border-b-2 border-black rounded-none px-1 pb-2 pt-2 bg-transparent hover:bg-transparent">
+              <Link to="/robo-advisor" className="text-[#7C3AED] border-b-2 border-[#7C3AED] rounded-none px-1 pb-2 pt-2 bg-transparent hover:bg-transparent">
                 Robo-Advisor
               </Link>
             </li>
@@ -139,11 +139,11 @@ const RoboAdvisor = () => {
         {/* ================= JUDUL & TOMBOL AKSI ================= */}
         <div className="flex flex-col items-center text-center gap-6">
           <div>
-            <h1 className="text-4xl font-extrabold text-black">Ringkasan Keuangan</h1>
-            <p className="text-gray-500 mt-2 text-sm font-medium">Performa dan progres target Anda bulan ini.</p>
+            <h1 className="text-4xl font-extrabold text-[#0F172A]">Ringkasan Keuangan</h1>
+            <p className="text-[#64748B] mt-2 text-sm font-medium">Performa dan progres target Anda bulan ini.</p>
           </div>
           <div className="flex flex-row gap-4">
-            <button className="btn bg-black text-white hover:bg-neutral-800 font-bold px-8 border-none rounded-md">
+            <button className="btn bg-[#7C3AED] text-white hover:bg-[#4C1D95] font-bold px-8 border-none rounded-md">
               Unduh Laporan
             </button>
           </div>
@@ -154,10 +154,10 @@ const RoboAdvisor = () => {
           
           <div className="flex flex-col gap-6">
             <div>
-              <h2 className="text-3xl font-extrabold text-black leading-tight max-w-sm">
+              <h2 className="text-3xl font-extrabold text-[#0F172A] leading-tight max-w-sm">
                 Kartu Indikator Kondisi Keuangan
               </h2>
-              <p className="text-gray-500 mt-4 text-sm leading-relaxed max-w-sm">
+              <p className="text-[#64748B] mt-4 text-sm leading-relaxed max-w-sm">
                 Sistem mendeteksi sisa alokasi uangmu bulan ini dan memberikan rekomendasi yang sesuai.
               </p>
             </div>
@@ -181,7 +181,7 @@ const RoboAdvisor = () => {
           </div>
 
           <div className="border border-gray-100 shadow-sm p-6 rounded-2xl bg-white w-full h-[350px] flex flex-col items-center justify-center">
-            <h3 className="text-sm font-bold text-black self-start">Visualisasi Kondisi</h3>
+            <h3 className="text-sm font-bold text-[#0F172A] self-start">Visualisasi Kondisi</h3>
             <div className="flex-grow w-full h-full mt-4">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
@@ -201,10 +201,10 @@ const RoboAdvisor = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start mt-4">
             
             <div className="flex flex-col gap-4">
-              <h2 className="text-3xl font-extrabold text-black leading-tight max-w-sm">
+              <h2 className="text-3xl font-extrabold text-[#0F172A] leading-tight max-w-sm">
                 Rekomendasi Instrumen
               </h2>
-              <p className="text-gray-500 text-sm">
+              <p className="text-[#64748B] text-sm">
                 Berdasarkan profil risiko dan sisa uangmu, ini adalah alokasi terbaik yang kami sarankan.
               </p>
             </div>
@@ -233,9 +233,9 @@ const RoboAdvisor = () => {
         {isSurplus && roboData.projection.length > 0 && (
           <div className="w-full flex flex-col gap-8 mt-4">
             <div className="text-center flex flex-col gap-2">
-              <h2 className="text-3xl font-extrabold text-black">Grafik Simulasi Mesin Waktu</h2>
-              <p className="text-gray-500 text-sm max-w-lg mx-auto">
-                Simulasi 5 tahun ke depan: <span className="font-bold text-gray-500">Abu-abu (Tabungan Biasa)</span> vs <span className="font-bold text-green-500">Hijau (Investasi Majemuk)</span>.
+              <h2 className="text-3xl font-extrabold text-[#0F172A]">Grafik Simulasi Mesin Waktu</h2>
+              <p className="text-[#64748B] text-sm max-w-lg mx-auto">
+                Simulasi 5 tahun ke depan: <span className="font-bold text-[#64748B]">Abu-abu (Tabungan Biasa)</span> vs <span className="font-bold text-green-500">Hijau (Investasi Majemuk)</span>.
               </p>
             </div>
 
@@ -245,8 +245,8 @@ const RoboAdvisor = () => {
                   <AreaChart data={roboData.projection} margin={{ top: 10, right: 10, left: 20, bottom: 0 }}>
                     <defs>
                       <linearGradient id="colorInvestasi" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#22c55e" stopOpacity={0.4}/>
-                        <stop offset="95%" stopColor="#22c55e" stopOpacity={0}/>
+                        <stop offset="5%" stopColor="#7C3AED" stopOpacity={0.4}/>
+                        <stop offset="95%" stopColor="#7C3AED" stopOpacity={0}/>
                       </linearGradient>
                       <linearGradient id="colorModal" x1="0" y1="0" x2="0" y2="1">
                         <stop offset="5%" stopColor="#9CA3AF" stopOpacity={0.4}/>
@@ -275,7 +275,7 @@ const RoboAdvisor = () => {
                     <Area 
                       type="monotone" 
                       dataKey="estimasiHasil" 
-                      stroke="#22c55e" 
+                      stroke="#10B981" 
                       strokeWidth={3}
                       fillOpacity={1} 
                       fill="url(#colorInvestasi)" 
