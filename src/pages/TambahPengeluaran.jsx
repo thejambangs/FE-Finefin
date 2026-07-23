@@ -163,55 +163,56 @@ const TambahPengeluaran = () => {
     <div className="min-h-screen w-full bg-slate-50 text-neutral font-sans flex flex-col items-center pb-20">
       
       <ToastContainer position="top-right" autoClose={3000} />
-
-      {/* ================= HEADER (PRESISI SESUAI DASHBOARD) ================= */}
-      <header className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-2">
-        <div className="bg-white rounded-2xl border border-gray-200/80 shadow-sm px-6 py-3 flex justify-between items-center">
-          
-          {/* LOGO BRAND */}
-          <Link to="/dashboard" className="flex items-center gap-3 select-none">
-            <div className="bg-indigo-600 text-white font-black text-lg w-10 h-10 rounded-xl flex items-center justify-center tracking-tighter shadow-sm">
-              FF
+      {/* ================= HEADER NAVIGATION ================= */}
+      <nav className="navbar bg-white/80 backdrop-blur-md sticky top-0 z-50 rounded-2xl border border-slate-200/80 shadow-sm px-6 py-3">
+            <div className="flex-1">
+              <Link
+                to="/dashboard"
+                className="text-2xl font-black text-slate-900 tracking-tight uppercase flex items-center gap-2"
+              >
+                <span className="bg-indigo-600 text-white px-2 py-0.5 rounded-lg text-lg">FF</span>
+                FineFin
+              </Link>
             </div>
-            <span className="text-2xl font-black text-black tracking-tight uppercase">
-              FINEFIN
-            </span>
-          </Link>
 
-          {/* MENU NAVIGASI UTAMA */}
-          <div className="hidden md:flex items-center gap-1">
-            <Link 
-              to="/dashboard" 
-              className="px-5 py-2.5 text-sm font-medium text-gray-600 hover:text-black rounded-xl transition-colors"
-            >
-              Dasbor
-            </Link>
-            <Link 
-              to="/pengeluaran" 
-              className="px-5 py-2.5 text-sm font-semibold text-indigo-600 bg-indigo-50 rounded-xl"
-            >
-              Transaksi
-            </Link>
-            <Link 
-              to="/robo-advisor" 
-              className="px-5 py-2.5 text-sm font-medium text-gray-600 hover:text-black rounded-xl transition-colors"
-            >
-              Robo-Advisor
-            </Link>
-          </div>
+            <div className="flex-none hidden md:block">
+              <ul className="menu menu-horizontal gap-2 text-sm font-semibold">
+                <li>
+                  <Link
+                    to="/dashboard"
+                    className="text-indigo-600 bg-indigo-50 font-bold rounded-xl px-4 py-2"
+                  >
+                    Dasbor
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/transaction"
+                    className="text-slate-500 rounded-xl px-4 py-2 hover:text-slate-900 hover:bg-slate-100 transition-all"
+                  >
+                    Transaksi
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/robo-adviser"
+                    className="text-slate-500 rounded-xl px-4 py-2 hover:text-slate-900 hover:bg-slate-100 transition-all"
+                  >
+                    Robo-Advisor
+                  </Link>
+                </li>
+              </ul>
+            </div>
 
-          {/* AKSI USER / LOGOUT */}
-          <div>
-            <button 
+          <div className="flex-none ml-4">
+            <button
               onClick={handleLogout}
-              className="border border-gray-300 hover:bg-gray-100 text-gray-700 text-xs font-bold px-4 py-2.5 rounded-xl transition-colors uppercase tracking-wider"
+              className="btn btn-sm btn-outline border-slate-300 hover:border-red-500 text-slate-700 hover:bg-red-500 hover:text-white rounded-xl uppercase font-bold text-xs transition-all px-4"
             >
-              LOG OUT
+              Log out
             </button>
           </div>
-
-        </div>
-      </header>
+        </nav>
 
       {/* ================= KONTEN FORM ATAS ================= */}
       <div className="w-full max-w-5xl px-6 py-10 flex flex-col gap-10">
