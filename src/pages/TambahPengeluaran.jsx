@@ -38,12 +38,19 @@ const TambahPengeluaran = () => {
     }
   };
 
+  // FUNGSI UNTUK LOGOUT
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    toast.info("Berhasil keluar.");
+    navigate('/login');
+  };
+
   // FUNGSI UNTUK MENGHAPUS
   const handleDelete = async (_id) => {
     if (!window.confirm("Apakah Anda yakin ingin menghapus transaksi ini?")) return;
     try {
       await axiosInstance.delete(`/api/transaction/${_id}`);
-      setTransactions((prev) => prev.filter((trx) => (trx._id || trx._id) !== _id));
+      setTransactions((prev) => prev.filter((trx) => (trx._id || trx.id) !== _id));
       toast.success("Transaksi berhasil dihapus!");
     } catch (error) {
       toast.error("Gagal menghapus data.");
@@ -80,7 +87,7 @@ const TambahPengeluaran = () => {
     }
   };
 
- const handleSimpan = async (e) => {
+  const handleSimpan = async (e) => {
     e.preventDefault();
     
     // 1. BERSIHKAN NOMINAL
@@ -167,26 +174,59 @@ const TambahPengeluaran = () => {
       
       <ToastContainer position="top-right" autoClose={3000} />
 
-      {/* ================= HEADER ================= */}
-      <div className="navbar bg-white border-b border-gray-100 px-4 md:px-8 w-full shrink-0">
-        <div className="flex-1">
-          <Link to="/dashboard" className="text-3xl font-black text-black tracking-tighter uppercase select-none">
-            FineFin
-          </Link>
-        </div>
-        <div className="flex-none">
-          <ul className="menu menu-horizontal px-1 gap-6 text-lg font-semibold">
-            <li><Link to="/pengeluaran" className="text-black border-b-2 border-black rounded-none px-1 pb-2 pt-2 bg-transparent">Pengeluaran</Link></li>
-            <li><Link to="/robo-advisor" className="text-gray-400 hover:text-black rounded-none px-1 pb-2 pt-2 bg-transparent">Robo-Advisor</Link></li>
-          </ul>
-        </div>
-        <div className="flex-none ml-8 flex items-center gap-4">
-          <div className="form-control">
-            <input type="text" placeholder="Search in site" className="input border-gray-200 focus:outline-none focus:border-gray-300 input-sm rounded-full w-48 bg-white text-black" />
+      {/* ================= HEADER (SESUAI HEADER DASHBOARD) ================= */}
+      <header className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-gray-100 shadow-sm">
+        <div className="navbar max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
+          
+          {/* LOGO BRAND */}
+          <div className="flex-1">
+            <Link to="/dashboard" className="text-2xl font-black text-black tracking-tighter uppercase select-none">
+              FineFin
+            </Link>
           </div>
-          <div className="w-10 h-10 bg-gray-200 rounded-full"></div>
+
+          {/* MENU NAVIGASI UTAMA */}
+          <div className="flex-none hidden md:block">
+            <ul className="menu menu-horizontal px-1 gap-2 text-base font-semibold">
+              <li>
+                <Link 
+                  to="/dashboard" 
+                  className="text-gray-500 hover:text-black rounded-lg px-3 py-2 transition-colors"
+                >
+                  Dasbor
+                </Link>
+              </li>
+              <li>
+                <Link 
+                  to="/pengeluaran" 
+                  className="text-black border-b-2 border-black rounded-none px-3 py-2 font-bold bg-transparent"
+                >
+                  Pengeluaran
+                </Link>
+              </li>
+              <li>
+                <Link 
+                  to="/robo-advisor" 
+                  className="text-gray-500 hover:text-black rounded-lg px-3 py-2 transition-colors"
+                >
+                  Robo-Advisor
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* AKSI USER / LOGOUT */}
+          <div className="flex-none ml-4 flex items-center gap-3">
+            <button 
+              onClick={handleLogout}
+              className="btn btn-sm btn-ghost text-red-600 hover:bg-red-50 hover:text-red-700 rounded-lg text-sm font-semibold transition-colors"
+            >
+              Keluar
+            </button>
+          </div>
+
         </div>
-      </div>
+      </header>
 
       {/* ================= KONTEN FORM ATAS ================= */}
       <div className="w-full max-w-5xl px-6 py-12 flex flex-col gap-10 mt-2">
@@ -334,89 +374,89 @@ const TambahPengeluaran = () => {
             <hr className="border-gray-100" />
           </div>
 
-      {/* ================= KONTEN TABEL BAWAH ================= */}
-      <div className="w-full max-w-5xl px-6">
-        <div className="border border-gray-200 rounded-xl overflow-hidden bg-white shadow-sm">
-          <div className="overflow-x-auto">
-            <table className="table w-full text-black">
-              {/* Header Tabel */}
-              <thead className="bg-white border-b border-gray-200 text-black font-bold">
-                <tr>
-                  <th className="bg-transparent py-4 pl-6">No</th>
-                  <th className="bg-transparent py-4">Tanggal</th>
-                  <th className="bg-transparent py-4">Nama Transaksi</th>
-                  <th className="bg-transparent py-4">Tipe</th>
-                  <th className="bg-transparent py-4">Total</th>
-                  <th className="bg-transparent py-4">Kategori</th>
-                  <th className="bg-transparent py-4">Metode Pembayaran</th>
-                  <th className="bg-transparent py-4 text-center pr-6">Aksi</th>
-                </tr>
-              </thead>
-              
-              {/* Body Tabel */}
-              <tbody>
-                {transactions.length === 0 ? (
-                  <tr>
-                    <td colSpan="8" className="text-center py-12 text-gray-400">
-                      Belum ada transaksi. Silakan input form di atas.
-                    </td>
-                  </tr>
-                ) : (
-                  transactions.map((trx, index) => (
-                    <tr key={trx._id} className="border-b border-gray-100 hover:bg-gray-50">
-                      <td className="pl-6">{index + 1}</td>
-                      <td>{trx.tanggal ? trx.tanggal.substring(0, 10).split('-').reverse().join('/') : '-'}</td>
-                      <td className="font-medium">{trx.namaTransaksi}</td>
-                      
-                      {/* Tipe Transaksi Badges */}
-                      <td>
-                        <span className={`px-2 py-1 rounded-md text-xs font-bold ${trx.tipeTransaksi === 'Pemasukan' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                          {trx.tipeTransaksi}
-                        </span>
-                      </td>
-                      <td className={`font-semibold ${trx.tipeTransaksi === 'Pemasukan' ? 'text-green-600' : 'text-red-500'}`}>
-                        {trx.tipeTransaksi === 'Pemasukan' ? '+' : '-'}Rp. {Number(trx.nominal || 0).toLocaleString('id-ID')}
-                      </td>
-                      <td>
-                        <span className="px-3 py-1 bg-gray-100 text-gray-600 rounded-md text-xs font-semibold">
-                          {trx.kategori}
-                        </span>
-                      </td>
-                      <td>{trx.metodePembayaran}</td>
-                      <td className="flex justify-center gap-4 pr-6 py-4">
-                        {/* Tombol Edit */}
-                        <button 
-                          onClick={() => handleEditClick(trx)} 
-                          name="update" 
-                          className="text-blue-500 hover:text-blue-700 transition-colors" 
-                          title="Edit"
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                          </svg>
-                        </button>
-
-                        {/* Tombol Hapus */}
-                        <button 
-                          onClick={() => handleDelete(trx._id)} 
-                          className="text-red-500 hover:text-red-700 transition-colors" 
-                          title="Hapus"
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
-                          </svg>
-                        </button>
-                      </td>
+          {/* ================= KONTEN TABEL BAWAH ================= */}
+          <div className="w-full max-w-5xl px-6">
+            <div className="border border-gray-200 rounded-xl overflow-hidden bg-white shadow-sm">
+              <div className="overflow-x-auto">
+                <table className="table w-full text-black">
+                  {/* Header Tabel */}
+                  <thead className="bg-white border-b border-gray-200 text-black font-bold">
+                    <tr>
+                      <th className="bg-transparent py-4 pl-6">No</th>
+                      <th className="bg-transparent py-4">Tanggal</th>
+                      <th className="bg-transparent py-4">Nama Transaksi</th>
+                      <th className="bg-transparent py-4">Tipe</th>
+                      <th className="bg-transparent py-4">Total</th>
+                      <th className="bg-transparent py-4">Kategori</th>
+                      <th className="bg-transparent py-4">Metode Pembayaran</th>
+                      <th className="bg-transparent py-4 text-center pr-6">Aksi</th>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+                  </thead>
+                  
+                  {/* Body Tabel */}
+                  <tbody>
+                    {transactions.length === 0 ? (
+                      <tr>
+                        <td colSpan="8" className="text-center py-12 text-gray-400">
+                          Belum ada transaksi. Silakan input form di atas.
+                        </td>
+                      </tr>
+                    ) : (
+                      transactions.map((trx, index) => (
+                        <tr key={trx._id} className="border-b border-gray-100 hover:bg-gray-50">
+                          <td className="pl-6">{index + 1}</td>
+                          <td>{trx.tanggal ? trx.tanggal.substring(0, 10).split('-').reverse().join('/') : '-'}</td>
+                          <td className="font-medium">{trx.namaTransaksi}</td>
+                          
+                          {/* Tipe Transaksi Badges */}
+                          <td>
+                            <span className={`px-2 py-1 rounded-md text-xs font-bold ${trx.tipeTransaksi === 'Pemasukan' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                              {trx.tipeTransaksi}
+                            </span>
+                          </td>
+                          <td className={`font-semibold ${trx.tipeTransaksi === 'Pemasukan' ? 'text-green-600' : 'text-red-500'}`}>
+                            {trx.tipeTransaksi === 'Pemasukan' ? '+' : '-'}Rp. {Number(trx.nominal || 0).toLocaleString('id-ID')}
+                          </td>
+                          <td>
+                            <span className="px-3 py-1 bg-gray-100 text-gray-600 rounded-md text-xs font-semibold">
+                              {trx.kategori}
+                            </span>
+                          </td>
+                          <td>{trx.metodePembayaran}</td>
+                          <td className="flex justify-center gap-4 pr-6 py-4">
+                            {/* Tombol Edit */}
+                            <button 
+                              onClick={() => handleEditClick(trx)} 
+                              name="update" 
+                              className="text-blue-500 hover:text-blue-700 transition-colors" 
+                              title="Edit"
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                              </svg>
+                            </button>
+
+                            {/* Tombol Hapus */}
+                            <button 
+                              onClick={() => handleDelete(trx._id)} 
+                              className="text-red-500 hover:text-red-700 transition-colors" 
+                              title="Hapus"
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                              </svg>
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-    </>
-    )}
+        </>
+      )}
     </div>
   );
 };
