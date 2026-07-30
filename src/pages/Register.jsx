@@ -84,60 +84,60 @@ const Register = () => {
       </div>
 
       {/* PANEL KANAN: Formulir Registrasi */}
-      <div className="w-1/2 h-full flex flex-col justify-center px-16 lg:px-32 xl:px-40 gap-8 bg-white">
-        <h1 className="text-5xl font-extrabold text-black uppercase tracking-tight">
+      <div className="w-1/2 h-full flex flex-col justify-center px-16 lg:px-32 xl:px-40 gap-8 bg-[#F8FAFC]">
+        <h1 className="text-5xl font-extrabold text-[#0F172A] uppercase tracking-tight">
           REGISTRASI
         </h1>
 
         {/* INPUT USERNAME */}
         <label className="form-control w-full gap-2">
-          <div className="label p-0"><span className="label-text text-xl font-medium text-black">Username</span></div>
+          <div className="label p-0"><span className="label-text text-xl font-medium text-[#0F172A]">Username</span></div>
           <input 
             type="text"
             required
             placeholder="Masukkan username" 
             value={username} 
             onChange={(e) => setUsername(e.target.value)} 
-            className="input input-bordered w-full rounded-full border-gray-300 h-14 text-lg text-black bg-white focus:border-black focus:ring-0" 
+            className="input input-bordered w-full rounded-full border-gray-300 h-14 text-lg text-[#0F172A] bg-white focus:border-[#7C3AED] focus:ring-0" 
           />
         </label>
 
         {/* INPUT EMAIL */}
         <label className="form-control w-full gap-2">
-          <div className="label p-0"><span className="label-text text-xl font-medium text-black">Email</span></div>
+          <div className="label p-0"><span className="label-text text-xl font-medium text-[#0F172A]">Email</span></div>
           <input
             type="email"
             required
             placeholder="contoh@email.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="input input-bordered w-full rounded-full border-gray-300 h-14 text-lg text-black bg-white focus:border-black focus:ring-0"
+            className="input input-bordered w-full rounded-full border-gray-300 h-14 text-lg text-[#0F172A] bg-white focus:border-[#7C3AED] focus:ring-0"
           />
         </label>
 
         {/* INPUT PASSWORD */}
         <label className="form-control w-full gap-2">
-          <div className="label p-0"><span className="label-text text-xl font-medium text-black">Isi Kata Sandi Baru</span></div>
+          <div className="label p-0"><span className="label-text text-xl font-medium text-[#0F172A]">Isi Kata Sandi Baru</span></div>
           <input
             type="password"
             required
             placeholder="••••••••"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="input input-bordered w-full rounded-full border-gray-300 h-14 text-lg text-black bg-white focus:border-black focus:ring-0"
+            className="input input-bordered w-full rounded-full border-gray-300 h-14 text-lg text-[#0F172A]  bg-white focus:border-[#7C3AED] focus:ring-0"
           />
         </label>
 
         {/* INPUT KONFIRMASI PASSWORD */}
         <label className="form-control w-full gap-2">
-          <div className="label p-0"><span className="label-text text-xl font-medium text-black">Konfirmasi Kata Sandi</span></div>
+          <div className="label p-0"><span className="label-text text-xl font-medium text-[#0F172A]">Konfirmasi Kata Sandi</span></div>
           <input
             type="password"
             required
             placeholder="••••••••"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-            className="input input-bordered w-full rounded-full border-gray-300 h-14 text-lg text-black bg-white focus:border-black focus:ring-0"
+            className="input input-bordered w-full rounded-full border-gray-300 h-14 text-lg text-[#0F172A] bg-white focus:border-[#7C3AED] focus:ring-0"
           />
         </label>
 
@@ -146,14 +146,14 @@ const Register = () => {
           <button
             type="button"
             onClick={() => navigate("/login")}
-            className="btn grow rounded-full text-base h-14 text-black border-black bg-white hover:bg-gray-100 font-semibold"
+            className="btn grow rounded-full text-base h-14 text-[#0F172A] border-[#0F172A] bg-transparent hover:bg-[#E2E8F0] font-semibold"
           >
             Sudah punya akun? Masuk
           </button>
           <button
             onClick={handleRegister}
             disabled={isLoading}
-            className="btn grow rounded-full text-lg h-14 text-white bg-black hover:bg-neutral-800 disabled:bg-neutral-700 disabled:text-neutral-400 uppercase font-semibold"
+            className="btn grow rounded-full text-lg h-14 text-white bg-[#7C3AED] hover:bg-[#4C1D95] uppercase font-semibold"
           >
             {isLoading ? <span className="loading loading-spinner text-neutral-400"></span> : "Daftar"}
           </button>

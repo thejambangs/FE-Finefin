@@ -88,14 +88,14 @@ const Login = () => {
       </div>
 
       {/* PANEL KANAN */}
-      <div className="w-1/2 h-full flex flex-col justify-center px-16 lg:px-32 xl:px-40 gap-8 bg-white">
-        <h1 className="text-5xl font-extrabold text-black uppercase tracking-tight">
+      <div className="w-1/2 h-full flex flex-col justify-center px-16 lg:px-32 xl:px-40 gap-8 bg-[#F8FAFC]">
+        <h1 className="text-5xl font-extrabold text-[#0F172A] uppercase tracking-tight">
           MASUK
         </h1>
 
         <label className="form-control w-full gap-2">
           <div className="label p-0">
-            <span className="label-text text-xl font-medium text-black">
+            <span className="label-text text-xl font-medium text-[#0F172A]">
               Email
             </span>
           </div>
@@ -105,13 +105,13 @@ const Login = () => {
             placeholder="contoh@email.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="input input-bordered w-full rounded-full border-gray-300 h-14 text-lg text-black bg-white focus:border-black focus:ring-0"
+            className="input input-bordered w-full rounded-full border-gray-300 h-14 text-lg text-[#0F172A] bg-white focus:border-[#7C3AED] focus:ring-0"
           />
         </label>
 
         <label className="form-control w-full gap-2">
           <div className="label p-0">
-            <span className="label-text text-xl font-medium text-black">
+            <span className="label-text text-xl font-medium text-[#0F172A]">
               Kata Sandi
             </span>
           </div>
@@ -121,7 +121,7 @@ const Login = () => {
             placeholder="••••••••"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="input input-bordered w-full rounded-full border-gray-300 h-14 text-lg text-black bg-white focus:border-black focus:ring-0"
+            className="input input-bordered w-full rounded-full border-gray-300 h-14 text-lg text-[#0F172A] bg-white focus:border-[#7C3AED] focus:ring-0"
           />
         </label>
 
@@ -129,7 +129,7 @@ const Login = () => {
           <button
             type="button"
             onClick={() => navigate("/register")}
-            className="btn flex-grow rounded-full text-base h-14 text-black border-black bg-white hover:bg-gray-100 font-semibold"
+            className="btn flex-grow rounded-full text-base h-14 text-[#0F172A] border-[#0F172A] bg-transparent hover:bg-[#E2E8F0] font-semibold"
           >
             Belum punya akun? Daftar
           </button>
@@ -137,7 +137,7 @@ const Login = () => {
             type="button"
             onClick={handleLogin}
             disabled={isLoading}
-            className="btn flex-grow rounded-full text-lg h-14 text-white bg-black hover:bg-neutral-800 disabled:bg-neutral-700 disabled:text-neutral-400 uppercase font-semibold"
+            className="btn flex-grow rounded-full text-lg h-14 text-white bg-[#7C3AED] hover:bg-[#4C1D95] uppercase font-semibold"
           >
             {isLoading ? (
               <span className="loading loading-spinner text-neutral-400"></span>
